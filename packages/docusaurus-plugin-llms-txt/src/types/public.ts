@@ -12,6 +12,7 @@ import type { Plugin, Settings } from 'unified';
 import { 
   DEFAULT_CONTENT_SELECTORS,
   DEFAULT_DEPTH,
+  PLUGIN_NAME,
 } from '../constants';
 
 
@@ -109,6 +110,9 @@ export interface ContentOptions {
  * Main plugin configuration options
  */
 export interface PluginOptions {
+  /** Plugin instance ID (injected by Docusaurus) */
+  readonly id?: string;
+  
   /** Content processing options (affects individual file generation) */
   readonly content?: ContentOptions;
   
@@ -186,6 +190,9 @@ export interface Logger {
  * @internal - This is used by Docusaurus framework for options validation
  */
 export const pluginOptionsSchema = Joi.object<PluginOptions>({
+  // Plugin metadata (injected by Docusaurus)
+  id: Joi.string().default(PLUGIN_NAME),
+  
   // Content processing options
   content: Joi.object({
     // File generation
