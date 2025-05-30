@@ -1,0 +1,12 @@
+node_modules
+dist
+lib
+build
+.docusaurus
+coverage
+*.min.js
+*.min.css
+CHANGELOG.md
+package-lock.json
+yarn.lock
+pnpm-lock.yaml 
