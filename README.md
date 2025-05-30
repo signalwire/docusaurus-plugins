@@ -195,6 +195,19 @@ src/
 └── ...              # Plugin-specific modules
 ```
 
+5. **Update root package.json scripts**: Add your new plugin to the build:packages script:
+
+```json
+{
+  "scripts": {
+    "build:packages": "npm run build:llms-txt && npm run build:your-plugin && echo '✅ All packages built successfully'",
+    "build:your-plugin": "npm run build --workspace=packages/docusaurus-plugin-your-plugin"
+  }
+}
+```
+
+This ensures `npm run build:packages` will build all plugins and scale automatically.
+
 ## 🔧 Architecture
 
 ### Directory Structure

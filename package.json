@@ -9,9 +9,8 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces",
-    "build:packages": "npm run build --workspace=packages/*",
+    "build:packages": "npm run build:llms-txt && echo '✅ All packages built successfully'",
     "build:llms-txt": "npm run build --workspace=packages/docusaurus-plugin-llms-txt",
-    "build:types": "npm run build --workspace=packages/types",
     "build:website": "npm run build --workspace=website",
     "prebuild:website": "npm run build:packages",
     "dev": "npm run dev --workspaces --if-present",
