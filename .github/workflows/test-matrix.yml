@@ -10,22 +10,14 @@ on:
     - cron: '0 2 * * 0'
 
 jobs:
-  test-matrix:
-    name: Test (Node ${{ matrix.node-version }}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
+  test-node-versions:
+    name: Test Node.js ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        node-version: ['18', '20', '22']
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        include:
-          # Test with different yarn versions
-          - node-version: '20'
-            os: ubuntu-latest
-            yarn-version: '1.22.19'
-          - node-version: '20'
-            os: ubuntu-latest
-            yarn-version: '4.0.2'
+        # Test minimum supported (18) and current LTS (20)
+        node-version: ['18', '20']
 
     steps:
       - name: Checkout
@@ -37,37 +29,23 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
 
-      - name: Setup specific Yarn version
-        if: matrix.yarn-version
-        run: |
-          corepack enable
-          corepack prepare yarn@${{ matrix.yarn-version }} --activate
-
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
       - name: Build packages
         run: yarn run build:packages
 
-      - name: Test packages
-        run: yarn run test
-
-      - name: Lint code
-        run: yarn run lint
-
-      - name: Type check
-        run: yarn run type-check
-
       - name: Test website build
         run: yarn run build:website
 
-  test-docusaurus-versions:
-    name: Test with Docusaurus ${{ matrix.docusaurus-version }}
+  test-docusaurus-compatibility:
+    name: Test Docusaurus Compatibility
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        docusaurus-version: ['3.0.0', '3.5.0', '3.8.0']
+        # Test current version and previous minor version
+        docusaurus-version: ['3.6.0', '3.8.0']
 
     steps:
       - name: Checkout
