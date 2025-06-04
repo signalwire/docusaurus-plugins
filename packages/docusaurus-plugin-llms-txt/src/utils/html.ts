@@ -18,4 +18,4 @@ export function selectText(tree: Root, selector: string): string {
 export function selectMetaContent(tree: Root, selector: string): string {
   const element = select(selector, tree) as Element | null;
   return element?.properties?.content ? String(element.properties.content) : '';
-} 
+}

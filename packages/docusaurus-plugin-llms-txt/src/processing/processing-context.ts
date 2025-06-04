@@ -31,23 +31,25 @@ export function analyzeProcessingContext(
   logger: Logger
 ): ContextAnalysis {
   const isCliContext = routes.length === 0;
-  
+
   if (isCliContext) {
     // CLI: Convert cached routes to RouteConfig objects for unified processing
-    logger.debug('CLI context: Converting cached routes to RouteConfig objects');
+    logger.debug(
+      'CLI context: Converting cached routes to RouteConfig objects'
+    );
     const routesToProcess = cachedRoutesToRouteConfigs(cache.routes);
-    
+
     return {
       mode: 'cli',
       routesToProcess,
-      description: `Using ${routesToProcess.length} cached routes for processing`
+      description: `Using ${routesToProcess.length} cached routes for processing`,
     };
   } else {
     // PostBuild: Use provided routes
     return {
       mode: 'build',
       routesToProcess: routes,
-      description: `Processing ${routes.length} build routes`
+      description: `Processing ${routes.length} build routes`,
     };
   }
 }

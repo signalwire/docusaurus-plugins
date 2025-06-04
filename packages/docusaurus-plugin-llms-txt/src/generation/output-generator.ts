@@ -33,26 +33,26 @@ export async function generateOutputFiles(
     logger.info(PROCESSING_MESSAGES.NO_DOCUMENTS);
     return {
       llmsTxtPath: '',
-      contentLength: 0
+      contentLength: 0,
     };
   }
 
   // Build llms.txt content
   const llmsTxtContent = buildLlmsTxtContent(docs, config, siteConfig);
   const llmsTxtPath = path.join(directories.outDir, LLMS_TXT_FILENAME);
-  
+
   // Log generation details at debug level
   logger.debug(`Saving llms.txt to: ${llmsTxtPath}`);
   logger.debug(`Content length: ${llmsTxtContent.length} characters`);
-  
+
   // Save the file
   await saveMarkdownFile(llmsTxtPath, llmsTxtContent);
-  
+
   logger.debug(`Successfully saved llms.txt`);
   logger.info(`Generated llms.txt with ${docs.length} documents`);
-  
+
   return {
     llmsTxtPath,
-    contentLength: llmsTxtContent.length
+    contentLength: llmsTxtContent.length,
   };
-} 
+}

@@ -1,4 +1,4 @@
-# docusaurus-plugin-llms-txt
+# @signalwire/docusaurus-plugin-llms-txt
 
 A powerful Docusaurus plugin that generates Markdown versions of your HTML pages and creates an `llms.txt` index file for AI/LLM consumption. Perfect for making your documentation easily accessible to Large Language Models while maintaining human-readable markdown files.
 
@@ -18,7 +18,9 @@ A powerful Docusaurus plugin that generates Markdown versions of your HTML pages
 ## Installation
 
 ```bash
-npm install docusaurus-plugin-llms-txt
+npm install @signalwire/docusaurus-plugin-llms-txt
+# or
+yarn add @signalwire/docusaurus-plugin-llms-txt
 ```
 
 ### Peer Dependencies
@@ -38,7 +40,15 @@ Add the plugin to your `docusaurus.config.js`:
 ```javascript
 module.exports = {
   plugins: [
-    'docusaurus-plugin-llms-txt'
+    [
+      '@signalwire/docusaurus-plugin-llms-txt',
+      {
+        // Plugin options (optional)
+        outputDir: 'llms-txt',
+        includePatterns: ['**/*.html'],
+        excludePatterns: ['**/404.html'],
+      },
+    ]
   ]
 };
 ```
@@ -49,7 +59,7 @@ module.exports = {
 module.exports = {
   plugins: [
     [
-      'docusaurus-plugin-llms-txt',
+      '@signalwire/docusaurus-plugin-llms-txt',
       {
         siteTitle: 'My Documentation',
         siteDescription: 'Comprehensive guide to our platform',
@@ -836,9 +846,7 @@ The plugin uses intelligent caching to speed up subsequent builds:
 
 ## License
 
-MIT 
-
-## Public API
+MIT ## Public API
 
 The plugin exports types, utilities, and functions that you can import and use in your Docusaurus configuration and custom plugins.
 
@@ -1102,3 +1110,4 @@ async function processDocuments() {
   }
 }
 ```
+

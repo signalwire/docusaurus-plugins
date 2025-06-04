@@ -1,41 +1,75 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "strict": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "declarationMap": true,
+    /* Build Configuration */
     "composite": true,
     "incremental": true,
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+
+    /* Emit */
+    "target": "ES2020",
     "lib": ["ES2020", "DOM"],
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": false,
+    "importHelpers": true,
+    "noEmitHelpers": true,
 
-    // Enhanced strictness settings
-    "strictNullChecks": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitOverride": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "useUnknownInCatchVariables": true,
-
-    // Module settings
+    /* Module System - ESNext for module compatibility */
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "verbatimModuleSyntax": false,
+    "allowJs": true,
 
-    // Type settings - Include Jest types for testing
+    /* Paths and Output */
+    "rootDir": "./src",
+    "outDir": "./lib",
+    "noEmit": false,
+
+    /* Strict Type-Checking Options */
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true,
+
+    /* Additional Strict Checks */
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUncheckedIndexedAccess": true,
+
+    /* Linting - Handled by ESLint */
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+
+    /* Other */
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    /* Type settings */
     "types": ["node", "jest"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "lib", "node_modules", "**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"]
+  "include": ["src/**/*", ".eslintrc.js"],
+  "exclude": [
+    "node_modules",
+    "coverage/**",
+    "**/lib/**/*",
+    "**/dist/**/*",
+    "**/__mocks__/**/*",
+    "**/__fixtures__/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ]
 }

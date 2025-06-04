@@ -24,7 +24,8 @@ export const EXIT_CODE_ERROR = 1 as const;
 /** Official Docusaurus blog plugin name */
 export const DOCUSAURUS_BLOG_PLUGIN = 'docusaurus-plugin-content-blog' as const;
 /** Official Docusaurus pages plugin name */
-export const DOCUSAURUS_PAGES_PLUGIN = 'docusaurus-plugin-content-pages' as const;
+export const DOCUSAURUS_PAGES_PLUGIN =
+  'docusaurus-plugin-content-pages' as const;
 
 // ============================================================================
 // CONTENT TYPES
@@ -33,9 +34,9 @@ export const DOCUSAURUS_PAGES_PLUGIN = 'docusaurus-plugin-content-pages' as cons
 /** Content type classifications */
 export const CONTENT_TYPES = {
   DOCS: 'docs',
-  BLOG: 'blog', 
+  BLOG: 'blog',
   PAGES: 'pages',
-  UNKNOWN: 'unknown'
+  UNKNOWN: 'unknown',
 } as const;
 
 // ============================================================================
@@ -63,7 +64,7 @@ export const JSON_INDENT = 2 as const;
 export const HASH_DISPLAY_LENGTH = 8 as const;
 
 // ============================================================================
-// HTML CONSTANTS  
+// HTML CONSTANTS
 // ============================================================================
 
 /** HTML selectors for content extraction */
@@ -72,7 +73,7 @@ export const HTML_SELECTORS = {
   TITLE: 'title',
   META_DESCRIPTION: 'meta[name="description"]',
   BODY: 'body',
-  MAIN: 'main'
+  MAIN: 'main',
 } as const;
 
 /** Default document title when none found */
@@ -101,21 +102,23 @@ export const VALIDATION_MESSAGES = {
   UNKNOWN_ERROR: 'Unknown error during configuration validation',
   ROUTE_RULE_MULTIPLE_CATEGORIES: 'Multiple categories defined for route',
   ROUTE_RULE_MULTIPLE_ORDERS: 'Multiple includeOrders defined for route',
-  USING_LAST_DEFINITION: 'Using last definition.'
+  USING_LAST_DEFINITION: 'Using last definition.',
 } as const;
 
 /** Cache error messages */
 export const CACHE_MESSAGES = {
   NO_ROUTES: 'No cached routes found. Please run "npm run build" first.',
-  CONFIG_CHANGED_CLI: 'Configuration changed - regenerating with current settings',
+  CONFIG_CHANGED_CLI:
+    'Configuration changed - regenerating with current settings',
   CONFIG_CHANGED_BUILD: 'Configuration changed - rebuilding cache',
   USING_CACHED: 'Using cached data',
-  CONFIG_CHANGED_REGENERATE: 'Configuration changed - using current settings to regenerate output'
+  CONFIG_CHANGED_REGENERATE:
+    'Configuration changed - using current settings to regenerate output',
 } as const;
 
 /** Processing messages */
 export const PROCESSING_MESSAGES = {
-  NO_DOCUMENTS: 'No documents found to generate llms.txt'
+  NO_DOCUMENTS: 'No documents found to generate llms.txt',
 } as const;
 
 /**
@@ -123,23 +126,22 @@ export const PROCESSING_MESSAGES = {
  * @internal
  */
 export const ERROR_MESSAGES = {
-  ROUTE_PROCESSING_FAILED: (route: string, error: string): string => 
+  ROUTE_PROCESSING_FAILED: (route: string, error: string): string =>
     `Failed to process route ${route}: ${error}`,
 
   // Generic operation failure messages
   CLI_OPERATION_FAILED: (operation: string, error: string): string =>
     `❌ ${operation} failed: ${error}`,
-    
-  PLUGIN_BUILD_FAILED: (error: string): string =>
-    `Error: ${error}`,
+
+  PLUGIN_BUILD_FAILED: (error: string): string => `Error: ${error}`,
 
   // Specific operation failures
   HTML_PROCESSING_FAILED: (error: string): string =>
     `Failed to process HTML file: ${error}`,
-    
+
   FILE_REMOVAL_FAILED: (filePath: string, error: string): string =>
     `Failed to remove ${filePath}: ${error}`,
-} as const; 
+} as const;
 
 // Title and content formatting
 /** @internal */
@@ -168,9 +170,9 @@ export const DEFAULT_CONTENT_SELECTORS = [
   '.theme-doc-markdown',
   'main .container .col',
   'main .theme-doc-wrapper',
-  'article', 
+  'article',
   'main .container',
-  'main'
+  'main',
 ] as const;
 
 // Output files
@@ -191,5 +193,3 @@ export const DEFAULT_GFM: GfmOptions = {
   tablePipeAlign: true,
   stringLength: stringWidth,
 };
-
- 

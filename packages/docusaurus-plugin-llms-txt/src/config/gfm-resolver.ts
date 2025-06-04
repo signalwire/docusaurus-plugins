@@ -17,7 +17,7 @@ export function resolveGfmConfig(content: ContentOptions): ContentOptions {
   if (content.remarkGfm === true) {
     return {
       ...content,
-      remarkGfm: DEFAULT_GFM
+      remarkGfm: DEFAULT_GFM,
     };
   }
 
@@ -26,8 +26,8 @@ export function resolveGfmConfig(content: ContentOptions): ContentOptions {
       ...content,
       remarkGfm: {
         ...DEFAULT_GFM,
-        ...content.remarkGfm
-      }
+        ...content.remarkGfm,
+      },
     };
   }
 
@@ -39,16 +39,20 @@ export function resolveGfmConfig(content: ContentOptions): ContentOptions {
  */
 export function applyGfmConfiguration(options: PluginOptions): PluginOptions {
   const content = options.content ?? {};
-  
-  if (!(content.remarkGfm === true || 
-    (typeof content.remarkGfm === 'object' && content.remarkGfm !== null))) {
+
+  if (
+    !(
+      content.remarkGfm === true ||
+      (typeof content.remarkGfm === 'object' && content.remarkGfm !== null)
+    )
+  ) {
     return options;
   }
-  
+
   const resolvedContent = resolveGfmConfig(content);
-  
+
   return {
     ...options,
-    content: resolvedContent
+    content: resolvedContent,
   };
-} 
+}

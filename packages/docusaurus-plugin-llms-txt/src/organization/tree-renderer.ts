@@ -5,7 +5,10 @@
 
 import { createSlugger } from '@docusaurus/utils';
 
-import { DEFAULT_MARKDOWN_HEADER_LEVEL, LANDING_PAGE_SUFFIX } from '../constants';
+import {
+  DEFAULT_MARKDOWN_HEADER_LEVEL,
+  LANDING_PAGE_SUFFIX,
+} from '../constants';
 import type { TreeNode, DocInfo } from '../types';
 import { formatUrl } from '../utils/url';
 
@@ -23,80 +26,90 @@ function areSimilarTitles(a: string, b: string): boolean {
  * @internal
  */
 export function renderTreeAsMarkdown(
-  node: TreeNode, 
-  level: number = DEFAULT_MARKDOWN_HEADER_LEVEL, 
-  isRoot: boolean = false, 
-  baseUrl: string = '', 
+  node: TreeNode,
+  level: number = DEFAULT_MARKDOWN_HEADER_LEVEL,
+  isRoot: boolean = false,
+  baseUrl: string = '',
   useRelativePaths: boolean = true,
   enableMarkdownFiles: boolean = true,
   enableDescriptions: boolean = true
 ): string {
   let md = '';
-  
+
   // Handle category heading and description
   if (!isRoot && node.name) {
-    const shouldHeader = !node.indexDoc || !areSimilarTitles(node.name, node.indexDoc.title);
+    const shouldHeader =
+      !node.indexDoc || !areSimilarTitles(node.name, node.indexDoc.title);
     if (shouldHeader) {
       md += `${'#'.repeat(level)} ${node.name}\n\n`;
-      
+
       if (enableDescriptions && node.indexDoc?.description) {
         md += `${node.indexDoc.description}\n\n`;
       }
     }
   }
-  
+
   // Handle the category index document or root index
   if (node.indexDoc) {
     const formatOptions: Parameters<typeof formatUrl>[1] = {
-      relativePaths: useRelativePaths, 
+      relativePaths: useRelativePaths,
       enableMarkdownFiles,
     };
-    
+
     if (node.indexDoc.markdownFile) {
       formatOptions.markdownFile = node.indexDoc.markdownFile;
     }
-    
-    const formattedUrl = formatUrl(node.indexDoc.routePath, formatOptions, baseUrl);
-    
+
+    const formattedUrl = formatUrl(
+      node.indexDoc.routePath,
+      formatOptions,
+      baseUrl
+    );
+
     if (isRoot) {
       const rootTitle = node.title?.length ? node.title : node.indexDoc.title;
       md += `- [${rootTitle}](${formattedUrl})\n`;
     } else {
-      const categoryDesc = enableDescriptions ? `${node.name}${LANDING_PAGE_SUFFIX}` : '';
+      const categoryDesc = enableDescriptions
+        ? `${node.name}${LANDING_PAGE_SUFFIX}`
+        : '';
       md += `- [${node.indexDoc.title}](${formattedUrl})${categoryDesc}\n`;
     }
   }
-  
+
   // Handle regular documents in this category
-  node.docs.forEach((d: DocInfo) => { 
+  node.docs.forEach((d: DocInfo) => {
     const formatOptions: Parameters<typeof formatUrl>[1] = {
-      relativePaths: useRelativePaths, 
+      relativePaths: useRelativePaths,
       enableMarkdownFiles,
     };
-    
+
     if (d.markdownFile) {
       formatOptions.markdownFile = d.markdownFile;
     }
-    
+
     const formattedUrl = formatUrl(d.routePath, formatOptions, baseUrl);
-    
-    const descriptionText = enableDescriptions && d.description ? `: ${d.description}` : '';
+
+    const descriptionText =
+      enableDescriptions && d.description ? `: ${d.description}` : '';
     md += `- [${d.title}](${formattedUrl})${descriptionText}\n`;
   });
-  
+
   // Process subcategories (already ordered by tree builder)
   if (node.subCategories.length) {
     node.subCategories.forEach((sub: TreeNode) => {
-      md += `\n` + renderTreeAsMarkdown(
-        sub, 
-        isRoot ? level : level+1, 
-        false, 
-        baseUrl, 
-        useRelativePaths,
-        enableMarkdownFiles,
-        enableDescriptions
-      );
+      md +=
+        `\n` +
+        renderTreeAsMarkdown(
+          sub,
+          isRoot ? level : level + 1,
+          false,
+          baseUrl,
+          useRelativePaths,
+          enableMarkdownFiles,
+          enableDescriptions
+        );
     });
   }
   return md;
-} 
+}

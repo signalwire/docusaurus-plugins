@@ -18,11 +18,12 @@ function applyOrdering(node: TreeNode, globalConfig: PluginOptions): void {
   // Get effective config for this node's path
   const nodePath = node.relPath ? `/${node.relPath}` : '/';
   const effectiveConfig = getEffectiveConfigForRoute(nodePath, globalConfig);
-  
+
   // Apply ordering if specified and we have subcategories
-  const hasIncludeOrder = effectiveConfig.includeOrder && effectiveConfig.includeOrder.length > 0;
+  const hasIncludeOrder =
+    effectiveConfig.includeOrder && effectiveConfig.includeOrder.length > 0;
   const hasSubCategories = node.subCategories.length > 0;
-  
+
   if (hasIncludeOrder && hasSubCategories) {
     // Cast to mutable for sorting
     const mutableNode = node as TreeNode & { subCategories: TreeNode[] };
@@ -30,44 +31,52 @@ function applyOrdering(node: TreeNode, globalConfig: PluginOptions): void {
       // Create full paths for matching - subcategories need to be treated as potential matches
       const aPath = `/${a.relPath}`;
       const bPath = `/${b.relPath}`;
-      
+
       let aIndex = -1;
       let bIndex = -1;
-      
+
       // Find the first matching pattern for each subcategory
       const includeOrder = effectiveConfig.includeOrder;
       if (includeOrder && includeOrder.length > 0) {
         for (let i = 0; i < includeOrder.length; i++) {
           const pattern = includeOrder[i];
           if (!pattern) continue; // Skip undefined patterns
-          
+
           // Create matcher for the pattern
           const matcher = createMatcher([pattern]);
-          
+
           // Check if subcategory path matches the pattern
-          if (aIndex === -1 && (matcher(aPath) || (pattern.endsWith('/**') && aPath === pattern.slice(0, -3)))) {
+          if (
+            aIndex === -1 &&
+            (matcher(aPath) ||
+              (pattern.endsWith('/**') && aPath === pattern.slice(0, -3)))
+          ) {
             aIndex = i;
           }
-          
-          if (bIndex === -1 && (matcher(bPath) || (pattern.endsWith('/**') && bPath === pattern.slice(0, -3)))) {
+
+          if (
+            bIndex === -1 &&
+            (matcher(bPath) ||
+              (pattern.endsWith('/**') && bPath === pattern.slice(0, -3)))
+          ) {
             bIndex = i;
           }
-          
+
           // Break early if both found
           if (aIndex !== -1 && bIndex !== -1) break;
         }
       }
-      
+
       // Items matching includeOrder patterns come first, in pattern order
       if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
       if (aIndex !== -1) return -1;
       if (bIndex !== -1) return 1;
-      
+
       // Items not matching any pattern come after, alphabetically
       return a.name.localeCompare(b.name);
     });
   }
-  
+
   // Recursively apply ordering to child categories
   for (const subCategory of node.subCategories) {
     applyOrdering(subCategory, globalConfig);
@@ -78,26 +87,35 @@ function applyOrdering(node: TreeNode, globalConfig: PluginOptions): void {
  * Build hierarchical tree from docs
  * @internal
  */
-export function buildDocumentTree(docs: readonly DocInfo[], globalConfig: PluginOptions): TreeNode {
+export function buildDocumentTree(
+  docs: readonly DocInfo[],
+  globalConfig: PluginOptions
+): TreeNode {
   // Create root as mutable during construction
-  type MutableTreeNode = TreeNode & { subCategories: TreeNode[]; docs: DocInfo[] };
-  
-  const root: Partial<TreeNode> & { subCategories: TreeNode[]; docs: DocInfo[] } = { 
-    name: TREE_ROOT_NAME, 
-    relPath: '', 
-    docs: [], 
+  type MutableTreeNode = TreeNode & {
+    subCategories: TreeNode[];
+    docs: DocInfo[];
+  };
+
+  const root: Partial<TreeNode> & {
+    subCategories: TreeNode[];
+    docs: DocInfo[];
+  } = {
+    name: TREE_ROOT_NAME,
+    relPath: '',
+    docs: [],
     subCategories: [],
     title: globalConfig.siteTitle ?? '',
-    description: globalConfig.siteDescription ?? ''
+    description: globalConfig.siteDescription ?? '',
   };
-  
+
   const categoryMap = new Map<string, MutableTreeNode>();
   categoryMap.set('', root as MutableTreeNode);
 
   for (const doc of docs) {
     const route = doc.routePath.replace(/\.md$/, '');
     const routePath = ensureLeadingSlash(route);
-    
+
     // Single route rule lookup for all effects (depth, categoryName, ordering)
     const effectiveConfig = getEffectiveConfigForRoute(routePath, globalConfig);
     const depth = effectiveConfig.depth ?? 1;
@@ -116,23 +134,23 @@ export function buildDocumentTree(docs: readonly DocInfo[], globalConfig: Plugin
     for (let i = 0; i < Math.min(depth, segments.length); i++) {
       const segment = segments[i];
       if (!segment) continue; // Skip undefined segments
-      
+
       const nextPath = categoryPath ? `${categoryPath}/${segment}` : segment;
       if (!categoryMap.has(nextPath)) {
         // Get category name from single route rule lookup
         const categoryPathRoute = `/${nextPath}`;
         const categoryEffectiveConfig = getEffectiveConfigForRoute(
-          categoryPathRoute, 
-          globalConfig, 
+          categoryPathRoute,
+          globalConfig,
           segment
         );
         const categoryName = categoryEffectiveConfig.categoryName ?? segment;
-        
-        const newNode: MutableTreeNode = { 
+
+        const newNode: MutableTreeNode = {
           name: categoryName,
-          relPath: nextPath, 
-          docs: [], 
-          subCategories: [] 
+          relPath: nextPath,
+          docs: [],
+          subCategories: [],
         };
         currentNode.subCategories.push(newNode);
         categoryMap.set(nextPath, newNode);
@@ -154,7 +172,7 @@ export function buildDocumentTree(docs: readonly DocInfo[], globalConfig: Plugin
       currentNode.docs.push(doc);
     }
   }
-  
+
   applyOrdering(root as TreeNode, globalConfig);
   return root as TreeNode;
-} 
+}

@@ -25,7 +25,7 @@
     "module": "ESNext",
     "target": "ES2020",
     "lib": ["ES2020", "DOM"],
-    "types": ["node", "jest"]
+    "types": ["node"]
   },
   "files": [],
   "references": [

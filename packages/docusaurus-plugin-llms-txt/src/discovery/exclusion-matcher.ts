@@ -14,7 +14,7 @@ import { ensureLeadingSlash } from '../utils';
 export function createExclusionMatcher(
   excludeRoutes?: readonly string[]
 ): (_path: string) => boolean {
-  return excludeRoutes?.length 
+  return excludeRoutes?.length
     ? createMatcher([...excludeRoutes])
     : (): boolean => false;
 }
@@ -24,10 +24,10 @@ export function createExclusionMatcher(
  * @internal
  */
 export function isRouteExcluded(
-  routePath: string, 
+  routePath: string,
   isExcluded: (_path: string) => boolean
 ): boolean {
   // Normalize route path to ensure it starts with /
   const normalizedPath = ensureLeadingSlash(routePath);
   return isExcluded(normalizedPath);
-} 
+}

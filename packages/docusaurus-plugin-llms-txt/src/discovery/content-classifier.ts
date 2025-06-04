@@ -6,20 +6,26 @@
 import type { PluginRouteConfig } from '@docusaurus/types';
 
 import { getContentConfig } from '../config';
-import { DOCUSAURUS_BLOG_PLUGIN, DOCUSAURUS_PAGES_PLUGIN, CONTENT_TYPES } from '../constants';
+import {
+  DOCUSAURUS_BLOG_PLUGIN,
+  DOCUSAURUS_PAGES_PLUGIN,
+  CONTENT_TYPES,
+} from '../constants';
 import type { PluginOptions } from '../types';
 
 /**
  * Classify a route by its plugin type
  * @internal
  */
-export function classifyRoute(route: PluginRouteConfig): 'docs' | 'blog' | 'pages' | 'unknown' {
+export function classifyRoute(
+  route: PluginRouteConfig
+): 'docs' | 'blog' | 'pages' | 'unknown' {
   const plugin = route.plugin;
-  
+
   if (!plugin) {
     return CONTENT_TYPES.DOCS; // Routes without plugin info are considered docs
   }
-  
+
   switch (plugin.name) {
     case DOCUSAURUS_BLOG_PLUGIN:
       return CONTENT_TYPES.BLOG;
@@ -34,10 +40,13 @@ export function classifyRoute(route: PluginRouteConfig): 'docs' | 'blog' | 'page
  * Determines if a route should be processed based on plugin configuration
  * @internal
  */
-export function shouldProcessRoute(route: PluginRouteConfig, options: PluginOptions): boolean {
+export function shouldProcessRoute(
+  route: PluginRouteConfig,
+  options: PluginOptions
+): boolean {
   const contentConfig = getContentConfig(options);
   const routeType = classifyRoute(route);
-  
+
   switch (routeType) {
     case CONTENT_TYPES.BLOG:
       return contentConfig.includeBlog;
@@ -48,4 +57,4 @@ export function shouldProcessRoute(route: PluginRouteConfig, options: PluginOpti
     default:
       return contentConfig.includeDocs;
   }
-} 
+}

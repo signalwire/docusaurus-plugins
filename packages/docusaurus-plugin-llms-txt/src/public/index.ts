@@ -1,6 +1,6 @@
 /**
  * Public API for docusaurus-plugin-llms-txt
- * 
+ *
  * This module exports only what plugin users need.
  * Internal implementation details are not exposed.
  */
@@ -28,7 +28,7 @@ export type {
   PluginError,
   PluginConfigError,
   PluginValidationError,
-  Logger
+  Logger,
 } from '../types/public';
 
 // === USER ERROR HANDLING ===
@@ -39,4 +39,4 @@ export { isPluginError } from '../errors';
 // === UNIFIED PLUGIN DEVELOPMENT ===
 
 // Logger factory for users creating unified plugins
-export { createLogger } from '../logging'; 
+export { createLogger } from '../logging';

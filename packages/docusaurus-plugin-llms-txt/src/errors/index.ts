@@ -8,15 +8,15 @@
  */
 export abstract class PluginError extends Error {
   abstract readonly code: string;
-  
+
   constructor(
-    message: string, 
+    message: string,
     public readonly _context?: Record<string, unknown>
   ) {
     super(message);
     this.name = this.constructor.name;
   }
-  
+
   get context(): Record<string, unknown> | undefined {
     return this._context;
   }
@@ -72,7 +72,7 @@ export function isPluginError(error: unknown): error is PluginError {
  * @internal
  */
 export function createConfigError(
-  message: string, 
+  message: string,
   context?: Record<string, unknown>
 ): PluginConfigError {
   return new PluginConfigError(message, context);
@@ -83,7 +83,7 @@ export function createConfigError(
  * @internal
  */
 export function createProcessingError(
-  message: string, 
+  message: string,
   context?: Record<string, unknown>
 ): PluginProcessingError {
   return new PluginProcessingError(message, context);
@@ -94,7 +94,7 @@ export function createProcessingError(
  * @internal
  */
 export function createCacheError(
-  message: string, 
+  message: string,
   context?: Record<string, unknown>
 ): PluginCacheError {
   return new PluginCacheError(message, context);
@@ -105,7 +105,7 @@ export function createCacheError(
  * @internal
  */
 export function createFileError(
-  message: string, 
+  message: string,
   context?: Record<string, unknown>
 ): PluginFileError {
   return new PluginFileError(message, context);
@@ -116,7 +116,7 @@ export function createFileError(
  * @internal
  */
 export function createValidationError(
-  message: string, 
+  message: string,
   context?: Record<string, unknown>
 ): PluginValidationError {
   return new PluginValidationError(message, context);
@@ -151,4 +151,4 @@ export function getErrorMessage(error: unknown): string {
  */
 export function getErrorCause(error: unknown): Error | undefined {
   return isError(error) ? error : undefined;
-} 
+}

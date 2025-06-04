@@ -36,7 +36,7 @@ export class CacheIO {
   async loadCache(): Promise<CacheSchema> {
     try {
       const data: unknown = await fs.readJson(this._cachePath);
-      
+
       // Validate the loaded data structure
       if (validateCacheSchema(data)) {
         return data;
@@ -58,10 +58,10 @@ export class CacheIO {
       await this.writeJsonAtomic(this._cachePath, cache);
     } catch (error) {
       const errorCause = getErrorCause(error);
-      throw createCacheError(
-        'Failed to write cache file', 
-        { cachePath: this._cachePath, cause: errorCause }
-      );
+      throw createCacheError('Failed to write cache file', {
+        cachePath: this._cachePath,
+        cause: errorCause,
+      });
     }
   }
 
@@ -69,13 +69,19 @@ export class CacheIO {
    * Atomically writes JSON data to filePath
    * Uses temporary file + rename for atomic operation
    */
-  private async writeJsonAtomic(filePath: string, data: unknown): Promise<void> {
+  private async writeJsonAtomic(
+    filePath: string,
+    data: unknown
+  ): Promise<void> {
     const dir = path.dirname(filePath);
     await fs.ensureDir(dir);
-    
+
     // Create temporary file with timestamp to avoid conflicts
-    const tmp = path.join(dir, `${TEMP_FILE_PREFIX}${path.basename(filePath)}-${Date.now()}`);
-    
+    const tmp = path.join(
+      dir,
+      `${TEMP_FILE_PREFIX}${path.basename(filePath)}-${Date.now()}`
+    );
+
     try {
       // Write to temporary file first
       await fs.writeFile(tmp, JSON.stringify(data, null, JSON_INDENT), 'utf8');
@@ -96,9 +102,9 @@ export class CacheIO {
    * Get cache file information for debugging
    */
   getCacheInfo(): { dir: string; path: string } {
-    return { 
-      dir: path.dirname(this._cachePath), 
-      path: this._cachePath 
+    return {
+      dir: path.dirname(this._cachePath),
+      path: this._cachePath,
     };
   }
-} 
+}

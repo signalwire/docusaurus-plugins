@@ -15,16 +15,16 @@ import { getErrorCause, createFileError } from '../errors';
  */
 export async function saveMarkdownFile(
   outputPath: string,
-  content: string,
+  content: string
 ): Promise<void> {
   try {
     await fs.ensureDir(path.dirname(outputPath));
     await fs.writeFile(outputPath, content);
   } catch (error) {
     const errorCause = getErrorCause(error);
-    throw createFileError(
-      `Failed to save markdown file to ${outputPath}`,
-      { filePath: outputPath, cause: errorCause }
-    );
+    throw createFileError(`Failed to save markdown file to ${outputPath}`, {
+      filePath: outputPath,
+      cause: errorCause,
+    });
   }
-} 
+}

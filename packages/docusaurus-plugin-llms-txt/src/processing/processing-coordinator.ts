@@ -6,12 +6,12 @@
 import type { RouteConfig } from '@docusaurus/types';
 
 import type { CacheManager } from '../cache/cache';
-import type { 
-  DocInfo, 
-  PluginOptions, 
-  Logger, 
+import type {
+  DocInfo,
+  PluginOptions,
+  Logger,
   CacheSchema,
-  DirectoryConfig 
+  DirectoryConfig,
 } from '../types';
 
 import { processDocuments } from './route-processor';
@@ -53,9 +53,11 @@ export async function coordinateProcessing(
     directories.outDir,
     generatedFilesDir
   );
-  
-  logger.debug(`processDocuments returned: ${docs.length} docs, ${cachedRoutes ? 'cache updated' : 'cache used'}`);
-  
+
+  logger.debug(
+    `processDocuments returned: ${docs.length} docs, ${cachedRoutes ? 'cache updated' : 'cache used'}`
+  );
+
   // Update cache if we processed fresh routes and have updates
   let cacheUpdated = false;
   if (cachedRoutes) {
@@ -65,10 +67,10 @@ export async function coordinateProcessing(
   } else {
     logger.debug('Using cached processing results');
   }
-  
+
   return {
     docs,
     cacheUpdated,
-    processedCount: docs.length
+    processedCount: docs.length,
   };
-} 
+}

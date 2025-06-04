@@ -38,10 +38,7 @@ const extractDocumentTitle: TitleExtractor = (tree: Root): string | null => {
  * Default title extractor strategy chain
  * @internal
  */
-const defaultTitleExtractors = [
-  extractFirstH1,
-  extractDocumentTitle
-];
+const defaultTitleExtractors = [extractFirstH1, extractDocumentTitle];
 
 /**
  * Extract title using a strategy chain approach
@@ -57,6 +54,6 @@ export function extractTitle(
       return title;
     }
   }
-  
+
   return DEFAULT_DOCUMENT_TITLE;
-} 
+}

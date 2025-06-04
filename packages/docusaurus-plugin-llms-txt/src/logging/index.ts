@@ -14,7 +14,7 @@ class PluginLogger implements Logger {
   private logLevel: number;
 
   constructor(
-    name: string, 
+    name: string,
     onRouteError: ReportingSeverity = 'warn',
     logLevel: number = 1
   ) {
@@ -94,14 +94,14 @@ class PluginLogger implements Logger {
 
 /**
  * Factory function to create logger instances
- * 
+ *
  * @param name - Name for log prefix
  * @param onRouteError - How to handle route processing failures
  * @param logLevel - Operational logging level (0=quiet, 1=normal, 2=verbose, 3=debug)
  * @returns A new logger instance
  */
 export function createLogger(
-  name: string, 
+  name: string,
   onRouteError: ReportingSeverity = 'warn',
   logLevel: number = 1
 ): Logger {
@@ -110,43 +110,43 @@ export function createLogger(
 
 /**
  * Create logger for plugin operations with standard naming
- * 
+ *
  * @param pluginConfig - Plugin configuration (optional)
  * @returns Logger instance with standard plugin name
- * 
+ *
  * @example
  * ```typescript
  * // Quiet mode - only errors and successes
  * const logger = createPluginLogger({
  *   logLevel: 0
  * });
- * 
+ *
  * // Normal mode (default) - errors, warnings, successes
  * const logger = createPluginLogger({
  *   logLevel: 1  // default
  * });
- * 
+ *
  * // Verbose mode - errors, warnings, successes, info
  * const logger = createPluginLogger({
  *   logLevel: 2
  * });
- * 
+ *
  * // Debug mode - everything including debug messages
  * const logger = createPluginLogger({
  *   logLevel: 3
  * });
- * 
+ *
  * // Route error handling
  * const logger = createPluginLogger({
  *   onRouteError: 'throw'  // Fail fast on route errors
  * });
  * ```
  */
-export function createPluginLogger(pluginConfig?: { 
+export function createPluginLogger(pluginConfig?: {
   onRouteError?: ReportingSeverity;
   logLevel?: number;
 }): Logger {
   const onRouteError = pluginConfig?.onRouteError ?? 'warn';
   const logLevel = pluginConfig?.logLevel ?? 1;
   return createLogger('docusaurus-plugin-llms-txt', onRouteError, logLevel);
-} 
+}

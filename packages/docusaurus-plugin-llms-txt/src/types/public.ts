@@ -9,12 +9,11 @@ import type { Options as RemarkGfmOptions } from 'remark-gfm';
 import type { Options as RemarkStringifyOptions } from 'remark-stringify';
 import type { Plugin, Settings } from 'unified';
 
-import { 
+import {
   DEFAULT_CONTENT_SELECTORS,
   DEFAULT_DEPTH,
   PLUGIN_NAME,
 } from '../constants';
-
 
 // ============================================================================
 // USER CONFIGURATION TYPES
@@ -58,9 +57,9 @@ export interface OptionalLink {
  * Follows unified.js conventions: function, [function, options], [function, options, settings]
  */
 /* eslint-disable @typescript-eslint/no-explicit-any -- unified Plugin type requires any for generic plugin support */
-export type PluginInput = 
- | Plugin<unknown[], any, unknown> 
- | [Plugin<unknown[], any, unknown>, unknown?, Settings?];
+export type PluginInput =
+  | Plugin<unknown[], any, unknown>
+  | [Plugin<unknown[], any, unknown>, unknown?, Settings?];
 
 /**
  * Content processing options that affect individual markdown file generation
@@ -70,7 +69,7 @@ export interface ContentOptions {
   readonly enableMarkdownFiles?: boolean;
   /** Whether to use relative paths in links (default: true) */
   readonly relativePaths?: boolean;
-  
+
   // Content filtering
   /** Include blog posts (default: false) */
   readonly includeBlog?: boolean;
@@ -80,13 +79,13 @@ export interface ContentOptions {
   readonly includeDocs?: boolean;
   /** Glob patterns to exclude from processing */
   readonly excludeRoutes?: readonly string[];
-  
+
   // Content extraction
   /** CSS selectors for content extraction */
   readonly contentSelectors?: readonly string[];
   /** Route-specific processing rules */
   readonly routeRules?: readonly RouteRule[];
-  
+
   // Format options
   /** Remark stringify options for markdown generation */
   readonly remarkStringify?: Readonly<RemarkStringifyOptions>;
@@ -94,7 +93,7 @@ export interface ContentOptions {
   readonly remarkGfm?: boolean | Readonly<RemarkGfmOptions>;
   /** Whether to process tables with rehype (default: true) */
   readonly rehypeProcessTables?: boolean;
-  
+
   // Unified plugin system (standard unified.js formats)
   /** Custom rehype plugins run before built-in processing */
   readonly beforeDefaultRehypePlugins?: readonly PluginInput[];
@@ -112,10 +111,10 @@ export interface ContentOptions {
 export interface PluginOptions {
   /** Plugin instance ID (injected by Docusaurus) */
   readonly id?: string;
-  
+
   /** Content processing options (affects individual file generation) */
   readonly content?: ContentOptions;
-  
+
   // Structure options (affect llms.txt generation only)
   /** Categorization depth for document tree (default: 1) */
   readonly depth?: Depth;
@@ -129,11 +128,11 @@ export interface PluginOptions {
   readonly optionalLinks?: readonly OptionalLink[];
   /** Global ordering of categories (glob patterns) */
   readonly includeOrder?: readonly string[];
-  
+
   // Environment options (execution settings)
   /** Whether to run during postBuild phase (default: true) */
   readonly runOnPostBuild?: boolean;
-  
+
   // Logging configuration
   /** How to handle route processing failures: 'ignore' | 'log' | 'warn' | 'throw' (default: 'warn') */
   readonly onRouteError?: ReportingSeverity;
@@ -148,10 +147,10 @@ export interface PluginOptions {
 /**
  * Re-export error types from the main errors module to avoid duplication
  */
-export type { 
-  PluginError, 
-  PluginConfigError, 
-  PluginValidationError 
+export type {
+  PluginError,
+  PluginConfigError,
+  PluginValidationError,
 } from '../errors';
 
 export { isPluginError } from '../errors';
@@ -192,84 +191,99 @@ export interface Logger {
 export const pluginOptionsSchema = Joi.object<PluginOptions>({
   // Plugin metadata (injected by Docusaurus)
   id: Joi.string().default(PLUGIN_NAME),
-  
+
   // Content processing options
   content: Joi.object({
     // File generation
     enableMarkdownFiles: Joi.boolean().default(true),
     relativePaths: Joi.boolean().default(true),
-    
+
     // Content filtering
     includeBlog: Joi.boolean().default(false),
     includePages: Joi.boolean().default(false),
     includeDocs: Joi.boolean().default(true),
     excludeRoutes: Joi.array().items(Joi.string()).default([]),
-    
+
     // Content extraction
-    contentSelectors: Joi.array().items(Joi.string()).default([...DEFAULT_CONTENT_SELECTORS]),
-    routeRules: Joi.array().items(
-      Joi.object({
-        route: Joi.string().required(),
-        depth: Joi.number().integer().min(1).max(5),
-        contentSelectors: Joi.array().items(Joi.string()),
-        categoryName: Joi.string(),
-        includeOrder: Joi.array().items(Joi.string())
-      })
-    ).default([]),
-    
+    contentSelectors: Joi.array()
+      .items(Joi.string())
+      .default([...DEFAULT_CONTENT_SELECTORS]),
+    routeRules: Joi.array()
+      .items(
+        Joi.object({
+          route: Joi.string().required(),
+          depth: Joi.number().integer().min(1).max(5),
+          contentSelectors: Joi.array().items(Joi.string()),
+          categoryName: Joi.string(),
+          includeOrder: Joi.array().items(Joi.string()),
+        })
+      )
+      .default([]),
+
     // Format options
     remarkStringify: Joi.object().unknown(true).default({}),
-    remarkGfm: Joi.alternatives().try(
-      Joi.boolean(),
-      Joi.object().unknown(true)
-    ).default(true),
+    remarkGfm: Joi.alternatives()
+      .try(Joi.boolean(), Joi.object().unknown(true))
+      .default(true),
     rehypeProcessTables: Joi.boolean().default(true),
-    
+
     // Unified plugin system (standard unified.js formats)
-    beforeDefaultRehypePlugins: Joi.array().items(
-      Joi.alternatives().try(
-        Joi.function(),
-        Joi.array().items(Joi.function(), Joi.any(), Joi.any()).min(1).max(3)
+    beforeDefaultRehypePlugins: Joi.array()
+      .items(
+        Joi.alternatives().try(
+          Joi.function(),
+          Joi.array().items(Joi.function(), Joi.any(), Joi.any()).min(1).max(3)
+        )
       )
-    ).default([]),
-    rehypePlugins: Joi.array().items(
-      Joi.alternatives().try(
-        Joi.function(),
-        Joi.array().items(Joi.function(), Joi.any(), Joi.any()).min(1).max(3)
+      .default([]),
+    rehypePlugins: Joi.array()
+      .items(
+        Joi.alternatives().try(
+          Joi.function(),
+          Joi.array().items(Joi.function(), Joi.any(), Joi.any()).min(1).max(3)
+        )
       )
-    ).default([]),
-    beforeDefaultRemarkPlugins: Joi.array().items(
-      Joi.alternatives().try(
-        Joi.function(),
-        Joi.array().items(Joi.function(), Joi.any(), Joi.any()).min(1).max(3)
+      .default([]),
+    beforeDefaultRemarkPlugins: Joi.array()
+      .items(
+        Joi.alternatives().try(
+          Joi.function(),
+          Joi.array().items(Joi.function(), Joi.any(), Joi.any()).min(1).max(3)
+        )
       )
-    ).default([]),
-    remarkPlugins: Joi.array().items(
-      Joi.alternatives().try(
-        Joi.function(),
-        Joi.array().items(Joi.function(), Joi.any(), Joi.any()).min(1).max(3)
+      .default([]),
+    remarkPlugins: Joi.array()
+      .items(
+        Joi.alternatives().try(
+          Joi.function(),
+          Joi.array().items(Joi.function(), Joi.any(), Joi.any()).min(1).max(3)
+        )
       )
-    ).default([])
+      .default([]),
   }).default({}),
-  
+
   // Structure options
   depth: Joi.number().integer().min(1).max(5).default(DEFAULT_DEPTH),
   enableDescriptions: Joi.boolean().default(true),
   siteTitle: Joi.string().allow(''),
   siteDescription: Joi.string().allow(''),
-  optionalLinks: Joi.array().items(
-    Joi.object({
-      title: Joi.string().required(),
-      url: Joi.string().required(),
-      description: Joi.string()
-    })
-  ).default([]),
+  optionalLinks: Joi.array()
+    .items(
+      Joi.object({
+        title: Joi.string().required(),
+        url: Joi.string().required(),
+        description: Joi.string(),
+      })
+    )
+    .default([]),
   includeOrder: Joi.array().items(Joi.string()).default([]),
-  
+
   // Environment options
   runOnPostBuild: Joi.boolean().default(true),
-  
+
   // Logging configuration
-  onRouteError: Joi.string().valid('ignore', 'log', 'warn', 'throw').default('warn'),
+  onRouteError: Joi.string()
+    .valid('ignore', 'log', 'warn', 'throw')
+    .default('warn'),
   logLevel: Joi.number().integer().min(0).max(3).default(1),
-}); 
+});

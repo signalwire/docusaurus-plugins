@@ -12,7 +12,7 @@ import { pluginOptionsSchema } from './types';
 
 /**
  * Docusaurus plugin to generate Markdown versions of HTML pages and an llms.txt index file.
- * 
+ *
  * This plugin runs after the build process and:
  * 1. Processes routes from Docusaurus to find relevant content
  * 2. Converts HTML pages to Markdown using rehype/remark
@@ -23,7 +23,7 @@ export default function llmsTxtPlugin(
   options: Partial<PluginOptions> = {}
 ): Plugin<void> {
   const name = PLUGIN_NAME;
-  
+
   // Validate user inputs for security
   try {
     validateUserInputs(options);
@@ -31,16 +31,22 @@ export default function llmsTxtPlugin(
     if (isPluginError(error)) {
       throw error;
     }
-    throw createConfigError(
-      'Failed to validate plugin options',
-      { options, error: getErrorMessage(error) }
-    );
+    throw createConfigError('Failed to validate plugin options', {
+      options,
+      error: getErrorMessage(error),
+    });
   }
-  
+
   return {
     name,
-    
-    async postBuild({ outDir, siteDir, generatedFilesDir, siteConfig, routes }): Promise<void> {
+
+    async postBuild({
+      outDir,
+      siteDir,
+      generatedFilesDir,
+      siteConfig,
+      routes,
+    }): Promise<void> {
       const config = getConfig(options);
       const log = createPluginLogger(config);
 
@@ -52,12 +58,12 @@ export default function llmsTxtPlugin(
         log.info('Skipping postBuild processing (runOnPostBuild=false)');
         return;
       }
-      
+
       try {
         const finalRoutes = flattenRoutes(routes);
-        
+
         log.info(`Processing ${finalRoutes.length} routes`);
-        
+
         // Use unified processing orchestrator with Docusaurus-provided paths
         const result = await orchestrateProcessing(finalRoutes, {
           siteDir,
@@ -69,21 +75,27 @@ export default function llmsTxtPlugin(
           contentSelectors: config.content?.contentSelectors ?? [],
           relativePaths: config.content?.relativePaths !== false,
         });
-        
-        log.success(`Plugin completed successfully - processed ${result.processedCount} documents`);
+
+        log.success(
+          `Plugin completed successfully - processed ${result.processedCount} documents`
+        );
       } catch (error) {
         const errorMessage = getErrorMessage(error);
-        
+
         // Enhanced error reporting with better context
         if (isPluginError(error)) {
-          log.error(`${ERROR_MESSAGES.PLUGIN_BUILD_FAILED(errorMessage)} [${error.code}]`);
+          log.error(
+            `${ERROR_MESSAGES.PLUGIN_BUILD_FAILED(errorMessage)} [${error.code}]`
+          );
           if (error.context) {
-            log.debug(`Error context: ${JSON.stringify(error.context, null, 2)}`);
+            log.debug(
+              `Error context: ${JSON.stringify(error.context, null, 2)}`
+            );
           }
         } else {
           log.error(ERROR_MESSAGES.PLUGIN_BUILD_FAILED(errorMessage));
         }
-        
+
         throw error;
       }
     },
@@ -100,9 +112,9 @@ export default function llmsTxtPlugin(
  * @internal
  * This function is called by Docusaurus framework - users should not call directly
  */
-export function validateOptions({ 
-  options: _options, 
-  validate: _validate 
+export function validateOptions({
+  options: _options,
+  validate: _validate,
 }: {
   options: unknown;
   validate: (_schema: unknown, _options: unknown) => PluginOptions;
@@ -110,14 +122,14 @@ export function validateOptions({
   try {
     // Validate user inputs first
     validateUserInputs(_options);
-    
+
     // Then use Joi validation
     return _validate(pluginOptionsSchema, _options);
   } catch (error) {
     if (isPluginError(error)) {
       throw error;
     }
-    
+
     throw createConfigError(
       `Plugin option validation failed: ${getErrorMessage(error)}`,
       { options: _options }

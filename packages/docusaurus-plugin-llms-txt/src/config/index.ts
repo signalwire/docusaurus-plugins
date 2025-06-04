@@ -6,8 +6,11 @@ import { pluginOptionsSchema } from '../types';
 import { ensureLeadingSlash } from '../utils';
 
 import { applyGfmConfiguration } from './gfm-resolver';
-import { validateRouteRules, findMostSpecificRule, applyRouteRule } from './route-rules';
-
+import {
+  validateRouteRules,
+  findMostSpecificRule,
+  applyRouteRule,
+} from './route-rules';
 
 /**
  * Processes and validates plugin options, applying defaults
@@ -16,21 +19,23 @@ import { validateRouteRules, findMostSpecificRule, applyRouteRule } from './rout
  */
 export function getConfig(options: Partial<PluginOptions>): PluginOptions {
   try {
-    const validationResult = pluginOptionsSchema.validate(options, { abortEarly: false });
-    
+    const validationResult = pluginOptionsSchema.validate(options, {
+      abortEarly: false,
+    });
+
     if (validationResult.error) {
       throw validationResult.error;
     }
-    
+
     const validated = validationResult.value;
-    
+
     // Validate route rules for conflicts
     const contentConfig = getContentConfig(validated);
     if (contentConfig.routeRules.length > 0) {
       const logger = createPluginLogger(validated);
       validateRouteRules(contentConfig.routeRules, logger);
     }
-    
+
     // Apply GFM configuration
     return applyGfmConfiguration(validated);
   } catch (error) {
@@ -40,10 +45,9 @@ export function getConfig(options: Partial<PluginOptions>): PluginOptions {
         { originalOptions: options, validationError: error.message }
       );
     }
-    throw createConfigError(
-      VALIDATION_MESSAGES.UNKNOWN_ERROR,
-      { originalOptions: options }
-    );
+    throw createConfigError(VALIDATION_MESSAGES.UNKNOWN_ERROR, {
+      originalOptions: options,
+    });
   }
 }
 
@@ -54,7 +58,9 @@ export { validateUserInputs } from './security-validator';
  * Get content options with defaults applied
  * @internal
  */
-export function getContentConfig(config: PluginOptions): Required<ContentOptions> {
+export function getContentConfig(
+  config: PluginOptions
+): Required<ContentOptions> {
   const content = config.content ?? {};
   return {
     enableMarkdownFiles: content.enableMarkdownFiles ?? true,
@@ -81,8 +87,8 @@ export function getContentConfig(config: PluginOptions): Required<ContentOptions
  * @internal
  */
 export function getEffectiveConfigForRoute(
-  relPath: string, 
-  config: PluginOptions, 
+  relPath: string,
+  config: PluginOptions,
   routeSegment?: string
 ): EffectiveConfig {
   const matchPath = ensureLeadingSlash(relPath);
@@ -92,7 +98,3 @@ export function getEffectiveConfigForRoute(
   const rule = findMostSpecificRule(matchPath, contentConfig.routeRules);
   return applyRouteRule(rule, config, contentConfig, matchPath, routeSegment);
 }
-
-
-
- 

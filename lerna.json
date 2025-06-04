@@ -1,0 +1,48 @@
+{
+  "version": "independent",
+  "npmClient": "yarn",
+  "useWorkspaces": true,
+  "useNx": false,
+  "command": {
+    "build": {
+      "stream": true,
+      "ignore": ["website"]
+    },
+    "run": {
+      "stream": true,
+      "ignore": ["website"]
+    },
+    "exec": {
+      "stream": true
+    },
+    "publish": {
+      "registry": "https://registry.npmjs.org/",
+      "conventionalCommits": true,
+      "message": "chore(release): publish packages",
+      "npmClient": "yarn",
+      "allowBranch": ["main", "master"]
+    },
+    "version": {
+      "allowBranch": ["main", "master"],
+      "conventionalCommits": true,
+      "message": "chore(release): version packages",
+      "push": false
+    }
+  },
+  "changelog": {
+    "repo": "signalwire/docusaurus-plugins",
+    "labels": {
+      "pr: breaking change": ":boom: Breaking Change",
+      "pr: new feature": ":rocket: New Feature",
+      "pr: bug fix": ":bug: Bug Fix",
+      "pr: performance": ":running_woman: Performance",
+      "pr: polish": ":nail_care: Polish",
+      "pr: documentation": ":memo: Documentation",
+      "pr: dependencies": ":robot: Dependencies",
+      "pr: maintenance": ":wrench: Maintenance",
+      "pr: plugin": ":electric_plug: Plugin Enhancement"
+    },
+    "cacheDir": ".changelog"
+  },
+  "ignoreChanges": ["**/__tests__/**", "**/*.test.*", "**/*.spec.*", "**/README.md", "**/CHANGELOG.md", "website/**"]
+}

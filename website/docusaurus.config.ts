@@ -1,7 +1,7 @@
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import type { PluginOptions } from 'docusaurus-plugin-llms-txt';
+import type { PluginOptions } from '../packages/docusaurus-plugin-llms-txt/lib/public';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
@@ -11,7 +11,9 @@ const config: Config = {
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
-    v4: true, // Improve compatibility with the upcoming Docusaurus v4
+    v4: true,
+    experimental_faster: true,
+    experimental_router: 'browser',
   },
 
   // Set the production url of your site here
@@ -38,7 +40,7 @@ const config: Config = {
 
   plugins: [
     [
-      'docusaurus-plugin-llms-txt',
+      require.resolve('../packages/docusaurus-plugin-llms-txt/lib'),
       {
         siteTitle: 'My Docusaurus Plugins Collection',
         siteDescription: 'Documentation for Docusaurus plugins',

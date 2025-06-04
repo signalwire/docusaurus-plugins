@@ -20,19 +20,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
+          cache: 'yarn'
 
       - name: Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: Build plugins
-        run: npm run build:plugins
+        run: yarn run build:packages
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: npm run changeset:publish
+          publish: yarn run changeset:publish
           title: 'chore: release packages'
           commit: 'chore: release packages'
         env:

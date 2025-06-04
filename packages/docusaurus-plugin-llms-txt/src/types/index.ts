@@ -17,13 +17,10 @@ export type {
   PluginError,
   PluginConfigError,
   PluginValidationError,
-  PluginInput
+  PluginInput,
 } from './public';
 
-export { 
-  isPluginError,
-  pluginOptionsSchema 
-} from './public';
+export { isPluginError, pluginOptionsSchema } from './public';
 
 // ============================================================================
 // CONSOLIDATED CORE TYPES
@@ -34,22 +31,22 @@ export type {
   CachedRouteInfo,
   CacheSchema,
   DirectoryConfig,
-  
+
   // Document processing
   DocInfo,
   TreeNode,
   EffectiveConfig,
-  
+
   // Processing configuration
   ProcessingConfig,
   ProcessingResult,
-  
+
   // Transformation
   RehypeLinksOptions,
   MarkdownConversionOptions,
   ConversionResult,
   TitleExtractor,
-  ValidationResult
+  ValidationResult,
 } from './core';
 
 // ============================================================================
@@ -61,5 +58,5 @@ export {
   createProcessingError,
   createCacheError,
   createFileError,
-  createValidationError
-} from '../errors'; 
+  createValidationError,
+} from '../errors';

@@ -24,25 +24,25 @@ export function validateAndLogRouteFiltering(
 ): { validRoutes: PluginRouteConfig[]; summary: string } {
   let excludedCount = 0;
   let contentTypeFiltered = 0;
-  
-  const validRoutes = routes.filter(route => {
+
+  const validRoutes = routes.filter((route) => {
     if (!shouldProcessRoute(route, options)) {
       contentTypeFiltered++;
       return false;
     }
-    
+
     if (isRouteExcluded(route.path, isExcluded)) {
       excludedCount++;
       logger.debug(`Skipping excluded route: ${route.path}`);
       return false;
     }
-    
+
     return true;
   });
-  
+
   const summary = `Route filtering: ${validRoutes.length} included, ${excludedCount} excluded, ${contentTypeFiltered} filtered by content type`;
   logger.debug(summary);
-  
+
   return { validRoutes, summary };
 }
 
@@ -60,13 +60,13 @@ export function validateRouteForProcessing(
   if (!shouldProcessRoute(route, options)) {
     return false;
   }
-  
+
   // Check exclusions
   if (isRouteExcluded(route.path, isExcluded)) {
     logger.debug(`Skipping excluded route: ${route.path}`);
     return false;
   }
-  
+
   return true;
 }
 
@@ -78,17 +78,17 @@ export function validateRouteForProcessing(
 export function routePathToHtmlPath(routePath: string): string {
   // Normalize route path
   const normalizedPath = removeLeadingSlash(routePath);
-  
+
   // Handle root path
   if (!normalizedPath || normalizedPath === '/') {
     return INDEX_HTML;
   }
-  
+
   // Handle paths that end with /
   if (normalizedPath.endsWith('/')) {
     return `${normalizedPath}${INDEX_HTML}`;
   }
-  
+
   // Handle regular paths
   return `${normalizedPath}/${INDEX_HTML}`;
-} 
+}

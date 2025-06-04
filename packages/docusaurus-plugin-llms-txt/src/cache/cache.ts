@@ -11,13 +11,16 @@ import type { RouteConfig } from '@docusaurus/types';
 import packageJson from '../../package.json';
 import { CACHE_FILENAME } from '../constants';
 import { routePathToHtmlPath } from '../discovery/route-filter';
-import { PathManager , htmlPathToMdPath } from '../filesystem/paths';
-import type { DocInfo, PluginOptions, CachedRouteInfo, CacheSchema } from '../types';
+import { PathManager, htmlPathToMdPath } from '../filesystem/paths';
+import type {
+  DocInfo,
+  PluginOptions,
+  CachedRouteInfo,
+  CacheSchema,
+} from '../types';
 
 import { CacheIO } from './cache-io';
 import { isCachedRouteValid, calcConfigHash } from './cache-validation';
-
-
 
 /**
  * Simplified cache management service
@@ -27,7 +30,12 @@ export class CacheManager {
   private pathManager: PathManager;
   private cacheIO: CacheIO;
 
-  constructor(siteDir: string, generatedFilesDir: string, config: PluginOptions, outDir?: string) {
+  constructor(
+    siteDir: string,
+    generatedFilesDir: string,
+    config: PluginOptions,
+    outDir?: string
+  ) {
     this.pathManager = new PathManager(siteDir, config, outDir);
     const cacheDir = path.join(generatedFilesDir, 'docusaurus-plugin-llms-txt');
     const cachePath = path.join(cacheDir, CACHE_FILENAME);
@@ -46,10 +54,14 @@ export class CacheManager {
 
   /** Check if cached route is still valid using focused validation */
   async isCachedRouteValid(
-    cachedRoute: CachedRouteInfo, 
+    cachedRoute: CachedRouteInfo,
     currentConfig: PluginOptions
   ): Promise<boolean> {
-    return isCachedRouteValid(cachedRoute, currentConfig, this.pathManager.directories);
+    return isCachedRouteValid(
+      cachedRoute,
+      currentConfig,
+      this.pathManager.directories
+    );
   }
 
   /** Check if cached routes are available */
@@ -58,7 +70,10 @@ export class CacheManager {
   }
 
   /** Check if the cached configuration matches the current configuration */
-  isCacheConfigValid(cache: CacheSchema, currentConfig: PluginOptions): boolean {
+  isCacheConfigValid(
+    cache: CacheSchema,
+    currentConfig: PluginOptions
+  ): boolean {
     const currentConfigHash = calcConfigHash(currentConfig);
     return cache.configHash === currentConfigHash;
   }
@@ -70,27 +85,27 @@ export class CacheManager {
 
   /** Create cached route info from routes */
   createCachedRouteInfo(routes: RouteConfig[]): CachedRouteInfo[] {
-    return routes.map(route => {
+    return routes.map((route) => {
       // Type guard for PluginRouteConfig with proper typing
       const pluginRoute = route as { plugin?: { name?: string } };
-      
+
       const baseInfo = {
         path: route.path,
         htmlPath: routePathToHtmlPath(route.path),
       };
-      
-      const pluginInfo = pluginRoute.plugin?.name 
+
+      const pluginInfo = pluginRoute.plugin?.name
         ? { plugin: pluginRoute.plugin.name }
         : {};
-      
+
       return { ...baseInfo, ...pluginInfo } satisfies CachedRouteInfo;
     });
   }
 
   /** Update cached route info with processing results */
   updateCachedRouteWithDoc(
-    cachedRoute: CachedRouteInfo, 
-    doc: DocInfo, 
+    cachedRoute: CachedRouteInfo,
+    doc: DocInfo,
     hash: string,
     enableMarkdownFiles: boolean
   ): CachedRouteInfo {
@@ -100,12 +115,12 @@ export class CacheManager {
       title: doc.title,
       description: doc.description,
     };
-    
+
     if (enableMarkdownFiles && doc.markdownFile) {
       return { ...baseUpdate, markdownFile: doc.markdownFile };
     } else if (enableMarkdownFiles && cachedRoute.htmlPath) {
       const mdPath = htmlPathToMdPath(
-        cachedRoute.htmlPath, 
+        cachedRoute.htmlPath,
         this.pathManager.directories.mdOutDir
       );
       const relativeMdPath = this.pathManager.getRelativeMarkdownPath(mdPath);
@@ -120,24 +135,24 @@ export class CacheManager {
     if (!cachedRoute.htmlPath || !cachedRoute.title) {
       return null;
     }
-    
+
     const baseDocInfo = {
       routePath: cachedRoute.path,
       htmlPath: cachedRoute.htmlPath,
       title: cachedRoute.title,
       description: cachedRoute.description ?? '',
     };
-    
-    const markdownInfo = cachedRoute.markdownFile 
+
+    const markdownInfo = cachedRoute.markdownFile
       ? { markdownFile: cachedRoute.markdownFile }
       : {};
-    
+
     return { ...baseDocInfo, ...markdownInfo } satisfies DocInfo;
   }
 
   /** Update cache with processed routes and save to disk */
   async updateCacheWithRoutes(
-    config: PluginOptions, 
+    config: PluginOptions,
     cachedRoutes: CachedRouteInfo[]
   ): Promise<void> {
     const updatedCache = {
@@ -145,7 +160,7 @@ export class CacheManager {
       configHash: calcConfigHash(config),
       routes: cachedRoutes,
     };
-    
+
     await this.saveCache(updatedCache);
   }
 
@@ -155,4 +170,4 @@ export class CacheManager {
   }
 }
 
-export default CacheManager; 
+export default CacheManager;

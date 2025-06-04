@@ -10,7 +10,12 @@ import remarkStringify from 'remark-stringify';
 import { unified } from 'unified';
 import type { Processor } from 'unified';
 
-import type { Logger, MarkdownConversionOptions, RehypeLinksOptions, PluginInput } from '../../types';
+import type {
+  Logger,
+  MarkdownConversionOptions,
+  RehypeLinksOptions,
+  PluginInput,
+} from '../../types';
 
 import rehypeLinks from './rehype-links';
 import rehypeTables from './rehype-tables';
@@ -22,7 +27,10 @@ export class PluginRegistry {
   /**
    * Apply a single plugin input following unified.js conventions
    */
-  private applyPluginInput(processor: Processor, pluginInput: PluginInput): void {
+  private applyPluginInput(
+    processor: Processor,
+    pluginInput: PluginInput
+  ): void {
     if (typeof pluginInput === 'function') {
       // Direct plugin function
       processor.use(pluginInput);
@@ -43,15 +51,16 @@ export class PluginRegistry {
    * Apply an array of plugins in order
    */
   private applyPluginArray(
-    processor: Processor, 
-    plugins: readonly PluginInput[] = [], 
+    processor: Processor,
+    plugins: readonly PluginInput[] = [],
     logger?: Logger
   ): void {
     for (const pluginInput of plugins) {
       try {
         this.applyPluginInput(processor, pluginInput);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         if (logger) {
           logger.warn(`Failed to apply user plugin: ${errorMessage}`);
         }
@@ -64,14 +73,14 @@ export class PluginRegistry {
    * Apply built-in rehype plugins in fixed order
    */
   private applyBuiltinRehypePlugins(
-    processor: Processor, 
+    processor: Processor,
     options: MarkdownConversionOptions
   ): void {
     // Apply built-in plugins in fixed order
     if (options.rehypeProcessTables !== false) {
       processor.use(rehypeTables);
     }
-    
+
     if (options.rehypeProcessLinks !== false) {
       const linkOptions: RehypeLinksOptions = {
         baseUrl: options.baseUrl ?? '',
@@ -81,10 +90,10 @@ export class PluginRegistry {
       };
       processor.use(rehypeLinks, linkOptions);
     }
-    
+
     // Always last - converts HTML AST to Markdown AST
     processor.use(rehypeRemark, {
-      handlers: { br: () => ({ type: 'html', value: '<br />' }) }
+      handlers: { br: () => ({ type: 'html', value: '<br />' }) },
     });
   }
 
@@ -92,15 +101,16 @@ export class PluginRegistry {
    * Apply built-in remark plugins in fixed order
    */
   private applyBuiltinRemarkPlugins(
-    processor: Processor, 
+    processor: Processor,
     options: MarkdownConversionOptions
   ): void {
     // Apply remark-gfm if enabled
     if (options.remarkGfm !== false) {
-      const gfmOptions = typeof options.remarkGfm === 'object' && options.remarkGfm !== null
-        ? options.remarkGfm
-        : undefined;
-      
+      const gfmOptions =
+        typeof options.remarkGfm === 'object' && options.remarkGfm !== null
+          ? options.remarkGfm
+          : undefined;
+
       if (gfmOptions !== undefined) {
         processor.use(remarkGfm, gfmOptions);
       } else {
@@ -112,13 +122,20 @@ export class PluginRegistry {
   /**
    * Apply rehype (HTML processing) plugins using Docusaurus pattern
    */
-  applyRehypePlugins(processor: Processor, options: MarkdownConversionOptions): void {
+  applyRehypePlugins(
+    processor: Processor,
+    options: MarkdownConversionOptions
+  ): void {
     // 1. Apply "before" plugins first
-    this.applyPluginArray(processor, options.beforeDefaultRehypePlugins, options.logger);
-    
+    this.applyPluginArray(
+      processor,
+      options.beforeDefaultRehypePlugins,
+      options.logger
+    );
+
     // 2. Apply built-in plugins in fixed order
     this.applyBuiltinRehypePlugins(processor, options);
-    
+
     // 3. Apply "after" plugins last
     this.applyPluginArray(processor, options.rehypePlugins, options.logger);
   }
@@ -126,13 +143,20 @@ export class PluginRegistry {
   /**
    * Apply remark (Markdown processing) plugins using Docusaurus pattern
    */
-  applyRemarkPlugins(processor: Processor, options: MarkdownConversionOptions): void {
+  applyRemarkPlugins(
+    processor: Processor,
+    options: MarkdownConversionOptions
+  ): void {
     // 1. Apply "before" plugins first
-    this.applyPluginArray(processor, options.beforeDefaultRemarkPlugins, options.logger);
-    
+    this.applyPluginArray(
+      processor,
+      options.beforeDefaultRemarkPlugins,
+      options.logger
+    );
+
     // 2. Apply built-in plugins in fixed order
     this.applyBuiltinRemarkPlugins(processor, options);
-    
+
     // 3. Apply "after" plugins last
     this.applyPluginArray(processor, options.remarkPlugins, options.logger);
   }
@@ -140,7 +164,10 @@ export class PluginRegistry {
   /**
    * Apply stringify plugins
    */
-  applyStringifyPlugins(processor: Processor, options: MarkdownConversionOptions): void {
+  applyStringifyPlugins(
+    processor: Processor,
+    options: MarkdownConversionOptions
+  ): void {
     const stringifyOptions = options.remarkStringify ?? {};
     processor.use(remarkStringify, stringifyOptions);
   }
@@ -155,12 +182,12 @@ export class PluginRegistry {
     // HTML processing pipeline (hast)
     const htmlProcessor = unified();
     this.applyRehypePlugins(htmlProcessor, options);
-    
+
     // Markdown processing pipeline (mdast)
     const markdownProcessor = unified();
     this.applyRemarkPlugins(markdownProcessor, options);
     this.applyStringifyPlugins(markdownProcessor, options);
-    
+
     return { htmlProcessor, markdownProcessor };
   }
 
@@ -169,10 +196,10 @@ export class PluginRegistry {
    */
   createMetadataProcessor(): Processor {
     const processor = unified();
-    
+
     // Only HTML parsing, no user plugins
     processor.use(rehypeParse, { fragment: false });
-    
+
     return processor;
   }
 }
@@ -180,4 +207,4 @@ export class PluginRegistry {
 /**
  * Default plugin registry instance
  */
-export const defaultPluginRegistry = new PluginRegistry(); 
+export const defaultPluginRegistry = new PluginRegistry();

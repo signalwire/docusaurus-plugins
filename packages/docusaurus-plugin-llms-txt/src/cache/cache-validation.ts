@@ -9,16 +9,23 @@ import { md5Hash } from '@docusaurus/utils';
 import fs from 'fs-extra';
 
 import { getContentConfig } from '../config';
-import type { CachedRouteInfo, PluginOptions, DirectoryConfig, ValidationResult } from '../types';
+import type {
+  CachedRouteInfo,
+  PluginOptions,
+  DirectoryConfig,
+  ValidationResult,
+} from '../types';
 
 /**
  * Check if cached route has required fields
  */
-export function hasRequiredFields(cachedRoute: CachedRouteInfo): ValidationResult {
+export function hasRequiredFields(
+  cachedRoute: CachedRouteInfo
+): ValidationResult {
   if (!cachedRoute.htmlPath || !cachedRoute.hash) {
     return {
       isValid: false,
-      reason: 'Missing required htmlPath or hash'
+      reason: 'Missing required htmlPath or hash',
     };
   }
   return { isValid: true };
@@ -28,17 +35,17 @@ export function hasRequiredFields(cachedRoute: CachedRouteInfo): ValidationResul
  * Check if HTML file exists
  */
 export async function htmlFileExists(
-  cachedRoute: CachedRouteInfo, 
+  cachedRoute: CachedRouteInfo,
   directories: DirectoryConfig
 ): Promise<ValidationResult> {
   if (!cachedRoute.htmlPath) {
     return { isValid: false, reason: 'No htmlPath' };
   }
-  
+
   const fullHtmlPath = path.join(directories.docsDir, cachedRoute.htmlPath);
   const exists = await fs.pathExists(fullHtmlPath);
-  
-  return exists 
+
+  return exists
     ? { isValid: true }
     : { isValid: false, reason: `HTML file not found: ${fullHtmlPath}` };
 }
@@ -53,24 +60,24 @@ export async function contentHashMatches(
   if (!cachedRoute.htmlPath || !cachedRoute.hash) {
     return { isValid: false, reason: 'Missing htmlPath or hash' };
   }
-  
+
   try {
     const fullHtmlPath = path.join(directories.docsDir, cachedRoute.htmlPath);
     const content = await fs.readFile(fullHtmlPath, 'utf8');
     const currentHash = md5Hash(content);
-    
+
     if (currentHash !== cachedRoute.hash) {
       return {
         isValid: false,
-        reason: `Hash mismatch: cached=${cachedRoute.hash.slice(0, 8)}, current=${currentHash.slice(0, 8)}`
+        reason: `Hash mismatch: cached=${cachedRoute.hash.slice(0, 8)}, current=${currentHash.slice(0, 8)}`,
       };
     }
-    
+
     return { isValid: true };
   } catch (error) {
     return {
       isValid: false,
-      reason: `Error reading file: ${error instanceof Error ? error.message : 'Unknown error'}`
+      reason: `Error reading file: ${error instanceof Error ? error.message : 'Unknown error'}`,
     };
   }
 }
@@ -84,25 +91,31 @@ export async function markdownFileStateMatches(
   directories: DirectoryConfig
 ): Promise<ValidationResult> {
   const contentConfig = getContentConfig(currentConfig);
-  
+
   if (!contentConfig.enableMarkdownFiles) {
     // If markdown files are disabled, we don't care about their state
     return { isValid: true };
   }
-  
+
   // If markdown files are enabled, check consistency
   if (cachedRoute.markdownFile) {
-    const fullMarkdownPath = path.join(directories.mdOutDir, cachedRoute.markdownFile);
+    const fullMarkdownPath = path.join(
+      directories.mdOutDir,
+      cachedRoute.markdownFile
+    );
     const exists = await fs.pathExists(fullMarkdownPath);
-    
+
     return exists
       ? { isValid: true }
-      : { isValid: false, reason: `Markdown file not found: ${fullMarkdownPath}` };
+      : {
+          isValid: false,
+          reason: `Markdown file not found: ${fullMarkdownPath}`,
+        };
   } else {
     // Current config expects markdown files but cache entry has none
     return {
       isValid: false,
-      reason: 'Current config requires markdown files but cache entry has none'
+      reason: 'Current config requires markdown files but cache entry has none',
     };
   }
 }
@@ -116,13 +129,15 @@ export async function isCachedRouteValid(
   directories: DirectoryConfig
 ): Promise<boolean> {
   const checks = [
-    (): Promise<ValidationResult> => Promise.resolve(hasRequiredFields(cachedRoute)),
+    (): Promise<ValidationResult> =>
+      Promise.resolve(hasRequiredFields(cachedRoute)),
     (): Promise<ValidationResult> => htmlFileExists(cachedRoute, directories),
-    (): Promise<ValidationResult> => contentHashMatches(cachedRoute, directories),
-    (): Promise<ValidationResult> => 
-      markdownFileStateMatches(cachedRoute, currentConfig, directories)
+    (): Promise<ValidationResult> =>
+      contentHashMatches(cachedRoute, directories),
+    (): Promise<ValidationResult> =>
+      markdownFileStateMatches(cachedRoute, currentConfig, directories),
   ];
-  
+
   for (const check of checks) {
     try {
       const result = await check();
@@ -134,7 +149,7 @@ export async function isCachedRouteValid(
       return false;
     }
   }
-  
+
   return true;
 }
 
@@ -157,4 +172,4 @@ export function calcConfigHash(options: Partial<PluginOptions>): string {
   const sortedKeys = Object.keys(stableOptions).sort();
   const stable = JSON.stringify(stableOptions, sortedKeys);
   return md5Hash(stable);
-} 
+}

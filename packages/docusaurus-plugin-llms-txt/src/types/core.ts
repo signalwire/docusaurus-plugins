@@ -7,7 +7,12 @@ import type { Root } from 'hast';
 import type { Options as RemarkGfmOptions } from 'remark-gfm';
 import type { Options as RemarkStringifyOptions } from 'remark-stringify';
 
-import type { ContentOptions, PluginOptions, Logger, PluginInput } from './public';
+import type {
+  ContentOptions,
+  PluginOptions,
+  Logger,
+  PluginInput,
+} from './public';
 
 // ============================================================================
 // CACHE AND FILE SYSTEM TYPES
@@ -170,5 +175,3 @@ export interface ValidationResult {
   readonly isValid: boolean;
   readonly reason?: string;
 }
-
- 

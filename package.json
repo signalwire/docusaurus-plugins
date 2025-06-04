@@ -8,25 +8,51 @@
     "website"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
-    "build:packages": "npm run build:llms-txt && echo '✅ All packages built successfully'",
-    "build:llms-txt": "npm run build --workspace=packages/docusaurus-plugin-llms-txt",
-    "build:website": "npm run build --workspace=website",
-    "prebuild:website": "npm run build:packages",
-    "dev": "npm run dev --workspaces --if-present",
-    "dev:website": "npm run start --workspace=website",
-    "start": "npm run start --workspace=website",
-    "serve": "npm run serve --workspace=website",
-    "test": "npm run test --workspaces --if-present",
-    "test:ci": "npm run test:ci --workspaces --if-present",
-    "lint": "eslint . && npm run lint --workspaces --if-present",
-    "lint:fix": "eslint . --fix && npm run lint:fix --workspaces --if-present",
-    "type-check": "npm run type-check --workspaces --if-present",
-    "clean": "npm run clean --workspaces --if-present",
+    "start": "yarn build:packages && yarn start:website",
+    "start:website": "yarn workspace website start",
+    "start:website:baseUrl": "yarn workspace website start:baseUrl",
+    "dev": "yarn build:packages && yarn dev:website",
+    "dev:website": "yarn workspace website start",
+    "build": "yarn build:packages && yarn build:website",
+    "build:packages": "lerna run build --stream",
+    "build:website": "yarn workspace website run build",
+    "build:website:fast": "yarn workspace website run build:fast",
+    "prebuild:website": "yarn run build:packages",
+    "serve": "yarn workspace website run serve",
+    "serve:website": "yarn workspace website serve",
+    "test": "lerna run test --stream",
+    "test:ci": "lerna run test --stream",
+    "test:packages": "lerna run test --stream",
+    "watch": "lerna run watch --stream",
+    "lint": "eslint . && lerna run lint --stream",
+    "lint:fix": "eslint . --fix && lerna run lint:fix --stream",
+    "lint:ci": "eslint . --quiet && lerna run lint --stream",
+    "type-check": "lerna run type-check --stream",
+    "clean": "lerna run clean --stream && rimraf lib .docusaurus",
+    "format": "prettier --write . && lerna run format --stream",
+    "format:check": "prettier --check . && lerna run format:check --stream",
+    "postinstall": "yarn build:packages",
+    "prepare": "husky install",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
-    "prepare": "husky install"
+    "canary": "yarn canary:version && yarn canary:publish",
+    "canary:version": "changeset version --snapshot canary",
+    "canary:publish": "changeset publish --tag canary",
+    "changelog": "changeset status",
+    "release": "yarn build:packages && yarn changeset:publish",
+    "prerelease": "yarn build:packages && yarn test && yarn lint",
+    "version": "changeset version && yarn install",
+    "publish:check": "lerna run prepublishOnly --stream",
+    "npm:check": "npm whoami",
+    "npm:login": "npm login",
+    "lerna": "lerna",
+    "lerna:build": "lerna run build --stream",
+    "lerna:test": "lerna run test --stream",
+    "lerna:clean": "lerna run clean --stream",
+    "workspace": "yarn workspace",
+    "workspaces": "yarn workspaces",
+    "lock:update": "npx --yes yarn-deduplicate"
   },
   "keywords": [
     "docusaurus",
@@ -35,16 +61,16 @@
     "markdown",
     "react"
   ],
-  "author": "Your Name",
+  "author": "Your Name <your.email@example.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/docusaurus-plugins.git"
+    "url": "https://github.com/signalwire/docusaurus-plugins.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/docusaurus-plugins/issues"
+    "url": "https://github.com/signalwire/docusaurus-plugins/issues"
   },
-  "homepage": "https://github.com/your-org/docusaurus-plugins#readme",
+  "homepage": "https://github.com/signalwire/docusaurus-plugins#readme",
   "devDependencies": {
     "@changesets/changelog-github": "^0.4.8",
     "@changesets/cli": "^2.26.2",
@@ -62,6 +88,8 @@
     "fs-extra": "^11.0.0",
     "husky": "^8.0.3",
     "jest": "^29.7.0",
+    "lerna": "^6.6.2",
+    "lerna-changelog": "^2.2.0",
     "lint-staged": "^16.1.0",
     "prettier": "^3.0.0",
     "rimraf": "^5.0.0",
@@ -70,6 +98,7 @@
   },
   "engines": {
     "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "npm": ">=9.0.0",
+    "yarn": ">=1.22.0"
   }
 }

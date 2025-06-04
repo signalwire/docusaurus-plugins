@@ -7,7 +7,7 @@ import { visit } from 'unist-util-visit';
  * Each list item becomes text prefixed with a dash or index and separated by <br />.
  * This keeps tables valid in Markdown while preserving line-breaks and inline markup.
  */
-const rehypeTables: Plugin<[], Root, Root> = function() {
+const rehypeTables: Plugin<[], Root, Root> = function () {
   return function transformer(tree: Root): Root {
     visit(tree, 'element', (node: Element) => {
       if (node.tagName !== 'td' && node.tagName !== 'th') return;
@@ -23,7 +23,8 @@ const rehypeTables: Plugin<[], Root, Root> = function() {
 
         const listType = listNode.tagName;
         const listItems = (listNode.children || []).filter(
-          (c) => (c as Element).type === 'element' && (c as Element).tagName === 'li'
+          (c) =>
+            (c as Element).type === 'element' && (c as Element).tagName === 'li'
         ) as Element[];
         if (listItems.length === 0) return undefined;
 
@@ -32,10 +33,15 @@ const rehypeTables: Plugin<[], Root, Root> = function() {
           const prefix = listType === 'ol' ? `${idx + 1}. ` : '- ';
           replacement.push({ type: 'text', value: prefix } as Text);
           if (li.children?.length) {
-            replacement.push(...(li.children));
+            replacement.push(...li.children);
           }
           if (idx < listItems.length - 1) {
-            replacement.push({ type: 'element', tagName: 'br', properties: {}, children: [] });
+            replacement.push({
+              type: 'element',
+              tagName: 'br',
+              properties: {},
+              children: [],
+            });
           }
         });
 
@@ -48,4 +54,4 @@ const rehypeTables: Plugin<[], Root, Root> = function() {
   };
 };
 
-export default rehypeTables; 
+export default rehypeTables;

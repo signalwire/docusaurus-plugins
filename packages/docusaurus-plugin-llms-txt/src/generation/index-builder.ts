@@ -4,7 +4,11 @@
  */
 
 import { getContentConfig } from '../config';
-import { ROOT_ROUTE_PATH, INDEX_ROUTE_PATH, DEFAULT_SITE_TITLE } from '../constants';
+import {
+  ROOT_ROUTE_PATH,
+  INDEX_ROUTE_PATH,
+  DEFAULT_SITE_TITLE,
+} from '../constants';
 import { buildDocumentTree } from '../organization/tree-builder';
 import { renderTreeAsMarkdown } from '../organization/tree-renderer';
 import type { DocInfo, PluginOptions } from '../types';
@@ -19,24 +23,26 @@ export function buildLlmsTxtContent(
   siteConfig: { title?: string; url: string; baseUrl: string }
 ): string {
   const tree = buildDocumentTree(docs, config);
-  const rootDoc = docs.find(doc => 
-    doc.routePath === ROOT_ROUTE_PATH || 
-    doc.routePath === INDEX_ROUTE_PATH
+  const rootDoc = docs.find(
+    (doc) =>
+      doc.routePath === ROOT_ROUTE_PATH || doc.routePath === INDEX_ROUTE_PATH
   );
-  
+
   // Generate configuration values
-  const documentTitle = config.siteTitle ?? 
-    siteConfig.title ?? 
-    rootDoc?.title ?? 
+  const documentTitle =
+    config.siteTitle ??
+    siteConfig.title ??
+    rootDoc?.title ??
     DEFAULT_SITE_TITLE;
   const enableDescriptions = config.enableDescriptions !== false;
   const contentConfig = getContentConfig(config);
   const useRelativePaths = contentConfig.relativePaths;
-  const siteUrl = siteConfig.url + (siteConfig.baseUrl !== '/' ? siteConfig.baseUrl : '');
-  
+  const siteUrl =
+    siteConfig.url + (siteConfig.baseUrl !== '/' ? siteConfig.baseUrl : '');
+
   // Build content sections
   let content = `# ${documentTitle}\n\n`;
-  
+
   // Add description if enabled and available
   if (enableDescriptions) {
     const description = config.siteDescription ?? rootDoc?.description;
@@ -44,7 +50,7 @@ export function buildLlmsTxtContent(
       content += `> ${description}\n\n`;
     }
   }
-  
+
   // Add main content
   content += renderTreeAsMarkdown(
     tree,
@@ -55,15 +61,16 @@ export function buildLlmsTxtContent(
     contentConfig.enableMarkdownFiles,
     enableDescriptions
   );
-  
+
   // Add optional links if configured
   if (config.optionalLinks?.length) {
     content += `\n## Optional\n`;
     for (const link of config.optionalLinks) {
-      const descPart = enableDescriptions && link.description ? `: ${link.description}` : '';
+      const descPart =
+        enableDescriptions && link.description ? `: ${link.description}` : '';
       content += `- [${link.title}](${link.url})${descPart}\n`;
     }
   }
-  
+
   return content;
-} 
+}

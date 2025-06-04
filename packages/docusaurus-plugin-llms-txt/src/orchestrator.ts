@@ -6,7 +6,10 @@
 import type { RouteConfig } from '@docusaurus/types';
 
 import { CacheManager } from './cache/cache';
-import { analyzeCacheStrategy, validateCliContext } from './cache/cache-strategy';
+import {
+  analyzeCacheStrategy,
+  validateCliContext,
+} from './cache/cache-strategy';
 import { setupDirectories, buildSiteUrl } from './filesystem/paths';
 import { generateOutputFiles } from './generation/output-generator';
 import { coordinateProcessing } from './processing/processing-coordinator';
@@ -20,24 +23,39 @@ export async function orchestrateProcessing(
   routes: RouteConfig[],
   processingConfig: ProcessingConfig
 ): Promise<ProcessingResult> {
-  const { siteDir, generatedFilesDir, config, siteConfig, outDir, logger } = processingConfig;
-  
+  const { siteDir, generatedFilesDir, config, siteConfig, outDir, logger } =
+    processingConfig;
+
   // Setup infrastructure
   const directories = setupDirectories(siteDir, config, outDir);
   const siteUrl = siteConfig ? buildSiteUrl(siteConfig) : '';
-  const cacheManager = new CacheManager(siteDir, generatedFilesDir, config, outDir);
+  const cacheManager = new CacheManager(
+    siteDir,
+    generatedFilesDir,
+    config,
+    outDir
+  );
   const cache = await cacheManager.loadCache();
-  
+
   // Determine processing context and cache strategy
   const isCliContext = routes.length === 0;
-  const cacheStrategy = analyzeCacheStrategy(cacheManager, cache, config, isCliContext, logger);
-  
-  
+  const cacheStrategy = analyzeCacheStrategy(
+    cacheManager,
+    cache,
+    config,
+    isCliContext,
+    logger
+  );
+
   // Validate CLI context if needed
   if (isCliContext) {
-    validateCliContext(cacheStrategy.cacheHasRoutes, cacheStrategy.configMatches, logger);
+    validateCliContext(
+      cacheStrategy.cacheHasRoutes,
+      cacheStrategy.configMatches,
+      logger
+    );
   }
-  
+
   // Process documents
   const processingResult = await coordinateProcessing(
     routes,
@@ -50,7 +68,7 @@ export async function orchestrateProcessing(
     generatedFilesDir,
     logger
   );
-  
+
   // Generate output files
   const outputResult = await generateOutputFiles(
     processingResult.docs,
@@ -59,7 +77,7 @@ export async function orchestrateProcessing(
     directories,
     logger
   );
-  
+
   return {
     docs: processingResult.docs,
     processedCount: processingResult.processedCount,
@@ -67,4 +85,4 @@ export async function orchestrateProcessing(
     llmsTxtPath: outputResult.llmsTxtPath,
     errors: [],
   };
-} 
+}

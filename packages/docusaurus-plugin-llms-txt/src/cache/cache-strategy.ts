@@ -30,32 +30,37 @@ export function analyzeCacheStrategy(
 ): CacheStrategyResult {
   const cacheHasRoutes = cacheManager.hasCachedRoutes(cache);
   const configMatches = cacheManager.isCacheConfigValid(cache, config);
-  
+
   // Log detailed cache validation info if config changed
   if (cacheHasRoutes && !configMatches) {
     const cachedHash = cache.configHash.slice(0, HASH_DISPLAY_LENGTH);
-    const currentHash = cacheManager.calcConfigHash(config)
+    const currentHash = cacheManager
+      .calcConfigHash(config)
       .slice(0, HASH_DISPLAY_LENGTH);
-    logger.debug(`Cache invalidated: config changed (${cachedHash} → ${currentHash})`);
+    logger.debug(
+      `Cache invalidated: config changed (${cachedHash} → ${currentHash})`
+    );
   }
-  
+
   // Always use cache when available and valid
   const useCache = cacheHasRoutes && configMatches;
-  
+
   // Generate reason for cache decision
   const reason = generateCacheReason(
     cacheHasRoutes,
     configMatches,
     isCliContext
   );
-  
-  logger.debug(`Cache: hasRoutes=${cacheHasRoutes}, configMatches=${configMatches}, useCache=${useCache}`);
-  
+
+  logger.debug(
+    `Cache: hasRoutes=${cacheHasRoutes}, configMatches=${configMatches}, useCache=${useCache}`
+  );
+
   return {
     useCache,
     cacheHasRoutes,
     configMatches,
-    reason
+    reason,
   };
 }
 
@@ -70,13 +75,13 @@ function generateCacheReason(
   if (!hasRoutes) {
     return CACHE_MESSAGES.NO_ROUTES;
   }
-  
+
   if (!configMatches) {
-    return isCliContext 
+    return isCliContext
       ? CACHE_MESSAGES.CONFIG_CHANGED_CLI
       : CACHE_MESSAGES.CONFIG_CHANGED_BUILD;
   }
-  
+
   return CACHE_MESSAGES.USING_CACHED;
 }
 
@@ -91,8 +96,8 @@ export function validateCliContext(
   if (!cacheHasRoutes) {
     throw new Error(CACHE_MESSAGES.NO_ROUTES);
   }
-  
+
   if (!configMatches) {
     logger.debug(CACHE_MESSAGES.CONFIG_CHANGED_REGENERATE);
   }
-} 
+}
