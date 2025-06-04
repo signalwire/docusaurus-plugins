@@ -23,13 +23,6 @@ npm install @signalwire/docusaurus-plugin-llms-txt
 yarn add @signalwire/docusaurus-plugin-llms-txt
 ```
 
-### Peer Dependencies
-
-This plugin requires several peer dependencies. Install them if not already present:
-
-```bash
-npm install @docusaurus/core @docusaurus/logger @docusaurus/utils @docusaurus/utils-validation unified rehype-parse rehype-remark remark-gfm remark-stringify unist-util-visit fs-extra string-width
-```
 
 ## Quick Start
 
