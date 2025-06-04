@@ -19,14 +19,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'yarn'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build plugins
-        run: yarn run build:packages
+      - name: Run pre-release checks
+        run: yarn run prerelease
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
