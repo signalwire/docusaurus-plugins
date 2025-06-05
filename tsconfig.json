@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "incremental": true
+  },
+  "references": [{ "path": "./packages/docusaurus-plugin-llms-txt" }, { "path": "./website" }],
+  "files": [],
+  "include": []
+}

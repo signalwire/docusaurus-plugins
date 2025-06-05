@@ -1,0 +1,44 @@
+{
+  "extends": "@docusaurus/tsconfig",
+  "compilerOptions": {
+    // Base configuration for all packages
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true,
+    "incremental": true,
+    "outDir": "./dist",
+    "rootDir": "../",
+    "noEmit": false,
+    
+    // Enhanced strictness settings for plugin development
+    "strictNullChecks": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "useUnknownInCatchVariables": true,
+    
+    // Plugin-specific settings
+    "module": "ESNext",
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM"],
+    "types": ["node"]
+  },
+  "files": [],
+  "references": [
+    { "path": "./docusaurus-plugin-llms-txt" }
+  ],
+  "include": ["../__tests__/**/*"],
+  "exclude": [
+    "dist",
+    "lib",
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ]
+} 
