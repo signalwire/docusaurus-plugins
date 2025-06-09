@@ -166,7 +166,7 @@ docusaurus-plugins/
 
 ## 📜 License
 
-MIT © [Your Name](LICENSE)
+MIT © [SignalWire](https://github.com/signalwire)
 
 ## 🔗 Links
 
