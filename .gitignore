@@ -479,8 +479,6 @@ Thumbs.db
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# Cursor IDE
-.cursor/
 
 # JetBrains IDEs
 .idea/
@@ -517,3 +515,7 @@ __tests__/coverage/
 *.swp
 *.swo
 *~
+
+# Cursor/Claude Code
+CLAUDE.md
+.cursor/

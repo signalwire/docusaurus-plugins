@@ -60,7 +60,7 @@
     "markdown",
     "react"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "Devon White <devon.white@signalwire.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -94,7 +94,7 @@
     "typescript": "^5.8.3"
   },
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=20.0.0",
     "npm": ">=9.0.0",
     "yarn": ">=1.22.0"
   },

@@ -111,7 +111,8 @@ export function registerLlmsTxtClean(
             siteDir,
             generatedFilesDir,
             config,
-            context.outDir
+            context.outDir,
+            context.siteConfig
           );
           const cache = await cacheManager.loadCache();
           const directories = setupDirectories(siteDir, config, context.outDir);
