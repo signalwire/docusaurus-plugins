@@ -212,7 +212,8 @@ Changesets automatically generate changelogs, but they follow this format:
 
 ## Local Publishing Only
 
-This project uses local publishing only for better control over releases. All publishing should be done from your local machine, not through CI/CD.
+This project uses local publishing only for better control over releases. All publishing should be
+done from your local machine, not through CI/CD.
 
 ### Why Local Publishing?
 
@@ -224,33 +225,39 @@ This project uses local publishing only for better control over releases. All pu
 ### Publishing Steps
 
 1. **Ensure you're on the main branch with latest changes**:
+
    ```bash
    git checkout main
    git pull origin main
    ```
 
 2. **Create a changeset for your changes**:
+
    ```bash
    yarn changeset
    ```
 
 3. **Version the packages**:
+
    ```bash
    yarn changeset:version
    ```
 
 4. **Commit the version changes**:
+
    ```bash
    git add .
    git commit -m "chore: version packages"
    ```
 
 5. **Build and test everything**:
+
    ```bash
    yarn prerelease
    ```
 
 6. **Publish to npm**:
+
    ```bash
    yarn changeset:publish
    ```
