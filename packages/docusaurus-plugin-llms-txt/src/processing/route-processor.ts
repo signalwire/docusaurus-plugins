@@ -68,7 +68,7 @@ async function processSingleRoute(
     if (doc) {
       const hash = await hashFile(fullHtmlPath);
       const contentConfig = getContentConfig(config);
-      
+
       // Note: This is a temporary CacheManager just for the update method
       // We don't have siteConfig here, but it's not needed for updateCachedRouteWithDoc
       const cacheManager = new CacheManager('', '', config, outDir);

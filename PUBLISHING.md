@@ -210,52 +210,55 @@ Changesets automatically generate changelogs, but they follow this format:
 - ghi789: Fix bug in Z
 ```
 
-## CI/CD Integration
+## Local Publishing Only
 
-### GitHub Actions
+This project uses local publishing only for better control over releases. All publishing should be done from your local machine, not through CI/CD.
 
-Create `.github/workflows/release.yml`:
+### Why Local Publishing?
 
-```yaml
-name: Release
+1. **Full control**: You decide exactly when to publish
+2. **Immediate feedback**: See errors and fix them in real-time
+3. **No CI complexity**: No need to manage secrets or debug workflow failures
+4. **Safer**: Less chance of accidental publishes from automated processes
 
-on:
-  push:
-    branches: [main]
+### Publishing Steps
 
-jobs:
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+1. **Ensure you're on the main branch with latest changes**:
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'yarn'
+2. **Create a changeset for your changes**:
+   ```bash
+   yarn changeset
+   ```
 
-      - run: yarn install --frozen-lockfile
-      - run: yarn build:packages
-      - run: yarn test
-      - run: yarn lint
+3. **Version the packages**:
+   ```bash
+   yarn changeset:version
+   ```
 
-      - name: Create Release Pull Request or Publish
-        uses: changesets/action@v1
-        with:
-          publish: yarn changeset:publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-```
+4. **Commit the version changes**:
+   ```bash
+   git add .
+   git commit -m "chore: version packages"
+   ```
 
-### Required Secrets
+5. **Build and test everything**:
+   ```bash
+   yarn prerelease
+   ```
 
-Add these to your GitHub repository secrets:
+6. **Publish to npm**:
+   ```bash
+   yarn changeset:publish
+   ```
 
-- `NPM_TOKEN`: Your npm access token
-- `GITHUB_TOKEN`: Automatically provided by GitHub Actions
+7. **Push the version tags and commits**:
+   ```bash
+   git push --follow-tags origin main
+   ```
 
 ## Manual Commands Reference
 

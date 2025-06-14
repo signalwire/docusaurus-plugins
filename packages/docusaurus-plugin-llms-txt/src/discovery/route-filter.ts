@@ -82,7 +82,7 @@ export function routePathToHtmlPath(
 ): string {
   // First strip the baseUrl from the route
   const pathWithoutBase = stripBaseUrl(routePath, baseUrl);
-  
+
   // Normalize path (remove leading slash for file path)
   const normalizedPath = removeLeadingSlash(pathWithoutBase);
 
