@@ -133,6 +133,10 @@ export interface PluginOptions {
   /** Whether to run during postBuild phase (default: true) */
   readonly runOnPostBuild?: boolean;
 
+  // Output options
+  /** Whether to generate llms-full.txt with complete content (default: false) */
+  readonly enableLlmsFullTxt?: boolean;
+
   // Logging configuration
   /** How to handle route processing failures: 'ignore' | 'log' | 'warn' | 'throw' (default: 'warn') */
   readonly onRouteError?: ReportingSeverity;
@@ -280,6 +284,9 @@ export const pluginOptionsSchema = Joi.object<PluginOptions>({
 
   // Environment options
   runOnPostBuild: Joi.boolean().default(true),
+
+  // Output options
+  enableLlmsFullTxt: Joi.boolean().default(false),
 
   // Logging configuration
   onRouteError: Joi.string()

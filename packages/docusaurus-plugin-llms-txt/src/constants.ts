@@ -178,6 +178,8 @@ export const DEFAULT_CONTENT_SELECTORS = [
 // Output files
 /** @internal */
 export const LLMS_TXT_FILENAME = 'llms.txt' as const;
+/** @internal */
+export const LLMS_FULL_TXT_FILENAME = 'llms-full.txt' as const;
 
 // Plugin configuration defaults
 import type { Options as GfmOptions } from 'remark-gfm';

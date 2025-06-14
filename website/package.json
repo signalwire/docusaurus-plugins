@@ -14,7 +14,7 @@
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
     "llms-txt": "docusaurus llms-txt",
-    "llms-txt-clean": "docusaurus llms-txt-clean --clear-cache"
+    "llms-txt-clean": "docusaurus llms-txt-clean"
   },
   "dependencies": {
     "@docusaurus/core": "3.8.0",

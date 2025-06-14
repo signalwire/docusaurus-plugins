@@ -33,7 +33,8 @@ export async function orchestrateProcessing(
     siteDir,
     generatedFilesDir,
     config,
-    outDir
+    outDir,
+    siteConfig
   );
   const cache = await cacheManager.loadCache();
 
@@ -66,7 +67,8 @@ export async function orchestrateProcessing(
     siteUrl,
     cacheStrategy.useCache,
     generatedFilesDir,
-    logger
+    logger,
+    siteConfig
   );
 
   // Generate output files

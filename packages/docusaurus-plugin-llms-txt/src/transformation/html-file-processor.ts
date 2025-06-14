@@ -86,20 +86,30 @@ export async function processHtmlFileWithContext(
           filePath: relHtmlPath,
         });
 
-      // Save markdown files using PathManager
-      logger.debug(`Saving markdown: ${routePath}`);
-      const mdPath = htmlPathToMdPath(relHtmlPath, mdOutDir);
-      await saveMarkdownFile(mdPath, markdown);
+      // Save markdown files if enableMarkdownFiles is true
+      if (contentConfig.enableMarkdownFiles) {
+        logger.debug(`Saving markdown: ${routePath}`);
+        const mdPath = htmlPathToMdPath(relHtmlPath, mdOutDir);
+        await saveMarkdownFile(mdPath, markdown);
 
-      // Calculate relative markdown file path using PathManager
-      const relativeMdPath = pathManager.getRelativeMarkdownPath(mdPath);
+        // Calculate relative markdown file path using PathManager
+        const relativeMdPath = pathManager.getRelativeMarkdownPath(mdPath);
 
+        return {
+          routePath,
+          htmlPath: relHtmlPath,
+          title,
+          description,
+          markdownFile: relativeMdPath,
+        };
+      }
+
+      // Return without markdown file (enableMarkdownFiles is false)
       return {
         routePath,
         htmlPath: relHtmlPath,
         title,
         description,
-        markdownFile: relativeMdPath,
       };
     } else {
       // Lightweight processing for llms.txt only - just extract metadata

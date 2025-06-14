@@ -23,6 +23,38 @@ export function removeLeadingSlash(path: string): string {
 }
 
 /**
+ * Strip baseUrl from a route path
+ * @internal
+ *
+ * @param routePath - The full route path (e.g., "/my-project/docs/intro")
+ * @param baseUrl - The site's baseUrl (e.g., "/my-project/")
+ * @returns The path without baseUrl (e.g., "/docs/intro")
+ */
+export function stripBaseUrl(routePath: string, baseUrl: string): string {
+  // Handle root baseUrl case
+  if (!baseUrl || baseUrl === '/') {
+    return routePath;
+  }
+
+  // Normalize baseUrl using Docusaurus's utility
+  // This ensures proper leading/trailing slash handling
+  const normalizedBase = normalizeUrl([baseUrl]);
+
+  // Remove trailing slash for comparison
+  const baseForComparison = normalizedBase.replace(/\/$/, '');
+
+  // If route starts with baseUrl, remove it
+  if (routePath.startsWith(baseForComparison)) {
+    const stripped = routePath.slice(baseForComparison.length);
+    // Ensure the result starts with / or is empty for root
+    if (stripped === '') return '/';
+    return stripped.startsWith('/') ? stripped : `/${stripped}`;
+  }
+
+  return routePath;
+}
+
+/**
  * Centralized URL formatting that handles all edge cases consistently
  * @internal
  *

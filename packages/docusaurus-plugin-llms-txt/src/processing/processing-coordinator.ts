@@ -37,7 +37,13 @@ export async function coordinateProcessing(
   siteUrl: string,
   useCache: boolean,
   generatedFilesDir: string,
-  logger: Logger
+  logger: Logger,
+  siteConfig?: {
+    title?: string;
+    url: string;
+    baseUrl: string;
+    trailingSlash?: boolean;
+  }
 ): Promise<ProcessingResult> {
   // Process documents using shared logic
   const { docs, cachedRoutes } = await processDocuments(
@@ -51,7 +57,8 @@ export async function coordinateProcessing(
     siteUrl,
     useCache,
     directories.outDir,
-    generatedFilesDir
+    generatedFilesDir,
+    siteConfig
   );
 
   logger.debug(
