@@ -5,6 +5,7 @@
 
 import path from 'path';
 
+import { getContentConfig } from '../config';
 import {
   LLMS_TXT_FILENAME,
   LLMS_FULL_TXT_FILENAME,
@@ -61,7 +62,8 @@ export async function generateOutputFiles(
   let totalContentLength = llmsTxtContent.length;
 
   // Generate llms-full.txt if enabled
-  if (config.enableLlmsFullTxt) {
+  const contentConfig = getContentConfig(config);
+  if (contentConfig.enableLlmsFullTxt) {
     const llmsFullTxtContent = await buildLlmsFullTxtContent(
       llmsTxtContent,
       docs,

@@ -53,7 +53,8 @@ export async function processHtmlFileWithContext(
     let description: string;
     let markdown = '';
 
-    if (contentConfig.enableMarkdownFiles) {
+    // Process content if markdown files are enabled OR if llms-full.txt is enabled
+    if (contentConfig.enableMarkdownFiles || contentConfig.enableLlmsFullTxt) {
       // Full processing for individual markdown files
       const conversionOptions: MarkdownConversionOptions = {
         remarkStringify: contentConfig.remarkStringify,
@@ -102,15 +103,17 @@ export async function processHtmlFileWithContext(
           description,
           markdownFile: relativeMdPath,
         };
+      } else {
+        // enableLlmsFullTxt is true but enableMarkdownFiles is false
+        // Return content in memory for llms-full.txt generation
+        return {
+          routePath,
+          htmlPath: relHtmlPath,
+          title,
+          description,
+          markdownContent: markdown,
+        };
       }
-
-      // Return without markdown file (enableMarkdownFiles is false)
-      return {
-        routePath,
-        htmlPath: relHtmlPath,
-        title,
-        description,
-      };
     } else {
       // Lightweight processing for llms.txt only - just extract metadata
       const result = extractHtmlMetadata(html);

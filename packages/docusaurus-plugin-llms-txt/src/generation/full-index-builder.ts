@@ -26,10 +26,10 @@ export async function buildLlmsFullTxtContent(
   // Add separator before full content
   content += '\n\n---\n\n# Full Documentation Content\n\n';
 
-  // Append all markdown content from docs that have markdown files
+  // Append all markdown content from docs that have markdown files or content
   for (const doc of docs) {
-    // Skip documents without markdown files
-    if (!doc.markdownFile) continue;
+    // Skip documents without markdown files or in-memory content
+    if (!doc.markdownFile && !doc.markdownContent) continue;
 
     // Skip root/index documents as they're used for site metadata
     if (doc.routePath === '/' || doc.routePath === '/index') {
@@ -37,9 +37,19 @@ export async function buildLlmsFullTxtContent(
     }
 
     try {
-      // Read markdown content from file
-      const markdownPath = path.join(directories.mdOutDir, doc.markdownFile);
-      const markdownContent = await fs.readFile(markdownPath, 'utf8');
+      let markdownContent: string;
+
+      // Use in-memory content if available, otherwise read from file
+      if (doc.markdownContent) {
+        markdownContent = doc.markdownContent;
+      } else if (doc.markdownFile) {
+        // Read markdown content from file
+        const markdownPath = path.join(directories.mdOutDir, doc.markdownFile);
+        markdownContent = await fs.readFile(markdownPath, 'utf8');
+      } else {
+        // This shouldn't happen due to the check above, but safety first
+        continue;
+      }
 
       // Add document header
       content += `## ${doc.title}\n\n`;

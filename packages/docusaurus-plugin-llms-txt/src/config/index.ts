@@ -63,13 +63,12 @@ export function getContentConfig(
 ): Required<ContentOptions> {
   const content = config.content ?? {};
 
-  // Force enableMarkdownFiles to true if enableLlmsFullTxt is true
-  const enableMarkdownFiles = config.enableLlmsFullTxt
-    ? true
-    : (content.enableMarkdownFiles ?? true);
+  const enableMarkdownFiles = content.enableMarkdownFiles ?? true;
+  const enableLlmsFullTxt = content.enableLlmsFullTxt ?? false;
 
   return {
     enableMarkdownFiles,
+    enableLlmsFullTxt,
     relativePaths: content.relativePaths ?? true,
     includeBlog: content.includeBlog ?? false,
     includePages: content.includePages ?? false,

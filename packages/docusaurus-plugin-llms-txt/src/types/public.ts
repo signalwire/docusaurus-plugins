@@ -67,6 +67,8 @@ export type PluginInput =
 export interface ContentOptions {
   /** Whether to generate individual markdown files (default: true) */
   readonly enableMarkdownFiles?: boolean;
+  /** Whether to generate llms-full.txt with complete content (default: false) */
+  readonly enableLlmsFullTxt?: boolean;
   /** Whether to use relative paths in links (default: true) */
   readonly relativePaths?: boolean;
 
@@ -133,10 +135,6 @@ export interface PluginOptions {
   /** Whether to run during postBuild phase (default: true) */
   readonly runOnPostBuild?: boolean;
 
-  // Output options
-  /** Whether to generate llms-full.txt with complete content (default: false) */
-  readonly enableLlmsFullTxt?: boolean;
-
   // Logging configuration
   /** How to handle route processing failures: 'ignore' | 'log' | 'warn' | 'throw' (default: 'warn') */
   readonly onRouteError?: ReportingSeverity;
@@ -200,6 +198,7 @@ export const pluginOptionsSchema = Joi.object<PluginOptions>({
   content: Joi.object({
     // File generation
     enableMarkdownFiles: Joi.boolean().default(true),
+    enableLlmsFullTxt: Joi.boolean().default(false),
     relativePaths: Joi.boolean().default(true),
 
     // Content filtering
@@ -284,9 +283,6 @@ export const pluginOptionsSchema = Joi.object<PluginOptions>({
 
   // Environment options
   runOnPostBuild: Joi.boolean().default(true),
-
-  // Output options
-  enableLlmsFullTxt: Joi.boolean().default(false),
 
   // Logging configuration
   onRouteError: Joi.string()

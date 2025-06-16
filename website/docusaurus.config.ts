@@ -45,11 +45,12 @@ const config: Config = {
         siteTitle: 'My Docusaurus Plugins Collection',
         siteDescription: 'Documentation for Docusaurus plugins',
         depth: 1,
-        enableLlmsFullTxt: true,
         content: {
           includeBlog: true,
           includePages: true,
           includeDocs: true,
+          enableMarkdownFiles: true,
+          enableLlmsFullTxt: true,
         },
       } satisfies PluginOptions,
     ],

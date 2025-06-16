@@ -59,7 +59,8 @@ module.exports = {
         depth: 2,
         content: {
           includeBlog: true,
-          includePages: true
+          includePages: true,
+          enableLlmsFullTxt: true  // Optional: generates llms-full.txt
         }
       }
     ]
@@ -81,7 +82,6 @@ After building your site (`npm run build`), you'll find:
 | `siteDescription` | `string` | `undefined` | Description for the llms.txt header. Can be empty string. |
 | `depth` | `1\|2\|3\|4\|5` | `1` | Categorization depth for document hierarchy. [Details →](#depth-configuration) |
 | `enableDescriptions` | `boolean` | `true` | Include descriptions in llms.txt links |
-| `enableLlmsFullTxt` | `boolean` | `false` | Generate llms-full.txt with index + full content. [Details →](#llms-full-txt) |
 | `optionalLinks` | `OptionalLink[]` | `[]` | Additional external links. [Details →](#optional-links) |
 | `includeOrder` | `string[]` | `[]` | Global category ordering (glob patterns). [Details →](#include-order) |
 | `runOnPostBuild` | `boolean` | `true` | Whether to run during postBuild phase |
@@ -95,6 +95,7 @@ After building your site (`npm run build`), you'll find:
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `enableMarkdownFiles` | `boolean` | `true` | Generate individual markdown files |
+| `enableLlmsFullTxt` | `boolean` | `false` | Generate llms-full.txt with index + full content. [Details →](#llms-full-txt) |
 | `relativePaths` | `boolean` | `true` | Use relative paths in links. [Details →](#path-configuration) |
 | `includeBlog` | `boolean` | `false` | Include blog posts |
 | `includePages` | `boolean` | `false` | Include pages |
@@ -259,8 +260,8 @@ The `enableLlmsFullTxt` option generates a comprehensive `llms-full.txt` file th
 **Example configuration:**
 ```javascript
 {
-  enableLlmsFullTxt: true,  // Generates llms-full.txt
   content: {
+    enableLlmsFullTxt: true,  // Generates llms-full.txt
     // Other content options apply to both llms.txt and llms-full.txt
     includeBlog: true,
     includePages: true

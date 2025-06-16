@@ -1,6 +1,6 @@
 {
   "name": "@signalwire/docusaurus-plugin-llms-txt",
-  "version": "0.0.0-canary-20250613185215",
+  "version": "0.0.0-canary-20250614144042",
   "type": "module",
   "description": "Generate Markdown versions of Docusaurus HTML pages and an llms.txt index file",
   "main": "./lib/index.js",
