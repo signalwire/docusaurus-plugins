@@ -7,7 +7,7 @@ import type { PluginRouteConfig } from '@docusaurus/types';
 
 import { INDEX_HTML } from '../constants';
 import type { PluginOptions, Logger } from '../types';
-import { removeLeadingSlash } from '../utils';
+import { removeLeadingSlash, stripBaseUrl } from '../utils';
 
 import { shouldProcessRoute } from './content-classifier';
 import { isRouteExcluded } from './exclusion-matcher';
@@ -75,20 +75,36 @@ export function validateRouteForProcessing(
  * Handles index routes and standard route-to-file mapping
  * @internal
  */
-export function routePathToHtmlPath(routePath: string): string {
-  // Normalize route path
-  const normalizedPath = removeLeadingSlash(routePath);
+export function routePathToHtmlPath(
+  routePath: string,
+  baseUrl: string = '/',
+  trailingSlash?: boolean
+): string {
+  // First strip the baseUrl from the route
+  const pathWithoutBase = stripBaseUrl(routePath, baseUrl);
+
+  // Normalize path (remove leading slash for file path)
+  const normalizedPath = removeLeadingSlash(pathWithoutBase);
 
   // Handle root path
   if (!normalizedPath || normalizedPath === '/') {
     return INDEX_HTML;
   }
 
-  // Handle paths that end with /
+  // Handle based on trailingSlash configuration
+  if (trailingSlash === false) {
+    // trailingSlash: false → /docs/myDoc.html
+    if (normalizedPath.endsWith('/')) {
+      // Special case: already has trailing slash, still use index.html
+      return `${normalizedPath}${INDEX_HTML}`;
+    }
+    return `${normalizedPath}.html`;
+  }
+
+  // Default behavior (trailingSlash: true or undefined)
+  // /docs/myDoc → /docs/myDoc/index.html
   if (normalizedPath.endsWith('/')) {
     return `${normalizedPath}${INDEX_HTML}`;
   }
-
-  // Handle regular paths
   return `${normalizedPath}/${INDEX_HTML}`;
 }

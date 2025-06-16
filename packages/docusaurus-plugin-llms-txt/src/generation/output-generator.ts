@@ -5,9 +5,15 @@
 
 import path from 'path';
 
-import { LLMS_TXT_FILENAME, PROCESSING_MESSAGES } from '../constants';
+import { getContentConfig } from '../config';
+import {
+  LLMS_TXT_FILENAME,
+  LLMS_FULL_TXT_FILENAME,
+  PROCESSING_MESSAGES,
+} from '../constants';
 import type { DocInfo, PluginOptions, Logger, DirectoryConfig } from '../types';
 
+import { buildLlmsFullTxtContent } from './full-index-builder';
 import { buildLlmsTxtContent } from './index-builder';
 import { saveMarkdownFile } from './markdown-writer';
 
@@ -16,6 +22,7 @@ import { saveMarkdownFile } from './markdown-writer';
  */
 export interface OutputResult {
   readonly llmsTxtPath: string;
+  readonly llmsFullTxtPath?: string;
   readonly contentLength: number;
 }
 
@@ -51,8 +58,38 @@ export async function generateOutputFiles(
   logger.debug(`Successfully saved llms.txt`);
   logger.info(`Generated llms.txt with ${docs.length} documents`);
 
+  let llmsFullTxtPath: string | undefined;
+  let totalContentLength = llmsTxtContent.length;
+
+  // Generate llms-full.txt if enabled
+  const contentConfig = getContentConfig(config);
+  if (contentConfig.enableLlmsFullTxt) {
+    const llmsFullTxtContent = await buildLlmsFullTxtContent(
+      llmsTxtContent,
+      docs,
+      directories,
+      logger
+    );
+    llmsFullTxtPath = path.join(directories.outDir, LLMS_FULL_TXT_FILENAME);
+
+    logger.debug(`Saving llms-full.txt to: ${llmsFullTxtPath}`);
+    logger.debug(
+      `Full content length: ${llmsFullTxtContent.length} characters`
+    );
+
+    await saveMarkdownFile(llmsFullTxtPath, llmsFullTxtContent);
+
+    logger.debug(`Successfully saved llms-full.txt`);
+    logger.info(
+      `Generated llms-full.txt with full content from ${docs.length} documents`
+    );
+
+    totalContentLength += llmsFullTxtContent.length;
+  }
+
   return {
     llmsTxtPath,
-    contentLength: llmsTxtContent.length,
+    llmsFullTxtPath,
+    contentLength: totalContentLength,
   };
 }

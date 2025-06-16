@@ -53,7 +53,8 @@ export async function processHtmlFileWithContext(
     let description: string;
     let markdown = '';
 
-    if (contentConfig.enableMarkdownFiles) {
+    // Process content if markdown files are enabled OR if llms-full.txt is enabled
+    if (contentConfig.enableMarkdownFiles || contentConfig.enableLlmsFullTxt) {
       // Full processing for individual markdown files
       const conversionOptions: MarkdownConversionOptions = {
         remarkStringify: contentConfig.remarkStringify,
@@ -86,21 +87,33 @@ export async function processHtmlFileWithContext(
           filePath: relHtmlPath,
         });
 
-      // Save markdown files using PathManager
-      logger.debug(`Saving markdown: ${routePath}`);
-      const mdPath = htmlPathToMdPath(relHtmlPath, mdOutDir);
-      await saveMarkdownFile(mdPath, markdown);
+      // Save markdown files if enableMarkdownFiles is true
+      if (contentConfig.enableMarkdownFiles) {
+        logger.debug(`Saving markdown: ${routePath}`);
+        const mdPath = htmlPathToMdPath(relHtmlPath, mdOutDir);
+        await saveMarkdownFile(mdPath, markdown);
 
-      // Calculate relative markdown file path using PathManager
-      const relativeMdPath = pathManager.getRelativeMarkdownPath(mdPath);
+        // Calculate relative markdown file path using PathManager
+        const relativeMdPath = pathManager.getRelativeMarkdownPath(mdPath);
 
-      return {
-        routePath,
-        htmlPath: relHtmlPath,
-        title,
-        description,
-        markdownFile: relativeMdPath,
-      };
+        return {
+          routePath,
+          htmlPath: relHtmlPath,
+          title,
+          description,
+          markdownFile: relativeMdPath,
+        };
+      } else {
+        // enableLlmsFullTxt is true but enableMarkdownFiles is false
+        // Return content in memory for llms-full.txt generation
+        return {
+          routePath,
+          htmlPath: relHtmlPath,
+          title,
+          description,
+          markdownContent: markdown,
+        };
+      }
     } else {
       // Lightweight processing for llms.txt only - just extract metadata
       const result = extractHtmlMetadata(html);

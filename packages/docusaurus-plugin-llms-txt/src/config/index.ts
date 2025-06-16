@@ -62,8 +62,13 @@ export function getContentConfig(
   config: PluginOptions
 ): Required<ContentOptions> {
   const content = config.content ?? {};
+
+  const enableMarkdownFiles = content.enableMarkdownFiles ?? true;
+  const enableLlmsFullTxt = content.enableLlmsFullTxt ?? false;
+
   return {
-    enableMarkdownFiles: content.enableMarkdownFiles ?? true,
+    enableMarkdownFiles,
+    enableLlmsFullTxt,
     relativePaths: content.relativePaths ?? true,
     includeBlog: content.includeBlog ?? false,
     includePages: content.includePages ?? false,

@@ -5,10 +5,7 @@
 
 import { createSlugger } from '@docusaurus/utils';
 
-import {
-  DEFAULT_MARKDOWN_HEADER_LEVEL,
-  LANDING_PAGE_SUFFIX,
-} from '../constants';
+import { DEFAULT_MARKDOWN_HEADER_LEVEL } from '../constants';
 import type { TreeNode, DocInfo } from '../types';
 import { formatUrl } from '../utils/url';
 
@@ -70,9 +67,10 @@ export function renderTreeAsMarkdown(
       const rootTitle = node.title?.length ? node.title : node.indexDoc.title;
       md += `- [${rootTitle}](${formattedUrl})\n`;
     } else {
-      const categoryDesc = enableDescriptions
-        ? `${node.name}${LANDING_PAGE_SUFFIX}`
-        : '';
+      const categoryDesc =
+        enableDescriptions && node.indexDoc.description
+          ? `: ${node.indexDoc.description}`
+          : '';
       md += `- [${node.indexDoc.title}](${formattedUrl})${categoryDesc}\n`;
     }
   }

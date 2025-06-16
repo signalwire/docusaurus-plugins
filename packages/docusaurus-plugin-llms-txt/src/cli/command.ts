@@ -8,6 +8,7 @@ import { CacheManager } from '../cache/cache';
 import { getConfig } from '../config';
 import {
   LLMS_TXT_FILENAME,
+  LLMS_FULL_TXT_FILENAME,
   ERROR_MESSAGES,
   EXIT_CODE_ERROR,
 } from '../constants';
@@ -111,7 +112,8 @@ export function registerLlmsTxtClean(
             siteDir,
             generatedFilesDir,
             config,
-            context.outDir
+            context.outDir,
+            context.siteConfig
           );
           const cache = await cacheManager.loadCache();
           const directories = setupDirectories(siteDir, config, context.outDir);
@@ -179,6 +181,16 @@ export function registerLlmsTxtClean(
           if (await fs.pathExists(llmsTxtPath)) {
             await fs.remove(llmsTxtPath);
             log.debug(`Removed ${LLMS_TXT_FILENAME}`);
+          }
+
+          // Clean up llms-full.txt file if it exists
+          const llmsFullTxtPath = path.join(
+            directories.outDir,
+            LLMS_FULL_TXT_FILENAME
+          );
+          if (await fs.pathExists(llmsFullTxtPath)) {
+            await fs.remove(llmsFullTxtPath);
+            log.debug(`Removed ${LLMS_FULL_TXT_FILENAME}`);
           }
 
           // Handle cache clearing if requested

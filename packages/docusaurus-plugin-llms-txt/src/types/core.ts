@@ -63,6 +63,7 @@ export interface DocInfo {
   readonly description: string;
   readonly htmlPath?: string;
   readonly markdownFile?: string;
+  readonly markdownContent?: string;
 }
 
 /**

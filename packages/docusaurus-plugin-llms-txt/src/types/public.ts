@@ -67,6 +67,8 @@ export type PluginInput =
 export interface ContentOptions {
   /** Whether to generate individual markdown files (default: true) */
   readonly enableMarkdownFiles?: boolean;
+  /** Whether to generate llms-full.txt with complete content (default: false) */
+  readonly enableLlmsFullTxt?: boolean;
   /** Whether to use relative paths in links (default: true) */
   readonly relativePaths?: boolean;
 
@@ -196,6 +198,7 @@ export const pluginOptionsSchema = Joi.object<PluginOptions>({
   content: Joi.object({
     // File generation
     enableMarkdownFiles: Joi.boolean().default(true),
+    enableLlmsFullTxt: Joi.boolean().default(false),
     relativePaths: Joi.boolean().default(true),
 
     // Content filtering

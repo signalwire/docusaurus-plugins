@@ -68,6 +68,9 @@ async function processSingleRoute(
     if (doc) {
       const hash = await hashFile(fullHtmlPath);
       const contentConfig = getContentConfig(config);
+
+      // Note: This is a temporary CacheManager just for the update method
+      // We don't have siteConfig here, but it's not needed for updateCachedRouteWithDoc
       const cacheManager = new CacheManager('', '', config, outDir);
 
       const updatedCachedRoute = cacheManager.updateCachedRouteWithDoc(
@@ -105,14 +108,16 @@ async function processRoutesStream(
   siteUrl: string,
   useCache: boolean = true,
   existingCachedRoutes?: CachedRouteInfo[],
-  outDir?: string
+  outDir?: string,
+  siteConfig?: { baseUrl: string; trailingSlash?: boolean }
 ): Promise<{ docs: DocInfo[]; cachedRoutes: CachedRouteInfo[] }> {
   // Setup cache and directories
   const cacheManager = new CacheManager(
     siteDir,
     generatedFilesDir,
     options,
-    outDir
+    outDir,
+    siteConfig
   );
   const cachedRoutes =
     existingCachedRoutes ?? cacheManager.createCachedRouteInfo(routes);
@@ -192,7 +197,8 @@ export async function processDocuments(
   siteUrl: string,
   useCache: boolean = true,
   outDir?: string,
-  generatedFilesDir?: string
+  generatedFilesDir?: string,
+  siteConfig?: { baseUrl: string; trailingSlash?: boolean }
 ): Promise<{ docs: DocInfo[]; cachedRoutes?: CachedRouteInfo[] }> {
   logger.debug(`Processing: useCache=${useCache}, routes=${routes.length}`);
 
@@ -219,7 +225,8 @@ export async function processDocuments(
     siteUrl,
     useCache,
     context.mode === 'cli' || useCache ? [...cache.routes] : undefined,
-    outDir
+    outDir,
+    siteConfig
   );
 
   logger.debug(`Processed ${result.docs.length} documents`);

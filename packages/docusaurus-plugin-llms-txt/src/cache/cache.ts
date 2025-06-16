@@ -29,14 +29,17 @@ import { isCachedRouteValid, calcConfigHash } from './cache-validation';
 export class CacheManager {
   private pathManager: PathManager;
   private cacheIO: CacheIO;
+  private siteConfig?: { baseUrl: string; trailingSlash?: boolean };
 
   constructor(
     siteDir: string,
     generatedFilesDir: string,
     config: PluginOptions,
-    outDir?: string
+    outDir?: string,
+    siteConfig?: { baseUrl: string; trailingSlash?: boolean }
   ) {
     this.pathManager = new PathManager(siteDir, config, outDir);
+    this.siteConfig = siteConfig;
     const cacheDir = path.join(generatedFilesDir, 'docusaurus-plugin-llms-txt');
     const cachePath = path.join(cacheDir, CACHE_FILENAME);
     this.cacheIO = new CacheIO(cachePath);
@@ -91,7 +94,11 @@ export class CacheManager {
 
       const baseInfo = {
         path: route.path,
-        htmlPath: routePathToHtmlPath(route.path),
+        htmlPath: routePathToHtmlPath(
+          route.path,
+          this.siteConfig?.baseUrl ?? '/',
+          this.siteConfig?.trailingSlash
+        ),
       };
 
       const pluginInfo = pluginRoute.plugin?.name
