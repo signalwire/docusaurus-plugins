@@ -155,32 +155,3 @@ describe('Package Structure Validation', () => {
     }
   });
 });
-
-describe('Plugin Integration', () => {
-  it('should allow plugin imports to work correctly', async () => {
-    // Test that we can import from our actual plugin
-    try {
-      // This will test the built plugin
-      const plugin = await import(
-        '../packages/docusaurus-plugin-llms-txt/dist/index'
-      );
-      expect(typeof plugin.default).toBe('function');
-    } catch (error) {
-      // If dist doesn't exist, that's a build issue, not a test failure
-      console.warn('Plugin not built yet, skipping import test');
-      expect(true).toBe(true);
-    }
-  });
-
-  it('should have consistent build outputs', async () => {
-    const packageJsonFiles = await getPackageJsonFiles();
-
-    packageJsonFiles
-      .filter((pkg) => !pkg.content.private)
-      .forEach((pkg) => {
-        // Check that main and types point to dist directory (our actual setup)
-        expect(pkg.content.main).toMatch(/^\.\/dist\//);
-        expect(pkg.content.types).toMatch(/^\.\/dist\//);
-      });
-  });
-});

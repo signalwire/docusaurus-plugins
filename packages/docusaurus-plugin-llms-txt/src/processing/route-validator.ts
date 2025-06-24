@@ -106,7 +106,7 @@ export function validateRoutesForProcessing(
       isExcluded,
       logger
     );
-    
+
     return { route, cachedRoute, isValid: validation.isValid };
   });
 }

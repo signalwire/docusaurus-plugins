@@ -107,7 +107,7 @@ export class CacheManager {
 
       return { ...baseInfo, ...pluginInfo } satisfies CachedRouteInfo;
     });
-    
+
     return cachedRoutes;
   }
 

@@ -49,7 +49,6 @@ export async function orchestrateProcessing(
     isCliContext ? undefined : routes.length // Only pass route count for build context
   );
 
-
   // Validate CLI context if needed
   if (isCliContext) {
     validateCliContext(

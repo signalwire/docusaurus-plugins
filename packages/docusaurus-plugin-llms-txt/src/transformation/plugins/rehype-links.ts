@@ -25,10 +25,7 @@ function isInternalLink(href: string): boolean {
 /**
  * Check if a URL should be excluded from transformation based on all configuration options
  */
-function isExcludedLink(
-  href: string,
-  options: RehypeLinksOptions
-): boolean {
+function isExcludedLink(href: string, options: RehypeLinksOptions): boolean {
   // Parse the URL to get the pathname
   const parsed = parseLocalURLPath(href);
   if (!parsed) {

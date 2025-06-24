@@ -43,16 +43,20 @@ export function classifyRoute(
  * This handles cases like versioned docs where plugin info is lost during route flattening
  * @internal
  */
-function classifyRouteByHeuristics(route: PluginRouteConfig): 'docs' | 'blog' | 'pages' | 'unknown' {
+function classifyRouteByHeuristics(
+  route: PluginRouteConfig
+): 'docs' | 'blog' | 'pages' | 'unknown' {
   // Check component type - docs typically use @theme/DocItem
   if (route.component === '@theme/DocItem') {
     return CONTENT_TYPES.DOCS;
   }
 
   // Check for blog patterns in path or metadata
-  if (route.path.includes('/blog/') || 
-      route.metadata?.sourceFilePath?.includes('blog/') ||
-      route.metadata?.sourceFilePath?.includes('_posts/')) {
+  if (
+    route.path.includes('/blog/') ||
+    route.metadata?.sourceFilePath?.includes('blog/') ||
+    route.metadata?.sourceFilePath?.includes('_posts/')
+  ) {
     return CONTENT_TYPES.BLOG;
   }
 
@@ -60,19 +64,24 @@ function classifyRouteByHeuristics(route: PluginRouteConfig): 'docs' | 'blog' | 
   if (route.metadata?.sourceFilePath) {
     const sourceFile = route.metadata.sourceFilePath;
     // Docs typically have paths like: docs/, api-docs/, versioned_docs/, etc.
-    if (sourceFile.includes('docs/') || 
-        sourceFile.includes('_docs/') ||
-        sourceFile.includes('versioned_docs/')) {
+    if (
+      sourceFile.includes('docs/') ||
+      sourceFile.includes('_docs/') ||
+      sourceFile.includes('versioned_docs/')
+    ) {
       return CONTENT_TYPES.DOCS;
     }
   }
 
   // Check for pages patterns
-  if (route.path === '/' || 
-      route.component === '@theme/BlogListPage' ||
-      route.component === '@theme/BlogPostPage') {
-    return route.component === '@theme/BlogListPage' || route.component === '@theme/BlogPostPage' 
-      ? CONTENT_TYPES.BLOG 
+  if (
+    route.path === '/' ||
+    route.component === '@theme/BlogListPage' ||
+    route.component === '@theme/BlogPostPage'
+  ) {
+    return route.component === '@theme/BlogListPage' ||
+      route.component === '@theme/BlogPostPage'
+      ? CONTENT_TYPES.BLOG
       : CONTENT_TYPES.PAGES;
   }
 
@@ -106,17 +115,19 @@ export function shouldProcessRoute(
       shouldIncludeType = contentConfig.includeDocs;
       break;
   }
-  
+
   if (!shouldIncludeType) {
     return false;
   }
 
   // For docs routes, check versioned docs filtering
-  if ((routeType === CONTENT_TYPES.DOCS || routeType === CONTENT_TYPES.UNKNOWN) && 
-      contentConfig.includeVersionedDocs === false) {
-    
+  if (
+    (routeType === CONTENT_TYPES.DOCS || routeType === CONTENT_TYPES.UNKNOWN) &&
+    contentConfig.includeVersionedDocs === false
+  ) {
     // Check if this is a versioned docs route (not current version)
-    const isVersionedRoute = (route as Record<string, unknown>).__docusaurus_isVersioned;
+    const isVersionedRoute = (route as Record<string, unknown>)
+      .__docusaurus_isVersioned;
     if (isVersionedRoute === true) {
       return false; // Skip versioned docs when includeVersionedDocs is false
     }

@@ -23,24 +23,26 @@ export function wouldRouteBeProcessed(
   config: PluginOptions
 ): boolean {
   const contentConfig = getContentConfig(config);
-  
+
   // First check explicit exclusion patterns
-  if (isRouteExcluded(routePath, (path) => {
-    // Create a simple matcher for the exclude patterns
-    const patterns = contentConfig.excludeRoutes;
-    for (const pattern of patterns) {
-      // Simple glob pattern matching
-      const regexPattern = pattern
-        .replace(/\*/g, '.*')
-        .replace(/\?/g, '.')
-        .replace(/\//g, '\\/');
-      const regex = new RegExp(`^${regexPattern}$`);
-      if (regex.test(path)) {
-        return true;
+  if (
+    isRouteExcluded(routePath, (path) => {
+      // Create a simple matcher for the exclude patterns
+      const patterns = contentConfig.excludeRoutes;
+      for (const pattern of patterns) {
+        // Simple glob pattern matching
+        const regexPattern = pattern
+          .replace(/\*/g, '.*')
+          .replace(/\?/g, '.')
+          .replace(/\//g, '\\/');
+        const regex = new RegExp(`^${regexPattern}$`);
+        if (regex.test(path)) {
+          return true;
+        }
       }
-    }
-    return false;
-  })) {
+      return false;
+    })
+  ) {
     return false;
   }
 
@@ -70,8 +72,11 @@ export function wouldRouteBeProcessed(
   }
 
   // Use the content classifier to check content type filters
-  const shouldProcess = shouldProcessRoute(mockRoute as PluginRouteConfig, config);
-  
+  const shouldProcess = shouldProcessRoute(
+    mockRoute as PluginRouteConfig,
+    config
+  );
+
   return shouldProcess;
 }
 
@@ -84,17 +89,17 @@ function inferComponentFromPath(routePath: string): string {
   if (routePath.includes('/blog/') || routePath.startsWith('/blog')) {
     return '@theme/BlogPostPage';
   }
-  
+
   // Check for category pages
   if (routePath.includes('/category/')) {
     return '@theme/DocCategoryGeneratedIndexPage';
   }
-  
+
   // Check for docs patterns
   if (routePath.includes('/docs/') || routePath.startsWith('/docs')) {
     return '@theme/DocItem';
   }
-  
+
   // Default to page
   return '@theme/MDXPage';
 }

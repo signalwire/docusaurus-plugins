@@ -38,7 +38,7 @@ export function analyzeCacheStrategy(
     const cachedRouteCount = cache.routes.length;
     const routeCountDiff = Math.abs(currentRouteCount - cachedRouteCount);
     const percentChange = (routeCountDiff / cachedRouteCount) * 100;
-    
+
     // If route count changed by more than 10%, invalidate cache
     if (percentChange > 10) {
       routeCountMatches = false;
