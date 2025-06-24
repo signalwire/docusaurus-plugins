@@ -1,0 +1,6 @@
+label: Advanced Topics
+position: 3
+link:
+  type: generated-index
+  title: Advanced Docusaurus Features
+  description: Deep dive into advanced Docusaurus features and customization options. Learn about plugins, themes, and extending functionality.

@@ -10,6 +10,10 @@ Documents are **groups of pages** connected through:
 - **previous/next navigation**
 - **versioning**
 
+For more information about this tutorial section, see the [Tutorial - Basics overview](/docs/category/tutorial---basics).
+
+You can also check out our [latest blog post](/blog/welcome) for more insights, or visit our [standalone blog section](/standalone-blog).
+
 ## Create your first Doc
 
 Create a Markdown file at `docs/hello.md`:

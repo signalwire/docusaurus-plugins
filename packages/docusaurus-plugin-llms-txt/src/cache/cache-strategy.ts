@@ -26,10 +26,27 @@ export function analyzeCacheStrategy(
   cache: CacheSchema,
   config: PluginOptions,
   isCliContext: boolean,
-  logger: Logger
+  logger: Logger,
+  currentRouteCount?: number
 ): CacheStrategyResult {
   const cacheHasRoutes = cacheManager.hasCachedRoutes(cache);
   const configMatches = cacheManager.isCacheConfigValid(cache, config);
+
+  // Check if route count has changed significantly (indicates new routes like versioned docs)
+  let routeCountMatches = true;
+  if (currentRouteCount !== undefined && cache.routes) {
+    const cachedRouteCount = cache.routes.length;
+    const routeCountDiff = Math.abs(currentRouteCount - cachedRouteCount);
+    const percentChange = (routeCountDiff / cachedRouteCount) * 100;
+    
+    // If route count changed by more than 10%, invalidate cache
+    if (percentChange > 10) {
+      routeCountMatches = false;
+      logger.debug(
+        `Cache invalidated: route count changed significantly (${cachedRouteCount} → ${currentRouteCount}, ${percentChange.toFixed(1)}% change)`
+      );
+    }
+  }
 
   // Log detailed cache validation info if config changed
   if (cacheHasRoutes && !configMatches) {
@@ -42,8 +59,8 @@ export function analyzeCacheStrategy(
     );
   }
 
-  // Always use cache when available and valid
-  const useCache = cacheHasRoutes && configMatches;
+  // Use cache only when available, config matches, AND route count hasn't changed significantly
+  const useCache = cacheHasRoutes && configMatches && routeCountMatches;
 
   // Generate reason for cache decision
   const reason = generateCacheReason(

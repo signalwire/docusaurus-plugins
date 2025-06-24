@@ -132,6 +132,7 @@ export interface RehypeLinksOptions {
   readonly relativePaths?: boolean;
   readonly enableMarkdownFiles?: boolean;
   readonly excludeRoutes?: readonly string[];
+  readonly fullConfig?: PluginOptions;
 }
 
 /**
@@ -143,6 +144,7 @@ export interface MarkdownConversionOptions {
   readonly baseUrl?: string;
   readonly enableMarkdownFiles?: boolean;
   readonly excludeRoutes?: readonly string[];
+  readonly fullConfig?: PluginOptions;
   readonly rehypeProcessTables?: boolean;
   readonly rehypeProcessLinks?: boolean;
   readonly remarkGfm?: boolean | Readonly<RemarkGfmOptions>;

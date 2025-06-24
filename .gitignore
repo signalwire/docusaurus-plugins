@@ -10,6 +10,7 @@
 *.userosscache
 *.sln.docstates
 .cursor
+.temp
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -519,3 +520,4 @@ __tests__/coverage/
 # Cursor/Claude Code
 CLAUDE.md
 .cursor/
+.claude

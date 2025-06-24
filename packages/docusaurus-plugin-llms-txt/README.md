@@ -100,6 +100,8 @@ After building your site (`npm run build`), you'll find:
 | `includeBlog` | `boolean` | `false` | Include blog posts |
 | `includePages` | `boolean` | `false` | Include pages |
 | `includeDocs` | `boolean` | `true` | Include documentation |
+| `includeVersionedDocs` | `boolean` | `true` | Include versioned documentation (when false, only current version is included) |
+| `includeGeneratedIndex` | `boolean` | `true` | Include generated category index pages |
 | `excludeRoutes` | `string[]` | `[]` | Glob patterns to exclude. [Details →](#route-exclusion) |
 | `contentSelectors` | `string[]` | Default selectors | CSS selectors for content extraction. [Details →](#content-selectors) |
 | `routeRules` | `RouteRule[]` | `[]` | Route-specific processing rules. [Details →](#route-rules) |
@@ -322,6 +324,23 @@ The `relativePaths` option controls link format in both `llms.txt` and markdown 
 - Integration with web-based tools
 - Cleaner link appearance
 - When you want full URLs with your site domain
+
+### Generated Index Pages
+
+The `includeGeneratedIndex` option controls whether Docusaurus-generated category index pages are included in the output. These are pages automatically created from `_category_.json` or `_category_.yaml` files with `link.type: "generated-index"`, or from sidebar configurations.
+
+**When to exclude generated index pages (`includeGeneratedIndex: false`):**
+- You only want actual content pages, not navigation pages
+- Generated indexes duplicate information already in your documentation structure
+- You're focusing on content extraction rather than site navigation
+- You want to reduce the number of processed pages
+
+**Generated index pages include:**
+- Category pages created from `_category_.json/yaml` files
+- Sidebar category pages with `type: "generated-index"`
+- Auto-generated category overview pages
+
+These pages typically contain a list of links to documents within that category rather than substantial content.
 
 ### Route Exclusion
 
@@ -730,6 +749,7 @@ npx docusaurus llms-txt-clean ./docs --clear-cache
   content: {
     includeBlog: false,
     includePages: true,
+    includeVersionedDocs: false,  // Only include current version
     contentSelectors: [
       '.api-docs-content',
       '.theme-doc-markdown',
@@ -981,6 +1001,8 @@ interface ContentOptions {
   includeBlog?: boolean;
   includePages?: boolean;
   includeDocs?: boolean;
+  includeVersionedDocs?: boolean;
+  includeGeneratedIndex?: boolean;
   excludeRoutes?: string[];
   contentSelectors?: string[];
   routeRules?: RouteRule[];

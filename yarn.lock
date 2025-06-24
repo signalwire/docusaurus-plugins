@@ -3319,23 +3319,6 @@
   resolved "https://registry.yarnpkg.com/@sideway/pinpoint/-/pinpoint-2.0.0.tgz#cff8ffadc372ad29fd3f78277aeb29e632cc70df"
   integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
 
-"@signalwire/docusaurus-plugin-llms-txt@*":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@signalwire/docusaurus-plugin-llms-txt/-/docusaurus-plugin-llms-txt-1.0.1.tgz#1f4d3f7aa5f5c5e4ac5de799067797322569cdd6"
-  integrity sha512-90wg9LM6/I1pSHud6iNVUd6r25MmeHaRWo9vpfkyvTAPbuHYArLJyCiYxkKWssKSaMbdz7HrGNe+fPDAhwk6jg==
-  dependencies:
-    fs-extra "^11.0.0"
-    hast-util-select "^6.0.4"
-    hast-util-to-html "^9.0.5"
-    hast-util-to-string "^3.0.1"
-    rehype-parse "^9"
-    rehype-remark "^10"
-    remark-gfm "^4"
-    remark-stringify "^11"
-    string-width "^5.0.0"
-    unified "^11"
-    unist-util-visit "^5"
-
 "@sigstore/bundle@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@sigstore/bundle/-/bundle-1.1.0.tgz#17f8d813b09348b16eeed66a8cf1c3d6bd3d04f1"
