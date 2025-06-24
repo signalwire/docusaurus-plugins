@@ -23,7 +23,7 @@ export function classifyRoute(
   const plugin = route.plugin;
 
   // If we have plugin info, use it
-  if (plugin && plugin.name) {
+  if (plugin?.name) {
     switch (plugin.name) {
       case DOCUSAURUS_BLOG_PLUGIN:
         return CONTENT_TYPES.BLOG;
@@ -116,7 +116,7 @@ export function shouldProcessRoute(
       contentConfig.includeVersionedDocs === false) {
     
     // Check if this is a versioned docs route (not current version)
-    const isVersionedRoute = (route as any).__docusaurus_isVersioned;
+    const isVersionedRoute = (route as Record<string, unknown>).__docusaurus_isVersioned;
     if (isVersionedRoute === true) {
       return false; // Skip versioned docs when includeVersionedDocs is false
     }

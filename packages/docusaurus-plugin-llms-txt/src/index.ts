@@ -32,8 +32,8 @@ function createPluginInfoMapping(routes: RouteConfig[]): Map<string, { name: str
       
       // Check for version information in route props
       if (route.props && typeof route.props === 'object' && 'version' in route.props) {
-        const versionProps = route.props.version as any;
-        if (versionProps && typeof versionProps === 'object') {
+        const versionProps = route.props.version as Record<string, unknown>;
+        if (versionProps && typeof versionProps === 'object' && 'version' in versionProps) {
           const version = versionProps.version as string;
           const isCurrentVersion = version === 'current';
           
@@ -83,8 +83,8 @@ function enhanceRoutesWithPluginInfo(
       
       // Add version metadata if available
       if (pluginInfo.version !== undefined) {
-        (enhancedRoute as any).__docusaurus_version = pluginInfo.version;
-        (enhancedRoute as any).__docusaurus_isVersioned = pluginInfo.isVersioned;
+        (enhancedRoute as Record<string, unknown>).__docusaurus_version = pluginInfo.version;
+        (enhancedRoute as Record<string, unknown>).__docusaurus_isVersioned = pluginInfo.isVersioned;
       }
       
       return enhancedRoute;
