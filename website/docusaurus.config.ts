@@ -55,6 +55,12 @@ const config: Config = {
           includeGeneratedIndex: false,
           enableMarkdownFiles: true,
           enableLlmsFullTxt: true,
+          routeRules: [
+            {
+              route: '/api/v[0-9]*/**',
+              depth: 2
+            }
+          ]
         },
       } satisfies PluginOptions,
     ],
