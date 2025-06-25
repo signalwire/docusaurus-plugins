@@ -527,7 +527,13 @@ Route rules provide powerful per-route customization capabilities. They allow yo
 
 #### Route Pattern Matching
 
-Route rules use glob patterns to match routes:
+Route rules use **glob patterns** to match routes. This gives you powerful pattern-matching capabilities for targeting specific parts of your documentation.
+
+**Basic Glob Patterns:**
+- `**` - Matches any number of directories/segments
+- `*` - Matches any single directory/segment  
+- `[]` - Character classes (e.g., `[0-9]` for digits)
+- `{}` - Alternation (e.g., `{v1,v2,v3}` for specific versions)
 
 ```javascript
 {
@@ -553,6 +559,68 @@ Route rules use glob patterns to match routes:
   }
 }
 ```
+
+#### Versioned Documentation Patterns
+
+For Docusaurus sites with versioned documentation, use these patterns to target specific versions:
+
+```javascript
+{
+  content: {
+    routeRules: [
+      // Match only versioned paths (v1, v2, v3, etc.) - excludes non-versioned
+      {
+        route: '/api/v[0-9]*/**',
+        depth: 2,
+        categoryName: 'Versioned API Docs'
+      },
+      
+      // Match specific versions only
+      {
+        route: '/api/{v1,v2,v3}/**',
+        depth: 2,
+        categoryName: 'Legacy API Versions'
+      },
+      
+      // Match current version (non-versioned paths)
+      {
+        route: '/api/!(v*)**',          // Exclude paths starting with 'v'
+        depth: 3,
+        categoryName: 'Current API'
+      },
+      
+      // Separate rules for different version behaviors
+      {
+        route: '/docs/v1/**',
+        depth: 1,                     // Shallow depth for legacy
+        categoryName: 'v1 (Legacy)'
+      },
+      {
+        route: '/docs/v2/**', 
+        depth: 2,                     // Medium depth for stable
+        categoryName: 'v2 (Stable)'
+      },
+      {
+        route: '/docs/**',            // Current version (no v prefix)
+        depth: 3,                     // Full depth for current
+        categoryName: 'Latest Documentation'
+      }
+    ]
+  }
+}
+```
+
+**Pattern Specificity Examples:**
+- `/api/v*/**` matches `/api/video/upload` (any path starting with 'v')
+- `/api/v[0-9]*/**` matches `/api/v1/users` but NOT `/api/video/upload`
+- `/api/{v1,v2}/**` matches only `/api/v1/` and `/api/v2/` paths
+- `/api/!(v*)/**` matches `/api/users` but NOT `/api/v1/users`
+
+**Common Use Cases:**
+- **Versioned APIs**: Use `v[0-9]*` to target only numbered versions
+- **Language variants**: Use `{en,es,fr}` for specific locales
+- **Content types**: Use `/{guides,tutorials}/**` for specific content sections
+- **Exclude patterns**: Use `!(pattern)` to exclude matching paths
 
 #### Rule Priority
 
