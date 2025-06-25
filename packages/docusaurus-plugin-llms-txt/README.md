@@ -100,6 +100,8 @@ After building your site (`npm run build`), you'll find:
 | `includeBlog` | `boolean` | `false` | Include blog posts |
 | `includePages` | `boolean` | `false` | Include pages |
 | `includeDocs` | `boolean` | `true` | Include documentation |
+| `includeVersionedDocs` | `boolean` | `true` | Include versioned documentation (when false, only current version is included) |
+| `includeGeneratedIndex` | `boolean` | `true` | Include generated category index pages |
 | `excludeRoutes` | `string[]` | `[]` | Glob patterns to exclude. [Details →](#route-exclusion) |
 | `contentSelectors` | `string[]` | Default selectors | CSS selectors for content extraction. [Details →](#content-selectors) |
 | `routeRules` | `RouteRule[]` | `[]` | Route-specific processing rules. [Details →](#route-rules) |
@@ -323,6 +325,23 @@ The `relativePaths` option controls link format in both `llms.txt` and markdown 
 - Cleaner link appearance
 - When you want full URLs with your site domain
 
+### Generated Index Pages
+
+The `includeGeneratedIndex` option controls whether Docusaurus-generated category index pages are included in the output. These are pages automatically created from `_category_.json` or `_category_.yaml` files with `link.type: "generated-index"`, or from sidebar configurations.
+
+**When to exclude generated index pages (`includeGeneratedIndex: false`):**
+- You only want actual content pages, not navigation pages
+- Generated indexes duplicate information already in your documentation structure
+- You're focusing on content extraction rather than site navigation
+- You want to reduce the number of processed pages
+
+**Generated index pages include:**
+- Category pages created from `_category_.json/yaml` files
+- Sidebar category pages with `type: "generated-index"`
+- Auto-generated category overview pages
+
+These pages typically contain a list of links to documents within that category rather than substantial content.
+
 ### Route Exclusion
 
 Use glob patterns to exclude specific routes or route patterns:
@@ -508,7 +527,13 @@ Route rules provide powerful per-route customization capabilities. They allow yo
 
 #### Route Pattern Matching
 
-Route rules use glob patterns to match routes:
+Route rules use **glob patterns** to match routes. This gives you powerful pattern-matching capabilities for targeting specific parts of your documentation.
+
+**Basic Glob Patterns:**
+- `**` - Matches any number of directories/segments
+- `*` - Matches any single directory/segment  
+- `[]` - Character classes (e.g., `[0-9]` for digits)
+- `{}` - Alternation (e.g., `{v1,v2,v3}` for specific versions)
 
 ```javascript
 {
@@ -534,6 +559,68 @@ Route rules use glob patterns to match routes:
   }
 }
 ```
+
+#### Versioned Documentation Patterns
+
+For Docusaurus sites with versioned documentation, use these patterns to target specific versions:
+
+```javascript
+{
+  content: {
+    routeRules: [
+      // Match only versioned paths (v1, v2, v3, etc.) - excludes non-versioned
+      {
+        route: '/api/v[0-9]*/**',
+        depth: 2,
+        categoryName: 'Versioned API Docs'
+      },
+      
+      // Match specific versions only
+      {
+        route: '/api/{v1,v2,v3}/**',
+        depth: 2,
+        categoryName: 'Legacy API Versions'
+      },
+      
+      // Match current version (non-versioned paths)
+      {
+        route: '/api/!(v*)**',          // Exclude paths starting with 'v'
+        depth: 3,
+        categoryName: 'Current API'
+      },
+      
+      // Separate rules for different version behaviors
+      {
+        route: '/docs/v1/**',
+        depth: 1,                     // Shallow depth for legacy
+        categoryName: 'v1 (Legacy)'
+      },
+      {
+        route: '/docs/v2/**', 
+        depth: 2,                     // Medium depth for stable
+        categoryName: 'v2 (Stable)'
+      },
+      {
+        route: '/docs/**',            // Current version (no v prefix)
+        depth: 3,                     // Full depth for current
+        categoryName: 'Latest Documentation'
+      }
+    ]
+  }
+}
+```
+
+**Pattern Specificity Examples:**
+- `/api/v*/**` matches `/api/video/upload` (any path starting with 'v')
+- `/api/v[0-9]*/**` matches `/api/v1/users` but NOT `/api/video/upload`
+- `/api/{v1,v2}/**` matches only `/api/v1/` and `/api/v2/` paths
+- `/api/!(v*)/**` matches `/api/users` but NOT `/api/v1/users`
+
+**Common Use Cases:**
+- **Versioned APIs**: Use `v[0-9]*` to target only numbered versions
+- **Language variants**: Use `{en,es,fr}` for specific locales
+- **Content types**: Use `/{guides,tutorials}/**` for specific content sections
+- **Exclude patterns**: Use `!(pattern)` to exclude matching paths
 
 #### Rule Priority
 
@@ -730,6 +817,7 @@ npx docusaurus llms-txt-clean ./docs --clear-cache
   content: {
     includeBlog: false,
     includePages: true,
+    includeVersionedDocs: false,  // Only include current version
     contentSelectors: [
       '.api-docs-content',
       '.theme-doc-markdown',
@@ -981,6 +1069,8 @@ interface ContentOptions {
   includeBlog?: boolean;
   includePages?: boolean;
   includeDocs?: boolean;
+  includeVersionedDocs?: boolean;
+  includeGeneratedIndex?: boolean;
   excludeRoutes?: string[];
   contentSelectors?: string[];
   routeRules?: RouteRule[];

@@ -4,6 +4,7 @@ import type { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
 
 import { HTML_OR_MD_EXTENSION_REGEX } from '../../constants';
+import { wouldRouteBeProcessed } from '../../discovery/route-matcher';
 import type { RehypeLinksOptions } from '../../types';
 import { formatUrl, ensureLeadingSlash } from '../../utils/url';
 
@@ -22,16 +23,9 @@ function isInternalLink(href: string): boolean {
 }
 
 /**
- * Check if a URL should be excluded from transformation based on exclude patterns
+ * Check if a URL should be excluded from transformation based on all configuration options
  */
-function isExcludedLink(
-  href: string,
-  excludePaths?: readonly string[]
-): boolean {
-  if (!excludePaths?.length) {
-    return false;
-  }
-
+function isExcludedLink(href: string, options: RehypeLinksOptions): boolean {
   // Parse the URL to get the pathname
   const parsed = parseLocalURLPath(href);
   if (!parsed) {
@@ -43,9 +37,21 @@ function isExcludedLink(
   // Normalize pathname to match exclude patterns (ensure it starts with /)
   pathname = ensureLeadingSlash(pathname);
 
-  // Create matcher and test the pathname
-  const isExcluded = createMatcher([...excludePaths]);
-  return isExcluded(pathname);
+  // First check explicit exclusion patterns for backward compatibility
+  if (options.excludeRoutes?.length) {
+    const isExcluded = createMatcher([...options.excludeRoutes]);
+    if (isExcluded(pathname)) {
+      return true;
+    }
+  }
+
+  // If we have the full config, use the comprehensive route matcher
+  if (options.fullConfig) {
+    return !wouldRouteBeProcessed(pathname, options.fullConfig);
+  }
+
+  // Fallback to false if no full config available
+  return false;
 }
 
 /**
@@ -150,7 +156,7 @@ function processAnchorElement(
   }
 
   // Check if the link is excluded
-  const isExcluded = isExcludedLink(href, options.excludeRoutes);
+  const isExcluded = isExcludedLink(href, options);
 
   if (isExcluded) {
     const excludedOptions = getExcludedLinkOptions(options);

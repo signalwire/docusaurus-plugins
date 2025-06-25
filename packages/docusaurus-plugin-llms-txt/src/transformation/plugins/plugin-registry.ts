@@ -87,6 +87,7 @@ export class PluginRegistry {
         relativePaths: options.relativePaths !== false,
         enableMarkdownFiles: options.enableMarkdownFiles !== false,
         excludeRoutes: options.excludeRoutes ?? [],
+        fullConfig: options.fullConfig,
       };
       processor.use(rehypeLinks, linkOptions);
     }

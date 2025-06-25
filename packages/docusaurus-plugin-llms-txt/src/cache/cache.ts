@@ -88,7 +88,7 @@ export class CacheManager {
 
   /** Create cached route info from routes */
   createCachedRouteInfo(routes: RouteConfig[]): CachedRouteInfo[] {
-    return routes.map((route) => {
+    const cachedRoutes = routes.map((route) => {
       // Type guard for PluginRouteConfig with proper typing
       const pluginRoute = route as { plugin?: { name?: string } };
 
@@ -107,6 +107,8 @@ export class CacheManager {
 
       return { ...baseInfo, ...pluginInfo } satisfies CachedRouteInfo;
     });
+
+    return cachedRoutes;
   }
 
   /** Update cached route info with processing results */

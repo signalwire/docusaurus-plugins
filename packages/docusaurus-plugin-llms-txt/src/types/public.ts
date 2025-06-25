@@ -79,6 +79,10 @@ export interface ContentOptions {
   readonly includePages?: boolean;
   /** Include docs (default: true) */
   readonly includeDocs?: boolean;
+  /** Include versioned docs in addition to current version (default: true) */
+  readonly includeVersionedDocs?: boolean;
+  /** Include generated category index pages (default: true) */
+  readonly includeGeneratedIndex?: boolean;
   /** Glob patterns to exclude from processing */
   readonly excludeRoutes?: readonly string[];
 
@@ -205,6 +209,8 @@ export const pluginOptionsSchema = Joi.object<PluginOptions>({
     includeBlog: Joi.boolean().default(false),
     includePages: Joi.boolean().default(false),
     includeDocs: Joi.boolean().default(true),
+    includeVersionedDocs: Joi.boolean().default(true),
+    includeGeneratedIndex: Joi.boolean().default(true),
     excludeRoutes: Joi.array().items(Joi.string()).default([]),
 
     // Content extraction

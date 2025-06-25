@@ -73,6 +73,8 @@ export function getContentConfig(
     includeBlog: content.includeBlog ?? false,
     includePages: content.includePages ?? false,
     includeDocs: content.includeDocs ?? true,
+    includeVersionedDocs: content.includeVersionedDocs ?? true,
+    includeGeneratedIndex: content.includeGeneratedIndex ?? true,
     excludeRoutes: content.excludeRoutes ?? [],
     contentSelectors: content.contentSelectors ?? [],
     routeRules: content.routeRules ?? [],

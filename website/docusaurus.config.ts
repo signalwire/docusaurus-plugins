@@ -44,15 +44,68 @@ const config: Config = {
       {
         siteTitle: 'My Docusaurus Plugins Collection',
         siteDescription: 'Documentation for Docusaurus plugins',
+        logLevel: 3,
+        onRouteError: 'throw',
         depth: 1,
         content: {
-          includeBlog: true,
-          includePages: true,
+          includeBlog: false,
+          includePages: false,
           includeDocs: true,
+          includeVersionedDocs: true,
+          includeGeneratedIndex: false,
           enableMarkdownFiles: true,
           enableLlmsFullTxt: true,
+          routeRules: [
+            {
+              route: '/api/v[0-9]*/**',
+              depth: 2
+            }
+          ]
         },
       } satisfies PluginOptions,
+    ],
+    // Standalone blog plugin instance
+    [
+      '@docusaurus/plugin-content-blog',
+      {
+        id: 'standalone-blog',
+        path: 'standalone-blog',
+        routeBasePath: 'standalone-blog',
+        blogTitle: 'Standalone Blog',
+        blogDescription: 'A standalone blog instance for testing plugin classification',
+        showReadingTime: true,
+      },
+    ],
+    // Standalone pages plugin instance
+    [
+      '@docusaurus/plugin-content-pages',
+      {
+        id: 'standalone-pages',
+        path: 'standalone-pages',
+        routeBasePath: 'standalone-pages',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'api',
+        path: 'api-docs',
+        routeBasePath: 'api',
+        sidebarPath: './api-sidebars.ts',
+        lastVersion: 'current',
+        versions: {
+          current: {
+            label: 'v3 (Current)',
+            banner: 'none',
+          },
+          v2: {
+            label: 'v2',
+          },
+          v1: {
+            label: 'v1',
+          },
+        },
+      },
     ],
   ],
 
@@ -105,7 +158,21 @@ const config: Config = {
           position: 'left',
           label: 'Tutorial',
         },
+        {
+          type: 'docSidebar',
+          sidebarId: 'apiSidebar',
+          docsPluginId: 'api',
+          position: 'left',
+          label: 'API Docs',
+        },
+        {
+          type: 'docsVersionDropdown',
+          docsPluginId: 'api',
+          position: 'left',
+        },
         { to: '/blog', label: 'Blog', position: 'left' },
+        { to: '/standalone-blog', label: 'Standalone Blog', position: 'left' },
+        { to: '/standalone-pages', label: 'Standalone Pages', position: 'left' },
         {
           href: 'https://github.com/facebook/docusaurus',
           label: 'GitHub',

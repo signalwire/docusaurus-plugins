@@ -65,6 +65,7 @@ export async function processHtmlFileWithContext(
         relativePaths: contentConfig.relativePaths,
         enableMarkdownFiles: contentConfig.enableMarkdownFiles,
         excludeRoutes: contentConfig.excludeRoutes,
+        fullConfig: config,
         logger: logger,
         // Pass simplified plugin arrays to the conversion pipeline
         beforeDefaultRehypePlugins: contentConfig.beforeDefaultRehypePlugins,

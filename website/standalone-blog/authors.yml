@@ -1,0 +1,11 @@
+admin:
+  name: Admin User
+  title: Site Administrator
+  url: https://github.com/admin
+  image_url: https://github.com/admin.png
+
+developer:
+  name: Developer
+  title: Plugin Developer
+  url: https://github.com/developer
+  image_url: https://github.com/developer.png
