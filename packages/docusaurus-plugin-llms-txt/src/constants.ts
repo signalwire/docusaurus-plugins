@@ -40,7 +40,7 @@ export const CONTENT_TYPES = {
 } as const;
 
 /** Union type for content types */
-export type ContentType = typeof CONTENT_TYPES[keyof typeof CONTENT_TYPES];
+export type ContentType = (typeof CONTENT_TYPES)[keyof typeof CONTENT_TYPES];
 
 // ============================================================================
 // TREE CONSTANTS

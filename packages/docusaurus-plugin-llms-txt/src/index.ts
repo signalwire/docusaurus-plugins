@@ -209,20 +209,27 @@ export default function llmsTxtPlugin(
         );
 
         // Create cached routes with enhanced metadata before processing
-        const enhancedCachedRoutes = cacheManager.createCachedRouteInfo(enhancedRoutes);
-        log.debug(`Created cached routes with enhanced metadata: ${enhancedCachedRoutes.length} routes`);
+        const enhancedCachedRoutes =
+          cacheManager.createCachedRouteInfo(enhancedRoutes);
+        log.debug(
+          `Created cached routes with enhanced metadata: ${enhancedCachedRoutes.length} routes`
+        );
 
         // Use unified processing orchestrator with Docusaurus-provided paths
-        const result = await orchestrateProcessing(enhancedRoutes, {
-          siteDir,
-          generatedFilesDir,
-          config,
-          siteConfig,
-          outDir,
-          logger: log,
-          contentSelectors: config.content?.contentSelectors ?? [],
-          relativePaths: config.content?.relativePaths !== false,
-        }, enhancedCachedRoutes);
+        const result = await orchestrateProcessing(
+          enhancedRoutes,
+          {
+            siteDir,
+            generatedFilesDir,
+            config,
+            siteConfig,
+            outDir,
+            logger: log,
+            contentSelectors: config.content?.contentSelectors ?? [],
+            relativePaths: config.content?.relativePaths !== false,
+          },
+          enhancedCachedRoutes
+        );
 
         log.success(
           `Plugin completed successfully - processed ${result.processedCount} documents`

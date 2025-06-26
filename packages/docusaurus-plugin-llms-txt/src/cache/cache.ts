@@ -115,14 +115,14 @@ export class CacheManager {
       const metadata = {
         contentType: classifyRoute(enhancedRoute as PluginRouteConfig),
         isVersioned: enhancedRoute.__docusaurus_isVersioned,
-        isGeneratedIndex: enhancedRoute.props?.categoryGeneratedIndex !== undefined,
+        isGeneratedIndex:
+          enhancedRoute.props?.categoryGeneratedIndex !== undefined,
       };
 
-
-      return { 
-        ...baseInfo, 
-        ...pluginInfo, 
-        ...metadata 
+      return {
+        ...baseInfo,
+        ...pluginInfo,
+        ...metadata,
       } satisfies CachedRouteInfo;
     });
 

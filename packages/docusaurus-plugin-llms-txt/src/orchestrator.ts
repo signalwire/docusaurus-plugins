@@ -13,7 +13,11 @@ import {
 import { setupDirectories, buildSiteUrl } from './filesystem/paths';
 import { generateOutputFiles } from './generation/output-generator';
 import { coordinateProcessing } from './processing/processing-coordinator';
-import type { ProcessingConfig, ProcessingResult, CachedRouteInfo } from './types';
+import type {
+  ProcessingConfig,
+  ProcessingResult,
+  CachedRouteInfo,
+} from './types';
 
 /**
  * Unified processing orchestrator that handles both build-time and CLI scenarios
@@ -46,7 +50,9 @@ export async function orchestrateProcessing(
       ...cache,
       routes: enhancedCachedRoutes,
     };
-    logger.debug(`Using enhanced cached routes with metadata: ${enhancedCachedRoutes.length} routes`);
+    logger.debug(
+      `Using enhanced cached routes with metadata: ${enhancedCachedRoutes.length} routes`
+    );
   }
 
   // Determine processing context and cache strategy

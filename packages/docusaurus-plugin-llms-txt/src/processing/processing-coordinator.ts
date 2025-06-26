@@ -52,7 +52,9 @@ export async function coordinateProcessing(
   let routesToProcess = routes;
   let filteredCache = cache;
 
-  logger.debug(`Context: ${isCliContext ? 'CLI' : 'Build'}, routes: ${routes.length}, cache routes: ${cache.routes.length}`);
+  logger.debug(
+    `Context: ${isCliContext ? 'CLI' : 'Build'}, routes: ${routes.length}, cache routes: ${cache.routes.length}`
+  );
 
   if (isCliContext && cache.routes.length > 0) {
     // CLI context: filter cached routes based on current config
@@ -61,7 +63,7 @@ export async function coordinateProcessing(
       config,
       logger
     );
-    
+
     // Create filtered cache for processing
     filteredCache = {
       ...cache,
@@ -71,7 +73,7 @@ export async function coordinateProcessing(
     logger.info(
       `Filtered cache routes: ${filteredCachedRoutes.length}/${cache.routes.length} routes will be processed`
     );
-    
+
     // Debug: show what was filtered out
     const excludedCount = cache.routes.length - filteredCachedRoutes.length;
     if (excludedCount > 0) {
@@ -84,11 +86,15 @@ export async function coordinateProcessing(
       config,
       logger
     );
-    
+
     // Filter the live routes to match the cache filtering
-    const filteredRoutesPaths = new Set(filteredCachedRoutes.map(r => r.path));
-    const filteredRoutes = routes.filter(route => filteredRoutesPaths.has(route.path));
-    
+    const filteredRoutesPaths = new Set(
+      filteredCachedRoutes.map((r) => r.path)
+    );
+    const filteredRoutes = routes.filter((route) =>
+      filteredRoutesPaths.has(route.path)
+    );
+
     routesToProcess = filteredRoutes;
     filteredCache = {
       ...cache,
@@ -98,7 +104,7 @@ export async function coordinateProcessing(
     logger.info(
       `Build context filtering: ${filteredRoutes.length}/${routes.length} routes will be processed`
     );
-    
+
     // Debug: show what was filtered out
     const excludedCount = routes.length - filteredRoutes.length;
     if (excludedCount > 0) {
@@ -131,19 +137,21 @@ export async function coordinateProcessing(
   if (cachedRoutes && !isCliContext) {
     // Merge the processed routes back into the full cache
     // This ensures we keep ALL routes in cache, not just the filtered ones
-    const processedPaths = new Set(cachedRoutes.map(r => r.path));
-    const mergedRoutes = cache.routes.map(route => {
+    const processedPaths = new Set(cachedRoutes.map((r) => r.path));
+    const mergedRoutes = cache.routes.map((route) => {
       if (processedPaths.has(route.path)) {
         // Find the updated route from processing
-        const updatedRoute = cachedRoutes.find(r => r.path === route.path);
+        const updatedRoute = cachedRoutes.find((r) => r.path === route.path);
         return updatedRoute ?? route;
       }
       return route;
     });
-    
+
     await cacheManager.updateCacheWithRoutes(config, mergedRoutes);
     cacheUpdated = true;
-    logger.debug(`Cache updated with ${mergedRoutes.length} routes (${cachedRoutes.length} processed)`);
+    logger.debug(
+      `Cache updated with ${mergedRoutes.length} routes (${cachedRoutes.length} processed)`
+    );
   } else if (isCliContext) {
     logger.debug('CLI context: cache preserved unchanged');
   } else {

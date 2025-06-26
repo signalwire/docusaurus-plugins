@@ -129,7 +129,7 @@ export function buildDocumentTree(
     // Create category hierarchy up to the depth specified
     let categoryPath = '';
     let currentNode = root as MutableTreeNode;
-    
+
     // Build the hierarchy up to depth levels (or segments length if shorter)
     for (let i = 0; i < Math.min(depth, segments.length); i++) {
       const segment = segments[i];
@@ -164,11 +164,11 @@ export function buildDocumentTree(
 
     // Determine if this is an index document or regular document
     const hierarchyDepth = Math.min(depth, segments.length);
-    
+
     // For standalone pages at root level (like /markdown-page), treat as regular docs
     // For pages that match their category depth exactly, treat as index docs
     const isStandalonePage = segments.length === 1 && depth === 1;
-    
+
     if (segments.length === hierarchyDepth && !isStandalonePage) {
       // This document represents the category itself (e.g., /docs/intro.md for docs category)
       (currentNode as MutableTreeNode & { indexDoc?: DocInfo }).indexDoc = doc;

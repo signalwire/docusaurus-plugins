@@ -56,7 +56,9 @@ export function validateRoutesForProcessing(
 }> {
   // Log route info - no filtering at build time, all filtering happens during cache filtering
   if (routes.length > 0) {
-    logger.debug(`Processing ${routes.length} routes for caching (no filtering at build time)`);
+    logger.debug(
+      `Processing ${routes.length} routes for caching (no filtering at build time)`
+    );
   }
 
   // Create a simple map for route lookup
@@ -77,10 +79,7 @@ export function validateRoutesForProcessing(
       };
     }
 
-    const validation = validateSingleRoute(
-      route,
-      cachedRoute
-    );
+    const validation = validateSingleRoute(route, cachedRoute);
 
     return { route, cachedRoute, isValid: validation.isValid };
   });

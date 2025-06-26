@@ -31,10 +31,10 @@ export interface CachedRouteInfo {
   readonly hash?: string;
   readonly markdownFile?: string;
   readonly plugin?: string;
-  
+
   // NEW: Metadata for cache-based filtering
   readonly contentType: ContentType;
-  readonly isVersioned?: boolean;  // true for non-latest versions (isLast=false), false for latest (isLast=true)
+  readonly isVersioned?: boolean; // true for non-latest versions (isLast=false), false for latest (isLast=true)
   readonly isGeneratedIndex?: boolean;
 }
 
