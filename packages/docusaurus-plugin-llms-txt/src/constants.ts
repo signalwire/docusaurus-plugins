@@ -39,6 +39,9 @@ export const CONTENT_TYPES = {
   UNKNOWN: 'unknown',
 } as const;
 
+/** Union type for content types */
+export type ContentType = (typeof CONTENT_TYPES)[keyof typeof CONTENT_TYPES];
+
 // ============================================================================
 // TREE CONSTANTS
 // ============================================================================

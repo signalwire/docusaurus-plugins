@@ -68,16 +68,18 @@ function createPluginInfoMapping(
         if (
           versionProps &&
           typeof versionProps === 'object' &&
-          'version' in versionProps
+          'isLast' in versionProps
         ) {
-          const version = versionProps.version as string;
-          const isCurrentVersion = version === 'current';
+          // Docusaurus versioning: isLast=true for latest released version
+          // Note: "current" version might be unreleased/future state
+          // Only isLast=false routes should be filtered when includeVersionedDocs=false
+          const isLast = versionProps.isLast as boolean;
+          const isVersioned = !isLast; // Only non-latest versions are "versioned"
 
           if (currentPluginInfo) {
             currentPluginInfo = {
               ...currentPluginInfo,
-              version,
-              isVersioned: !isCurrentVersion,
+              isVersioned,
             };
           }
         }
@@ -105,7 +107,7 @@ function enhanceRoutesWithPluginInfo(
   flattenedRoutes: RouteConfig[],
   pluginInfoMap: Map<
     string,
-    { name: string; id: string; version?: string; isVersioned?: boolean }
+    { name: string; id: string; isVersioned?: boolean }
   >
 ): PluginRouteConfig[] {
   return flattenedRoutes.map((route) => {
@@ -121,9 +123,7 @@ function enhanceRoutesWithPluginInfo(
       } as PluginRouteConfig;
 
       // Add version metadata if available
-      if (pluginInfo.version !== undefined) {
-        (enhancedRoute as Record<string, unknown>).__docusaurus_version =
-          pluginInfo.version;
+      if (pluginInfo.isVersioned !== undefined) {
         (enhancedRoute as Record<string, unknown>).__docusaurus_isVersioned =
           pluginInfo.isVersioned;
       }
@@ -199,17 +199,37 @@ export default function llmsTxtPlugin(
 
         log.info(`Processing ${enhancedRoutes.length} routes`);
 
-        // Use unified processing orchestrator with Docusaurus-provided paths
-        const result = await orchestrateProcessing(enhancedRoutes, {
+        // Create cache manager to capture enhanced metadata immediately
+        const cacheManager = new (await import('./cache/cache')).CacheManager(
           siteDir,
           generatedFilesDir,
           config,
-          siteConfig,
           outDir,
-          logger: log,
-          contentSelectors: config.content?.contentSelectors ?? [],
-          relativePaths: config.content?.relativePaths !== false,
-        });
+          siteConfig
+        );
+
+        // Create cached routes with enhanced metadata before processing
+        const enhancedCachedRoutes =
+          cacheManager.createCachedRouteInfo(enhancedRoutes);
+        log.debug(
+          `Created cached routes with enhanced metadata: ${enhancedCachedRoutes.length} routes`
+        );
+
+        // Use unified processing orchestrator with Docusaurus-provided paths
+        const result = await orchestrateProcessing(
+          enhancedRoutes,
+          {
+            siteDir,
+            generatedFilesDir,
+            config,
+            siteConfig,
+            outDir,
+            logger: log,
+            contentSelectors: config.content?.contentSelectors ?? [],
+            relativePaths: config.content?.relativePaths !== false,
+          },
+          enhancedCachedRoutes
+        );
 
         log.success(
           `Plugin completed successfully - processed ${result.processedCount} documents`

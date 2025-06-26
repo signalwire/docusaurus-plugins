@@ -6,10 +6,11 @@
 
 import path from 'path';
 
-import type { RouteConfig } from '@docusaurus/types';
+import type { RouteConfig, PluginRouteConfig } from '@docusaurus/types';
 
 import packageJson from '../../package.json';
 import { CACHE_FILENAME } from '../constants';
+import { classifyRoute } from '../discovery/content-classifier';
 import { routePathToHtmlPath } from '../discovery/route-filter';
 import { PathManager, htmlPathToMdPath } from '../filesystem/paths';
 import type {
@@ -86,11 +87,16 @@ export class CacheManager {
     return calcConfigHash(options);
   }
 
-  /** Create cached route info from routes */
+  /** Create cached route info from routes with metadata for filtering */
   createCachedRouteInfo(routes: RouteConfig[]): CachedRouteInfo[] {
     const cachedRoutes = routes.map((route) => {
-      // Type guard for PluginRouteConfig with proper typing
-      const pluginRoute = route as { plugin?: { name?: string } };
+      // Type guard for enhanced route with metadata
+      const enhancedRoute = route as {
+        plugin?: { name?: string };
+        props?: { categoryGeneratedIndex?: unknown };
+        __docusaurus_version?: string;
+        __docusaurus_isVersioned?: boolean;
+      };
 
       const baseInfo = {
         path: route.path,
@@ -101,11 +107,23 @@ export class CacheManager {
         ),
       };
 
-      const pluginInfo = pluginRoute.plugin?.name
-        ? { plugin: pluginRoute.plugin.name }
+      const pluginInfo = enhancedRoute.plugin?.name
+        ? { plugin: enhancedRoute.plugin.name }
         : {};
 
-      return { ...baseInfo, ...pluginInfo } satisfies CachedRouteInfo;
+      // Extract metadata for cache-based filtering
+      const metadata = {
+        contentType: classifyRoute(enhancedRoute as PluginRouteConfig),
+        isVersioned: enhancedRoute.__docusaurus_isVersioned,
+        isGeneratedIndex:
+          enhancedRoute.props?.categoryGeneratedIndex !== undefined,
+      };
+
+      return {
+        ...baseInfo,
+        ...pluginInfo,
+        ...metadata,
+      } satisfies CachedRouteInfo;
     });
 
     return cachedRoutes;

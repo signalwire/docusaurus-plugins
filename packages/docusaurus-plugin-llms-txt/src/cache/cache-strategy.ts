@@ -115,6 +115,8 @@ export function validateCliContext(
   }
 
   if (!configMatches) {
-    logger.debug(CACHE_MESSAGES.CONFIG_CHANGED_REGENERATE);
+    logger.info(
+      'Configuration changed - applying current settings to cached routes'
+    );
   }
 }

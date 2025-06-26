@@ -51,15 +51,7 @@ export async function buildLlmsFullTxtContent(
         continue;
       }
 
-      // Add document header
-      content += `## ${doc.title}\n\n`;
-
-      // Add description if available
-      if (doc.description) {
-        content += `> ${doc.description}\n\n`;
-      }
-
-      // Add the processed markdown content
+      // Add the processed markdown content (no need for duplicate header)
       content += markdownContent;
       content += '\n\n---\n\n';
     } catch {

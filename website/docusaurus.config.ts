@@ -49,16 +49,17 @@ const config: Config = {
         depth: 1,
         content: {
           includeBlog: false,
-          includePages: false,
+          includePages: true,
           includeDocs: true,
-          includeVersionedDocs: true,
+          includeVersionedDocs: false,
           includeGeneratedIndex: false,
           enableMarkdownFiles: true,
           enableLlmsFullTxt: true,
           routeRules: [
             {
-              route: '/api/v[0-9]*/**',
-              depth: 2
+              route: '/api/**',
+              depth: 1,
+              categoryName: 'API Documentation'
             }
           ]
         },
