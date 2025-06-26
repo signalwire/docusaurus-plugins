@@ -7,6 +7,8 @@ import type { Root } from 'hast';
 import type { Options as RemarkGfmOptions } from 'remark-gfm';
 import type { Options as RemarkStringifyOptions } from 'remark-stringify';
 
+import type { ContentType } from '../constants';
+
 import type {
   ContentOptions,
   PluginOptions,
@@ -19,7 +21,7 @@ import type {
 // ============================================================================
 
 /**
- * Cached route information
+ * Cached route information with metadata for filtering
  */
 export interface CachedRouteInfo {
   readonly path: string;
@@ -29,6 +31,11 @@ export interface CachedRouteInfo {
   readonly hash?: string;
   readonly markdownFile?: string;
   readonly plugin?: string;
+  
+  // NEW: Metadata for cache-based filtering
+  readonly contentType: ContentType;
+  readonly isVersioned?: boolean;  // true for non-latest versions (isLast=false), false for latest (isLast=true)
+  readonly isGeneratedIndex?: boolean;
 }
 
 /**

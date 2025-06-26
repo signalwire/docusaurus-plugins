@@ -10,6 +10,7 @@ import {
   DOCUSAURUS_BLOG_PLUGIN,
   DOCUSAURUS_PAGES_PLUGIN,
   CONTENT_TYPES,
+  type ContentType,
 } from '../constants';
 import type { PluginOptions } from '../types';
 
@@ -19,7 +20,7 @@ import type { PluginOptions } from '../types';
  */
 export function classifyRoute(
   route: PluginRouteConfig
-): 'docs' | 'blog' | 'pages' | 'unknown' {
+): ContentType {
   const plugin = route.plugin;
 
   // If we have plugin info, use it
@@ -45,7 +46,7 @@ export function classifyRoute(
  */
 function classifyRouteByHeuristics(
   route: PluginRouteConfig
-): 'docs' | 'blog' | 'pages' | 'unknown' {
+): ContentType {
   // Check component type - docs typically use @theme/DocItem
   if (route.component === '@theme/DocItem') {
     return CONTENT_TYPES.DOCS;

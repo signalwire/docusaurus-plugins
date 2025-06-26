@@ -5,12 +5,6 @@
 
 import type { RouteConfig, PluginRouteConfig } from '@docusaurus/types';
 
-import { getContentConfig } from '../config';
-import { createExclusionMatcher } from '../discovery/exclusion-matcher';
-import {
-  validateRouteForProcessing,
-  validateAndLogRouteFiltering,
-} from '../discovery/route-filter';
 import type {
   PluginOptions,
   Logger,
@@ -30,20 +24,14 @@ function isPluginRouteConfig(route: RouteConfig): route is PluginRouteConfig {
  */
 export function validateSingleRoute(
   route: RouteConfig,
-  cachedRoute: CachedRouteInfo | null,
-  options: PluginOptions,
-  isExcluded: (_path: string) => boolean,
-  logger: Logger
+  cachedRoute: CachedRouteInfo | null
 ): ValidationResult {
   // Safe conversion using type guard
   if (!isPluginRouteConfig(route)) {
     return { isValid: false, reason: 'Route is not a valid plugin route' };
   }
 
-  // Check if route should be processed based on content classification
-  if (!validateRouteForProcessing(route, options, isExcluded, logger)) {
-    return { isValid: false, reason: 'Route failed classification validation' };
-  }
+  // No filtering at build time - all routes should be cached for flexibility
 
   // Check if cached route has HTML path
   if (!cachedRoute?.htmlPath) {
@@ -66,19 +54,9 @@ export function validateRoutesForProcessing(
   cachedRoute: CachedRouteInfo;
   isValid: boolean;
 }> {
-  const contentConfig = getContentConfig(options);
-  const isExcluded = createExclusionMatcher(contentConfig.excludeRoutes);
-
-  // Get filtering info if we have route data to filter
+  // Log route info - no filtering at build time, all filtering happens during cache filtering
   if (routes.length > 0) {
-    // Filter to only valid plugin routes for validation
-    const validPluginRoutes = routes.filter(isPluginRouteConfig);
-    validateAndLogRouteFiltering(
-      validPluginRoutes,
-      options,
-      isExcluded,
-      logger
-    );
+    logger.debug(`Processing ${routes.length} routes for caching (no filtering at build time)`);
   }
 
   // Create a simple map for route lookup
@@ -101,10 +79,7 @@ export function validateRoutesForProcessing(
 
     const validation = validateSingleRoute(
       route,
-      cachedRoute,
-      options,
-      isExcluded,
-      logger
+      cachedRoute
     );
 
     return { route, cachedRoute, isValid: validation.isValid };

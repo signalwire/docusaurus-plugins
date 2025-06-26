@@ -13,7 +13,7 @@ import {
 import { setupDirectories, buildSiteUrl } from './filesystem/paths';
 import { generateOutputFiles } from './generation/output-generator';
 import { coordinateProcessing } from './processing/processing-coordinator';
-import type { ProcessingConfig, ProcessingResult } from './types';
+import type { ProcessingConfig, ProcessingResult, CachedRouteInfo } from './types';
 
 /**
  * Unified processing orchestrator that handles both build-time and CLI scenarios
@@ -21,7 +21,8 @@ import type { ProcessingConfig, ProcessingResult } from './types';
  */
 export async function orchestrateProcessing(
   routes: RouteConfig[],
-  processingConfig: ProcessingConfig
+  processingConfig: ProcessingConfig,
+  enhancedCachedRoutes?: CachedRouteInfo[]
 ): Promise<ProcessingResult> {
   const { siteDir, generatedFilesDir, config, siteConfig, outDir, logger } =
     processingConfig;
@@ -38,11 +39,21 @@ export async function orchestrateProcessing(
   );
   const cache = await cacheManager.loadCache();
 
+  // Use enhanced cached routes if provided (build-time with metadata)
+  let finalCache = cache;
+  if (enhancedCachedRoutes) {
+    finalCache = {
+      ...cache,
+      routes: enhancedCachedRoutes,
+    };
+    logger.debug(`Using enhanced cached routes with metadata: ${enhancedCachedRoutes.length} routes`);
+  }
+
   // Determine processing context and cache strategy
   const isCliContext = routes.length === 0;
   const cacheStrategy = analyzeCacheStrategy(
     cacheManager,
-    cache,
+    finalCache,
     config,
     isCliContext,
     logger,
@@ -61,7 +72,7 @@ export async function orchestrateProcessing(
   // Process documents
   const processingResult = await coordinateProcessing(
     routes,
-    cache,
+    finalCache,
     cacheManager,
     directories,
     config,
