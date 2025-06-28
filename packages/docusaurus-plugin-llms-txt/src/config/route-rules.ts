@@ -5,13 +5,14 @@
 
 import { createMatcher } from '@docusaurus/utils';
 
-import { VALIDATION_MESSAGES } from '../constants';
+// import { VALIDATION_MESSAGES } from '../constants'; // Currently unused
+import { createConfigError } from '../errors';
 import type {
   RouteRule,
   PluginOptions,
   EffectiveConfig,
   ContentOptions,
-  Logger,
+  Depth,
 } from '../types';
 import { ensureLeadingSlash } from '../utils';
 
@@ -95,11 +96,10 @@ export function applyRouteRule(
 }
 
 /**
- * Validate route rules for conflicts and warn about issues
+ * Validate route rules for conflicts and throw errors for true conflicts
  */
 export function validateRouteRules(
-  routeRules: readonly RouteRule[],
-  logger: Logger
+  routeRules: readonly RouteRule[]
 ): void {
   if (routeRules.length === 0) {
     return;
@@ -107,28 +107,58 @@ export function validateRouteRules(
 
   const conflicts = findRouteRuleConflicts(routeRules);
 
-  // Report conflicts using logger
-  conflicts.forEach(({ route, categories, includeOrders }) => {
-    if (categories.length > 1) {
-      const message = `${VALIDATION_MESSAGES.ROUTE_RULE_MULTIPLE_CATEGORIES} "${route}": ${categories.join(', ')}. ${VALIDATION_MESSAGES.USING_LAST_DEFINITION}`;
-      logger.warn(message);
+  // Throw errors for true conflicts (same route pattern with conflicting properties)
+  conflicts.forEach((conflict) => {
+    const conflictMessages: string[] = [];
+    
+    if (conflict.categories.length > 1) {
+      conflictMessages.push(`categoryName: [${conflict.categories.join(', ')}]`);
     }
-
-    if (includeOrders > 1) {
-      const message = `${VALIDATION_MESSAGES.ROUTE_RULE_MULTIPLE_ORDERS} "${route}". ${VALIDATION_MESSAGES.USING_LAST_DEFINITION}`;
-      logger.warn(message);
+    
+    if (conflict.depths.length > 1) {
+      conflictMessages.push(`depth: [${conflict.depths.join(', ')}]`);
+    }
+    
+    if (conflict.includeOrders > 1) {
+      conflictMessages.push(`includeOrder: ${conflict.includeOrders} different definitions`);
+    }
+    
+    if (conflict.contentSelectors > 1) {
+      conflictMessages.push(`contentSelectors: ${conflict.contentSelectors} different definitions`);
+    }
+    
+    if (conflictMessages.length > 0) {
+      const errorMessage = `Route rule conflict detected for pattern "${conflict.route}". Multiple conflicting values found for: ${conflictMessages.join(', ')}. Each route pattern should have only one value for each property. Please consolidate or use more specific route patterns.`;
+      
+      throw createConfigError(errorMessage, {
+        conflictingRoute: conflict.route,
+        conflictDetails: {
+          categories: conflict.categories,
+          depths: conflict.depths,
+          includeOrders: conflict.includeOrders,
+          contentSelectors: conflict.contentSelectors,
+        },
+        suggestion: 'Use more specific route patterns (e.g., "/api/v1/**" vs "/api/v2/**") or consolidate conflicting rules into a single rule definition.',
+      });
     }
   });
 }
 
 /**
- * Find conflicts between route rules
+ * Enhanced conflict detection interface
  */
-function findRouteRuleConflicts(routeRules: readonly RouteRule[]): Array<{
+interface RouteRuleConflict {
   route: string;
   categories: string[];
+  depths: Depth[];
   includeOrders: number;
-}> {
+  contentSelectors: number;
+}
+
+/**
+ * Find conflicts between route rules - enhanced to detect all property conflicts
+ */
+function findRouteRuleConflicts(routeRules: readonly RouteRule[]): RouteRuleConflict[] {
   const routeMap = new Map<string, RouteRule[]>();
 
   // Group rules by route pattern
@@ -142,11 +172,7 @@ function findRouteRuleConflicts(routeRules: readonly RouteRule[]): Array<{
     }
   });
 
-  const conflicts: Array<{
-    route: string;
-    categories: string[];
-    includeOrders: number;
-  }> = [];
+  const conflicts: RouteRuleConflict[] = [];
 
   // Check for conflicts within each route group
   routeMap.forEach((rulesForRoute, route) => {
@@ -154,21 +180,44 @@ function findRouteRuleConflicts(routeRules: readonly RouteRule[]): Array<{
       return;
     }
 
+    // Check categoryName conflicts
     const categories = rulesForRoute
       .map((r) => r.categoryName)
       .filter((name): name is string => Boolean(name));
+    const uniqueCategories = [...new Set(categories)];
 
+    // Check depth conflicts
+    const depths = rulesForRoute
+      .map((r) => r.depth)
+      .filter((depth): depth is Depth => depth !== undefined);
+    const uniqueDepths = [...new Set(depths)];
+
+    // Check includeOrder conflicts
     const includeOrders = rulesForRoute
       .map((r) => r.includeOrder)
       .filter(Boolean);
+    const uniqueIncludeOrders = includeOrders.length;
 
-    const uniqueCategories = [...new Set(categories)];
+    // Check contentSelectors conflicts
+    const contentSelectors = rulesForRoute
+      .map((r) => r.contentSelectors)
+      .filter(Boolean);
+    const uniqueContentSelectors = contentSelectors.length;
 
-    if (uniqueCategories.length > 1 || includeOrders.length > 1) {
+    // Only report if there are actual conflicts (multiple different values for same property)
+    const hasConflicts = 
+      uniqueCategories.length > 1 ||
+      uniqueDepths.length > 1 ||
+      uniqueIncludeOrders > 1 ||
+      uniqueContentSelectors > 1;
+
+    if (hasConflicts) {
       conflicts.push({
         route,
         categories: uniqueCategories,
-        includeOrders: includeOrders.length,
+        depths: uniqueDepths,
+        includeOrders: uniqueIncludeOrders,
+        contentSelectors: uniqueContentSelectors,
       });
     }
   });

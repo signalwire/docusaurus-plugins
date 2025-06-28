@@ -48,13 +48,15 @@ const config: Config = {
         onRouteError: 'throw',
         depth: 1,
         content: {
-          includeBlog: false,
+          includeBlog: true,
           includePages: true,
           includeDocs: true,
-          includeVersionedDocs: false,
+          includeVersionedDocs: true,
           includeGeneratedIndex: false,
-          enableMarkdownFiles: true,
+          enableMarkdownFiles: false,
+          relativePaths: true,
           enableLlmsFullTxt: true,
+          excludeRoutes: ['/docs/tutorial-extras/**'],
           routeRules: [
             {
               route: '/api/**',

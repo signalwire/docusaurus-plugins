@@ -140,6 +140,7 @@ export interface RehypeLinksOptions {
   readonly enableMarkdownFiles?: boolean;
   readonly excludeRoutes?: readonly string[];
   readonly fullConfig?: PluginOptions;
+  readonly routeLookup?: Map<string, CachedRouteInfo>;
 }
 
 /**
@@ -162,6 +163,8 @@ export interface MarkdownConversionOptions {
   readonly rehypePlugins?: readonly PluginInput[];
   readonly beforeDefaultRemarkPlugins?: readonly PluginInput[];
   readonly remarkPlugins?: readonly PluginInput[];
+  // Route lookup table for link resolution
+  readonly routeLookup?: Map<string, CachedRouteInfo>;
 }
 
 /**

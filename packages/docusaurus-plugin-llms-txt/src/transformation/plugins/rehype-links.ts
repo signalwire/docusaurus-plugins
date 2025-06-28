@@ -4,8 +4,7 @@ import type { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
 
 import { HTML_OR_MD_EXTENSION_REGEX } from '../../constants';
-import { wouldRouteBeProcessed } from '../../discovery/route-matcher';
-import type { RehypeLinksOptions } from '../../types';
+import type { RehypeLinksOptions, CachedRouteInfo } from '../../types';
 import { formatUrl, ensureLeadingSlash } from '../../utils/url';
 
 /**
@@ -23,6 +22,41 @@ function isInternalLink(href: string): boolean {
 }
 
 /**
+ * Resolve a link pathname to its actual route using the route lookup table
+ */
+function resolvePathname(pathname: string, routeLookup?: Map<string, CachedRouteInfo>): string {
+  if (!routeLookup) {
+    return pathname;
+  }
+
+  // Direct lookup
+  if (routeLookup.has(pathname)) {
+    return pathname;
+  }
+
+  // Try with trailing slash
+  const withTrailingSlash = pathname.endsWith('/') ? pathname : pathname + '/';
+  if (routeLookup.has(withTrailingSlash)) {
+    return withTrailingSlash;
+  }
+
+  // Try without trailing slash
+  const withoutTrailingSlash = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+  if (routeLookup.has(withoutTrailingSlash)) {
+    return withoutTrailingSlash;
+  }
+
+  // Try with index suffix
+  const withIndex = pathname.endsWith('/') ? pathname + 'index' : pathname + '/index';
+  if (routeLookup.has(withIndex)) {
+    return withIndex;
+  }
+
+  // Return original if not found
+  return pathname;
+}
+
+/**
  * Check if a URL should be excluded from transformation based on all configuration options
  */
 function isExcludedLink(href: string, options: RehypeLinksOptions): boolean {
@@ -37,17 +71,23 @@ function isExcludedLink(href: string, options: RehypeLinksOptions): boolean {
   // Normalize pathname to match exclude patterns (ensure it starts with /)
   pathname = ensureLeadingSlash(pathname);
 
+  // If we have a route lookup table, resolve the pathname first
+  const resolvedPathname = resolvePathname(pathname, options.routeLookup);
+
   // First check explicit exclusion patterns for backward compatibility
   if (options.excludeRoutes?.length) {
     const isExcluded = createMatcher([...options.excludeRoutes]);
-    if (isExcluded(pathname)) {
+    if (isExcluded(resolvedPathname)) {
       return true;
     }
   }
 
-  // If we have the full config, use the comprehensive route matcher
-  if (options.fullConfig) {
-    return !wouldRouteBeProcessed(pathname, options.fullConfig);
+  // Use route lookup if available (preferred method)
+  if (options.routeLookup) {
+    const routeInfo = options.routeLookup.get(resolvedPathname);
+    // If route is not in lookup, it won't be processed
+    // If route is in lookup but has no HTML path, it won't be processed
+    return !routeInfo?.htmlPath;
   }
 
   // Fallback to false if no full config available
@@ -122,9 +162,12 @@ function transformInternalLink(
     pathname = pathname.slice(0, -1);
   }
 
+  // If we have a route lookup table, resolve the pathname to its actual route
+  const resolvedPathname = resolvePathname(pathname, options.routeLookup);
+
   // Use our URL formatting utility for the pathname
   const transformedPathname = formatUrl(
-    pathname,
+    resolvedPathname,
     { relativePaths, enableMarkdownFiles },
     baseUrl
   );

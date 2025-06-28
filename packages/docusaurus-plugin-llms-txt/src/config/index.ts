@@ -1,6 +1,5 @@
 import { VALIDATION_MESSAGES } from '../constants';
 import { createConfigError } from '../errors';
-import { createPluginLogger } from '../logging';
 import type { PluginOptions, EffectiveConfig, ContentOptions } from '../types';
 import { pluginOptionsSchema } from '../types';
 import { ensureLeadingSlash } from '../utils';
@@ -32,8 +31,7 @@ export function getConfig(options: Partial<PluginOptions>): PluginOptions {
     // Validate route rules for conflicts
     const contentConfig = getContentConfig(validated);
     if (contentConfig.routeRules.length > 0) {
-      const logger = createPluginLogger(validated);
-      validateRouteRules(contentConfig.routeRules, logger);
+      validateRouteRules(contentConfig.routeRules);
     }
 
     // Apply GFM configuration

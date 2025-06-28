@@ -112,6 +112,7 @@ export function registerLlmsTxtClean(
             siteDir,
             generatedFilesDir,
             config,
+            log,
             context.outDir,
             context.siteConfig
           );

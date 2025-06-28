@@ -6,6 +6,7 @@
 import path from 'path';
 
 import type { RouteConfig } from '@docusaurus/types';
+import pMap from 'p-map';
 
 import { CacheManager } from '../cache/cache';
 import { validateCliContext } from '../cache/cache-strategy';
@@ -44,7 +45,8 @@ async function processSingleRoute(
   directories: { docsDir: string; mdOutDir: string },
   logger: Logger,
   siteUrl: string,
-  outDir?: string
+  outDir?: string,
+  routeLookup?: Map<string, CachedRouteInfo>
 ): Promise<{ doc?: DocInfo; updatedCachedRoute?: CachedRouteInfo }> {
   if (!cachedRoute.htmlPath) {
     logger.debug(`No HTML path for route: ${route.path}`);
@@ -62,7 +64,8 @@ async function processSingleRoute(
       directories.mdOutDir,
       logger,
       siteUrl,
-      outDir
+      outDir,
+      routeLookup
     );
 
     if (doc) {
@@ -71,7 +74,7 @@ async function processSingleRoute(
 
       // Note: This is a temporary CacheManager just for the update method
       // We don't have siteConfig here, but it's not needed for updateCachedRouteWithDoc
-      const cacheManager = new CacheManager('', '', config, outDir);
+      const cacheManager = new CacheManager('', '', config, logger, outDir);
 
       const updatedCachedRoute = cacheManager.updateCachedRouteWithDoc(
         cachedRoute,
@@ -116,12 +119,19 @@ async function processRoutesStream(
     siteDir,
     generatedFilesDir,
     options,
+    logger,
     outDir,
     siteConfig
   );
   const cachedRoutes =
     existingCachedRoutes ?? cacheManager.createCachedRouteInfo(routes);
   const directories = { docsDir, mdOutDir };
+
+  // Create route lookup table for link resolution
+  const routeLookup = new Map<string, CachedRouteInfo>();
+  for (const route of cachedRoutes) {
+    routeLookup.set(route.path, route);
+  }
 
   // Validate routes for processing
   const validatedRoutes = validateRoutesForProcessing(
@@ -130,55 +140,77 @@ async function processRoutesStream(
     options,
     logger
   );
-  const docs: DocInfo[] = [];
-  const updatedCachedRoutes: CachedRouteInfo[] = [...cachedRoutes];
-
-  // Process each valid route
-  for (let i = 0; i < validatedRoutes.length; i++) {
-    const routeData = validatedRoutes[i];
-    if (!routeData) continue;
-
-    const { route, cachedRoute, isValid } = routeData;
-    if (!isValid) continue;
-
-    // Only process routes that have a complete RouteConfig (not Partial<RouteConfig>)
-    if (!isCompleteRouteConfig(route)) {
-      logger.debug(`Skipping incomplete route: ${route.path}`);
-      continue;
-    }
-
-    // Check if we can use cached data
-    const canUseCache =
-      useCache && (await cacheManager.isCachedRouteValid(cachedRoute, options));
-
-    if (canUseCache) {
-      const doc = cacheManager.cachedRouteToDocInfo(cachedRoute);
-      if (doc) {
-        docs.push(doc);
-        logger.debug(`Using cached data for route: ${route.path}`);
-        continue;
+  // Process routes concurrently with p-map
+  const results = await pMap(
+    validatedRoutes,
+    async (routeData, index) => {
+      if (!routeData) {
+        return { originalIndex: index };
       }
-    }
 
-    // Process the route - TypeScript now knows route is a complete RouteConfig
-    const result = await processSingleRoute(
-      route,
-      cachedRoute,
-      options,
-      directories,
-      logger,
-      siteUrl,
-      outDir
-    );
+      const { route, cachedRoute, isValid } = routeData;
+      if (!isValid) {
+        return { originalIndex: index };
+      }
 
-    if (result.doc) {
-      docs.push(result.doc);
-    }
+      // Only process routes that have a complete RouteConfig (not Partial<RouteConfig>)
+      if (!isCompleteRouteConfig(route)) {
+        logger.debug(`Skipping incomplete route: ${route.path}`);
+        return { originalIndex: index };
+      }
 
+      // Check if we can use cached data
+      let canUseCache = false;
+      try {
+        canUseCache = useCache && (await cacheManager.isCachedRouteValid(cachedRoute, options));
+      } catch (error) {
+        const errorMessage = getErrorMessage(error);
+        logger.debug(
+          `Cache validation failed for route ${route.path}, falling back to processing: ${errorMessage}`
+        );
+        canUseCache = false;
+      }
+
+      if (canUseCache) {
+        const doc = cacheManager.cachedRouteToDocInfo(cachedRoute);
+        if (doc) {
+          logger.debug(`Using cached data for route: ${route.path}`);
+          return { doc, originalIndex: index };
+        }
+      }
+
+      // Process the route - TypeScript now knows route is a complete RouteConfig
+      const result = await processSingleRoute(
+        route,
+        cachedRoute,
+        options,
+        directories,
+        logger,
+        siteUrl,
+        outDir,
+        routeLookup
+      );
+
+      return {
+        doc: result.doc,
+        updatedCachedRoute: result.updatedCachedRoute,
+        originalIndex: index,
+      };
+    },
+    { concurrency: 10 }
+  );
+
+  // Collect results safely
+  const docs: DocInfo[] = results
+    .map(r => r.doc)
+    .filter((doc): doc is DocInfo => doc !== undefined);
+  const updatedCachedRoutes: CachedRouteInfo[] = [...cachedRoutes];
+  
+  results.forEach(result => {
     if (result.updatedCachedRoute) {
-      updatedCachedRoutes[i] = result.updatedCachedRoute;
+      updatedCachedRoutes[result.originalIndex] = result.updatedCachedRoute;
     }
-  }
+  });
 
   return { docs, cachedRoutes: updatedCachedRoutes };
 }

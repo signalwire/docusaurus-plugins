@@ -38,6 +38,7 @@ export async function orchestrateProcessing(
     siteDir,
     generatedFilesDir,
     config,
+    logger,
     outDir,
     siteConfig
   );
@@ -59,7 +60,7 @@ export async function orchestrateProcessing(
   const isCliContext = routes.length === 0;
   const cacheStrategy = analyzeCacheStrategy(
     cacheManager,
-    finalCache,
+    cache, // Use original cache for comparison, not the enhanced one
     config,
     isCliContext,
     logger,

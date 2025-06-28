@@ -101,7 +101,7 @@ export function extractHtmlMetadata(html: string): {
   } catch (error) {
     const errorMessage = getErrorMessage(error);
     throw createProcessingError(
-      `Error extracting HTML metadata: ${errorMessage}`
+      `Failed to extract title and description from HTML: ${errorMessage}. This may indicate malformed HTML or an issue with the HTML parsing library.`
     );
   }
 }
@@ -128,7 +128,11 @@ export function convertHtmlToMarkdown(
     );
 
     if (!content) {
-      throw createProcessingError('No content could be extracted from HTML');
+      throw createProcessingError(
+        `No content could be extracted from HTML using the provided contentSelectors: [${contentSelectors.join(', ')}]. ` +
+        `The HTML file may not contain elements matching these CSS selectors. ` +
+        `Try using more general selectors like 'main', 'article', or inspect the HTML structure to find the right selectors.`
+      );
     }
 
     // Create processor pipelines using plugin registry
@@ -152,7 +156,7 @@ export function convertHtmlToMarkdown(
   } catch (error) {
     const errorMessage = getErrorMessage(error);
     throw createProcessingError(
-      `HTML to Markdown conversion failed: ${errorMessage}`
+      `HTML to Markdown conversion failed: ${errorMessage}. This could be due to malformed HTML, unsupported HTML elements, or issues with the conversion pipeline. Check the HTML file structure and content.`
     );
   }
 }

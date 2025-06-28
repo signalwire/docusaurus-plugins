@@ -1,4 +1,4 @@
-import type { Root, Element, Nodes } from 'hast';
+import type { Root } from 'hast';
 import { select } from 'hast-util-select';
 import { toString } from 'hast-util-to-string';
 
@@ -7,8 +7,9 @@ import { toString } from 'hast-util-to-string';
  * @internal
  */
 export function selectText(tree: Root, selector: string): string {
-  const element = select(selector, tree) as Element | null;
-  return element ? toString(element as Nodes).trim() : '';
+  const element = select(selector, tree);
+  // select() returns Element | null, toString() accepts any Node
+  return element ? toString(element).trim() : '';
 }
 
 /**
@@ -16,6 +17,10 @@ export function selectText(tree: Root, selector: string): string {
  * @internal
  */
 export function selectMetaContent(tree: Root, selector: string): string {
-  const element = select(selector, tree) as Element | null;
-  return element?.properties?.content ? String(element.properties.content) : '';
+  const element = select(selector, tree);
+  // Safely check if element is Element with properties
+  if (element?.type === 'element' && element.properties?.content) {
+    return String(element.properties.content);
+  }
+  return '';
 }

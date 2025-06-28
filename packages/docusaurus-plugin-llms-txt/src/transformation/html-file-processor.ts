@@ -21,6 +21,7 @@ import type {
   PluginOptions,
   Logger,
   MarkdownConversionOptions,
+  CachedRouteInfo,
 } from '../types';
 
 import { extractHtmlMetadata, convertHtmlToMarkdown } from './html-parser';
@@ -36,7 +37,8 @@ export async function processHtmlFileWithContext(
   mdOutDir: string,
   logger: Logger,
   siteUrl: string,
-  outDir?: string
+  outDir?: string,
+  routeLookup?: Map<string, CachedRouteInfo>
 ): Promise<DocInfo> {
   // Use PathManager for all path operations
   const pathManager = new PathManager(path.dirname(mdOutDir), config, outDir);
@@ -67,6 +69,7 @@ export async function processHtmlFileWithContext(
         excludeRoutes: contentConfig.excludeRoutes,
         fullConfig: config,
         logger: logger,
+        routeLookup: routeLookup,
         // Pass simplified plugin arrays to the conversion pipeline
         beforeDefaultRehypePlugins: contentConfig.beforeDefaultRehypePlugins,
         rehypePlugins: contentConfig.rehypePlugins,
@@ -84,9 +87,13 @@ export async function processHtmlFileWithContext(
       markdown = result.content;
 
       if (!markdown)
-        throw createProcessingError('Conversion resulted in empty content', {
-          filePath: relHtmlPath,
-        });
+        throw createProcessingError(
+          `HTML to Markdown conversion resulted in empty content for "${relHtmlPath}". This usually means your contentSelectors didn't match any elements in the HTML. Try using different CSS selectors or check if the HTML file contains the expected content structure.`,
+          {
+            filePath: relHtmlPath,
+            contentSelectors,
+          }
+        );
 
       // Save markdown files if enableMarkdownFiles is true
       if (contentConfig.enableMarkdownFiles) {

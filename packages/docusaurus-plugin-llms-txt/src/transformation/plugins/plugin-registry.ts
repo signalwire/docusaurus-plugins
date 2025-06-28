@@ -88,6 +88,7 @@ export class PluginRegistry {
         enableMarkdownFiles: options.enableMarkdownFiles !== false,
         excludeRoutes: options.excludeRoutes ?? [],
         fullConfig: options.fullConfig,
+        routeLookup: options.routeLookup,
       };
       processor.use(rehypeLinks, linkOptions);
     }

@@ -48,11 +48,13 @@ function createPluginInfoMapping(
         route.plugin &&
         typeof route.plugin === 'object' &&
         'name' in route.plugin &&
-        'id' in route.plugin
+        'id' in route.plugin &&
+        typeof route.plugin.name === 'string' &&
+        typeof route.plugin.id === 'string'
       ) {
         currentPluginInfo = {
-          name: route.plugin.name as string,
-          id: route.plugin.id as string,
+          name: route.plugin.name,
+          id: route.plugin.id,
         };
       } else {
         currentPluginInfo = parentPluginInfo;
@@ -62,26 +64,23 @@ function createPluginInfoMapping(
       if (
         route.props &&
         typeof route.props === 'object' &&
-        'version' in route.props
+        'version' in route.props &&
+        route.props.version &&
+        typeof route.props.version === 'object' &&
+        'isLast' in route.props.version &&
+        typeof route.props.version.isLast === 'boolean'
       ) {
-        const versionProps = route.props.version as Record<string, unknown>;
-        if (
-          versionProps &&
-          typeof versionProps === 'object' &&
-          'isLast' in versionProps
-        ) {
-          // Docusaurus versioning: isLast=true for latest released version
-          // Note: "current" version might be unreleased/future state
-          // Only isLast=false routes should be filtered when includeVersionedDocs=false
-          const isLast = versionProps.isLast as boolean;
-          const isVersioned = !isLast; // Only non-latest versions are "versioned"
+        // Docusaurus versioning: isLast=true for latest released version
+        // Note: "current" version might be unreleased/future state
+        // Only isLast=false routes should be filtered when includeVersionedDocs=false
+        const isLast = route.props.version.isLast;
+        const isVersioned = !isLast; // Only non-latest versions are "versioned"
 
-          if (currentPluginInfo) {
-            currentPluginInfo = {
-              ...currentPluginInfo,
-              isVersioned,
-            };
-          }
+        if (currentPluginInfo) {
+          currentPluginInfo = {
+            ...currentPluginInfo,
+            isVersioned,
+          };
         }
       }
 
@@ -120,19 +119,22 @@ function enhanceRoutesWithPluginInfo(
           name: pluginInfo.name,
           id: pluginInfo.id,
         },
-      } as PluginRouteConfig;
+      } satisfies PluginRouteConfig;
 
       // Add version metadata if available
       if (pluginInfo.isVersioned !== undefined) {
-        (enhancedRoute as Record<string, unknown>).__docusaurus_isVersioned =
+        (enhancedRoute as PluginRouteConfig & { __docusaurus_isVersioned?: boolean }).__docusaurus_isVersioned =
           pluginInfo.isVersioned;
       }
 
       return enhancedRoute;
     }
 
-    // Return as PluginRouteConfig without plugin info (existing behavior)
-    return route as PluginRouteConfig;
+    // Return original route with plugin info (if it exists) or fallback
+    return route.plugin ? (route as PluginRouteConfig) : {
+      ...route,
+      plugin: { name: 'unknown', id: 'unknown' }
+    };
   });
 }
 
@@ -204,6 +206,7 @@ export default function llmsTxtPlugin(
           siteDir,
           generatedFilesDir,
           config,
+          log,
           outDir,
           siteConfig
         );

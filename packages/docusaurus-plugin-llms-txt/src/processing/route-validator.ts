@@ -13,10 +13,47 @@ import type {
 } from '../types';
 
 /**
- * Type guard to check if a route is a PluginRouteConfig
+ * Type guard to check if a route is a PluginRouteConfig with reliable structure
+ * Validates the properties that our code actually relies on
  */
 function isPluginRouteConfig(route: RouteConfig): route is PluginRouteConfig {
-  return 'plugin' in route || route.path !== undefined;
+  // Basic route structure validation
+  if (typeof route.path !== 'string') {
+    return false;
+  }
+
+  // Plugin info validation - if plugin exists, it must have proper structure
+  if ('plugin' in route && route.plugin !== undefined) {
+    if (
+      typeof route.plugin !== 'object' ||
+      route.plugin === null ||
+      !('name' in route.plugin) ||
+      typeof route.plugin.name !== 'string'
+    ) {
+      return false;
+    }
+  }
+
+  // Props validation - if props exist, validate version structure if present
+  if ('props' in route && route.props !== undefined) {
+    if (typeof route.props !== 'object' || route.props === null) {
+      return false;
+    }
+
+    // If version info exists, validate its structure
+    if ('version' in route.props && route.props.version !== undefined) {
+      if (
+        typeof route.props.version !== 'object' ||
+        route.props.version === null ||
+        !('isLast' in route.props.version) ||
+        typeof route.props.version.isLast !== 'boolean'
+      ) {
+        return false;
+      }
+    }
+  }
+
+  return true;
 }
 
 /**

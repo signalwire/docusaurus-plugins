@@ -5,6 +5,7 @@
 
 import type { ReportingSeverity } from '@docusaurus/types';
 import { Joi } from '@docusaurus/utils-validation';
+import minimatch from 'minimatch';
 import type { Options as RemarkGfmOptions } from 'remark-gfm';
 import type { Options as RemarkStringifyOptions } from 'remark-stringify';
 import type { Plugin, Settings } from 'unified';
@@ -191,6 +192,21 @@ export interface Logger {
 // ============================================================================
 
 /**
+ * Custom validator for glob patterns
+ */
+const globPatternValidator = Joi.string().custom((value: string, helpers) => {
+  try {
+    // Test if the pattern is a valid glob by testing it against a sample path
+    minimatch('test/path', value);
+    return value;
+  } catch {
+    return helpers.error('any.invalid', { 
+      message: `Invalid glob pattern "${value}". Use patterns like "*", "docs/**", or "!blog/**" to match routes.` 
+    });
+  }
+}, 'glob pattern validation');
+
+/**
  * Joi schema for plugin options validation
  * @internal - This is used by Docusaurus framework for options validation
  */
@@ -211,20 +227,21 @@ export const pluginOptionsSchema = Joi.object<PluginOptions>({
     includeDocs: Joi.boolean().default(true),
     includeVersionedDocs: Joi.boolean().default(true),
     includeGeneratedIndex: Joi.boolean().default(true),
-    excludeRoutes: Joi.array().items(Joi.string()).default([]),
+    excludeRoutes: Joi.array().items(globPatternValidator).default([]),
 
     // Content extraction
     contentSelectors: Joi.array()
       .items(Joi.string())
+      .min(1)
       .default([...DEFAULT_CONTENT_SELECTORS]),
     routeRules: Joi.array()
       .items(
         Joi.object({
-          route: Joi.string().required(),
+          route: globPatternValidator.required(),
           depth: Joi.number().integer().min(1).max(5),
           contentSelectors: Joi.array().items(Joi.string()),
           categoryName: Joi.string(),
-          includeOrder: Joi.array().items(Joi.string()),
+          includeOrder: Joi.array().items(globPatternValidator),
         })
       )
       .default([]),
@@ -285,7 +302,7 @@ export const pluginOptionsSchema = Joi.object<PluginOptions>({
       })
     )
     .default([]),
-  includeOrder: Joi.array().items(Joi.string()).default([]),
+  includeOrder: Joi.array().items(globPatternValidator).default([]),
 
   // Environment options
   runOnPostBuild: Joi.boolean().default(true),

@@ -38,8 +38,8 @@ export function classifyRoute(route: PluginRouteConfig): ContentType {
 }
 
 /**
- * Classify routes using heuristics when plugin info is not available
- * This handles cases like versioned docs where plugin info is lost during route flattening
+ * Classify routes using reliable component indicators when plugin info is not available
+ * Only uses reliable indicators, avoiding fragile path/filename matching
  * @internal
  */
 function classifyRouteByHeuristics(route: PluginRouteConfig): ContentType {
@@ -48,42 +48,21 @@ function classifyRouteByHeuristics(route: PluginRouteConfig): ContentType {
     return CONTENT_TYPES.DOCS;
   }
 
-  // Check for blog patterns in path or metadata
+  // Check for reliable blog component indicators
   if (
-    route.path.includes('/blog/') ||
-    route.metadata?.sourceFilePath?.includes('blog/') ||
-    route.metadata?.sourceFilePath?.includes('_posts/')
+    route.component === '@theme/BlogListPage' ||
+    route.component === '@theme/BlogPostPage'
   ) {
     return CONTENT_TYPES.BLOG;
   }
 
-  // Check for docs patterns in metadata sourceFilePath
-  if (route.metadata?.sourceFilePath) {
-    const sourceFile = route.metadata.sourceFilePath;
-    // Docs typically have paths like: docs/, api-docs/, versioned_docs/, etc.
-    if (
-      sourceFile.includes('docs/') ||
-      sourceFile.includes('_docs/') ||
-      sourceFile.includes('versioned_docs/')
-    ) {
-      return CONTENT_TYPES.DOCS;
-    }
+  // Home page is typically a page
+  if (route.path === '/') {
+    return CONTENT_TYPES.PAGES;
   }
 
-  // Check for pages patterns
-  if (
-    route.path === '/' ||
-    route.component === '@theme/BlogListPage' ||
-    route.component === '@theme/BlogPostPage'
-  ) {
-    return route.component === '@theme/BlogListPage' ||
-      route.component === '@theme/BlogPostPage'
-      ? CONTENT_TYPES.BLOG
-      : CONTENT_TYPES.PAGES;
-  }
-
-  // Default to docs for unknown patterns
-  return CONTENT_TYPES.DOCS;
+  // If no reliable indicators, mark as unknown rather than guessing
+  return CONTENT_TYPES.UNKNOWN;
 }
 
 /**
@@ -123,8 +102,11 @@ export function shouldProcessRoute(
     contentConfig.includeVersionedDocs === false
   ) {
     // Check if this is a versioned docs route (not current version)
-    const isVersionedRoute = (route as Record<string, unknown>)
-      .__docusaurus_isVersioned;
+    const isVersionedRoute = '__docusaurus_isVersioned' in route ? 
+      (route as PluginRouteConfig & { 
+        __docusaurus_isVersioned?: boolean 
+      }).__docusaurus_isVersioned :
+      undefined;
     if (isVersionedRoute === true) {
       return false; // Skip versioned docs when includeVersionedDocs is false
     }

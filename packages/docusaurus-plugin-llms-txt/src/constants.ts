@@ -98,11 +98,11 @@ export const INDEX_MD = '/index.md' as const;
 
 /** Validation error messages */
 export const VALIDATION_MESSAGES = {
-  OBJECT_REQUIRED: 'Plugin options must be an object',
-  PARENT_DIR_FORBIDDEN: 'cannot contain parent directory references (..)',
-  RELATIVE_PATH_REQUIRED: 'must be relative to project root',
-  INVALID_CONFIG: 'Invalid plugin configuration',
-  UNKNOWN_ERROR: 'Unknown error during configuration validation',
+  OBJECT_REQUIRED: 'Plugin options must be an object. Example: { outputDir: "llms", includeRoutes: ["*"] }',
+  PARENT_DIR_FORBIDDEN: 'cannot contain parent directory references (..) for security reasons. Use paths relative to your project root.',
+  RELATIVE_PATH_REQUIRED: 'must be relative to project root. Remove leading "/" or use paths like "docs/" instead of "/docs/"',
+  INVALID_CONFIG: 'Invalid plugin configuration. Check your docusaurus.config.js plugin options against the documentation.',
+  UNKNOWN_ERROR: 'Unknown error during configuration validation. Please check your plugin options and try again. Consider enabling debug logging for more details.',
   ROUTE_RULE_MULTIPLE_CATEGORIES: 'Multiple categories defined for route',
   ROUTE_RULE_MULTIPLE_ORDERS: 'Multiple includeOrders defined for route',
   USING_LAST_DEFINITION: 'Using last definition.',
@@ -110,13 +110,13 @@ export const VALIDATION_MESSAGES = {
 
 /** Cache error messages */
 export const CACHE_MESSAGES = {
-  NO_ROUTES: 'No cached routes found. Please run "npm run build" first.',
+  NO_ROUTES: 'No cached routes found. Run "npm run build" to generate the Docusaurus site first, then use the CLI commands.',
   CONFIG_CHANGED_CLI:
-    'Configuration changed - regenerating with current settings',
-  CONFIG_CHANGED_BUILD: 'Configuration changed - rebuilding cache',
-  USING_CACHED: 'Using cached data',
+    'Configuration changed since last build - applying current plugin settings to cached routes',
+  CONFIG_CHANGED_BUILD: 'Configuration changed - rebuilding cache with new settings',
+  USING_CACHED: 'Using cached data from previous build',
   CONFIG_CHANGED_REGENERATE:
-    'Configuration changed - using current settings to regenerate output',
+    'Configuration changed - regenerating output files with current plugin settings',
 } as const;
 
 /** Processing messages */
@@ -130,20 +130,21 @@ export const PROCESSING_MESSAGES = {
  */
 export const ERROR_MESSAGES = {
   ROUTE_PROCESSING_FAILED: (route: string, error: string): string =>
-    `Failed to process route ${route}: ${error}`,
+    `Failed to process route "${route}": ${error}. This route will be skipped in the output. Check if the HTML file exists and contains valid content.`,
 
   // Generic operation failure messages
   CLI_OPERATION_FAILED: (operation: string, error: string): string =>
-    `❌ ${operation} failed: ${error}`,
+    `❌ ${operation} failed: ${error}\n\nTroubleshooting steps:\n1. Ensure you've run "npm run build" first to generate the site\n2. Check file permissions in your project directory\n3. Run with --verbose flag for more detailed error information`,
 
-  PLUGIN_BUILD_FAILED: (error: string): string => `Error: ${error}`,
+  PLUGIN_BUILD_FAILED: (error: string): string => 
+    `Plugin build failed: ${error}\n\nThis error occurred during the Docusaurus build process. Check your plugin configuration in docusaurus.config.js and ensure all required dependencies are installed.`,
 
   // Specific operation failures
   HTML_PROCESSING_FAILED: (error: string): string =>
-    `Failed to process HTML file: ${error}`,
+    `Failed to convert HTML to Markdown: ${error}\n\nPossible causes:\n- HTML file is empty or malformed\n- Content selectors don't match any elements\n- HTML contains unsupported elements\n\nTry adjusting your contentSelectors configuration.`,
 
   FILE_REMOVAL_FAILED: (filePath: string, error: string): string =>
-    `Failed to remove ${filePath}: ${error}`,
+    `Failed to remove file "${filePath}": ${error}\n\nThis may be due to:\n- File permissions (try running as administrator/sudo)\n- File is currently open in another application\n- File path contains invalid characters`,
 } as const;
 
 // Title and content formatting

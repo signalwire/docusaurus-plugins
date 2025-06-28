@@ -32,18 +32,14 @@ export function analyzeCacheStrategy(
   const cacheHasRoutes = cacheManager.hasCachedRoutes(cache);
   const configMatches = cacheManager.isCacheConfigValid(cache, config);
 
-  // Check if route count has changed significantly (indicates new routes like versioned docs)
+  // Check if route count has changed (indicates routes added/removed)
   let routeCountMatches = true;
   if (currentRouteCount !== undefined && cache.routes) {
     const cachedRouteCount = cache.routes.length;
-    const routeCountDiff = Math.abs(currentRouteCount - cachedRouteCount);
-    const percentChange = (routeCountDiff / cachedRouteCount) * 100;
-
-    // If route count changed by more than 10%, invalidate cache
-    if (percentChange > 10) {
+    if (currentRouteCount !== cachedRouteCount) {
       routeCountMatches = false;
       logger.debug(
-        `Cache invalidated: route count changed significantly (${cachedRouteCount} → ${currentRouteCount}, ${percentChange.toFixed(1)}% change)`
+        `Cache invalidated: route count changed (${cachedRouteCount} → ${currentRouteCount})`
       );
     }
   }
@@ -66,11 +62,12 @@ export function analyzeCacheStrategy(
   const reason = generateCacheReason(
     cacheHasRoutes,
     configMatches,
-    isCliContext
+    isCliContext,
+    routeCountMatches
   );
 
   logger.debug(
-    `Cache: hasRoutes=${cacheHasRoutes}, configMatches=${configMatches}, useCache=${useCache}`
+    `Cache: hasRoutes=${cacheHasRoutes}, configMatches=${configMatches}, routeCountMatches=${routeCountMatches}, useCache=${useCache}`
   );
 
   return {
@@ -87,7 +84,8 @@ export function analyzeCacheStrategy(
 function generateCacheReason(
   hasRoutes: boolean,
   configMatches: boolean,
-  isCliContext: boolean
+  isCliContext: boolean,
+  routeCountMatches: boolean = true
 ): string {
   if (!hasRoutes) {
     return CACHE_MESSAGES.NO_ROUTES;
@@ -97,6 +95,10 @@ function generateCacheReason(
     return isCliContext
       ? CACHE_MESSAGES.CONFIG_CHANGED_CLI
       : CACHE_MESSAGES.CONFIG_CHANGED_BUILD;
+  }
+
+  if (!routeCountMatches) {
+    return 'Route count changed - regenerating output';
   }
 
   return CACHE_MESSAGES.USING_CACHED;

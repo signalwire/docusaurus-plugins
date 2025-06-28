@@ -3,6 +3,7 @@
  * Focused module for cache file reading, writing, and atomic operations
  */
 
+import { randomUUID } from 'crypto';
 import path from 'path';
 
 import fs from 'fs-extra';
@@ -18,9 +19,12 @@ function validateCacheSchema(data: unknown): data is CacheSchema {
   return (
     typeof data === 'object' &&
     data !== null &&
-    typeof (data as Record<string, unknown>).pluginVersion === 'string' &&
-    typeof (data as Record<string, unknown>).configHash === 'string' &&
-    Array.isArray((data as Record<string, unknown>).routes)
+    'pluginVersion' in data &&
+    'configHash' in data &&
+    'routes' in data &&
+    typeof data.pluginVersion === 'string' &&
+    typeof data.configHash === 'string' &&
+    Array.isArray(data.routes)
   );
 }
 
@@ -28,7 +32,10 @@ function validateCacheSchema(data: unknown): data is CacheSchema {
  * Cache file I/O handler
  */
 export class CacheIO {
-  constructor(private readonly _cachePath: string) {}
+  constructor(
+    private readonly _cachePath: string,
+    private readonly _logger: { warn: (_msg: string) => void }
+  ) {}
 
   /**
    * Load cache from disk, returning empty cache if file doesn't exist
@@ -41,12 +48,24 @@ export class CacheIO {
       if (validateCacheSchema(data)) {
         return data;
       } else {
-        // Return empty cache if structure is invalid
+        // Cache schema is invalid - clean up corrupted cache
+        const message = 'Cache file format is invalid (possibly from an older plugin version). Clearing corrupted cache and regenerating - this is safe and will not affect your site content.';
+        this._logger.warn(message);
+        await this.clearCorruptedCache();
         return { pluginVersion: '', configHash: '', routes: [] };
       }
-    } catch {
-      // Return empty cache if file doesn't exist or is invalid
-      return { pluginVersion: '', configHash: '', routes: [] };
+    } catch (error) {
+      // Cache file doesn't exist or can't be read
+      if ((error as { code?: string }).code === 'ENOENT') {
+        // File doesn't exist - this is normal for first run
+        return { pluginVersion: '', configHash: '', routes: [] };
+      } else {
+        // File exists but is corrupted (parse error, permission error, etc.)
+        const message = `Cache file corrupted (${(error as Error).message}). Clearing cache and regenerating - this will rebuild your content from scratch but will not affect your site.`;
+        this._logger.warn(message);
+        await this.clearCorruptedCache();
+        return { pluginVersion: '', configHash: '', routes: [] };
+      }
     }
   }
 
@@ -76,10 +95,10 @@ export class CacheIO {
     const dir = path.dirname(filePath);
     await fs.ensureDir(dir);
 
-    // Create temporary file with timestamp to avoid conflicts
+    // Create temporary file with UUID to avoid race conditions
     const tmp = path.join(
       dir,
-      `${TEMP_FILE_PREFIX}${path.basename(filePath)}-${Date.now()}`
+      `${TEMP_FILE_PREFIX}${path.basename(filePath)}-${randomUUID()}`
     );
 
     try {
@@ -95,6 +114,17 @@ export class CacheIO {
         // Ignore cleanup errors
       }
       throw error;
+    }
+  }
+
+  /**
+   * Clear corrupted cache file
+   */
+  private async clearCorruptedCache(): Promise<void> {
+    try {
+      await fs.remove(this._cachePath);
+    } catch {
+      // Ignore cleanup errors - cache directory might not exist or be accessible
     }
   }
 

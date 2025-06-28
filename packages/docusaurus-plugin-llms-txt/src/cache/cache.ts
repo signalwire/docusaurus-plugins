@@ -36,6 +36,7 @@ export class CacheManager {
     siteDir: string,
     generatedFilesDir: string,
     config: PluginOptions,
+    logger: { warn: (_msg: string) => void },
     outDir?: string,
     siteConfig?: { baseUrl: string; trailingSlash?: boolean }
   ) {
@@ -43,7 +44,7 @@ export class CacheManager {
     this.siteConfig = siteConfig;
     const cacheDir = path.join(generatedFilesDir, 'docusaurus-plugin-llms-txt');
     const cachePath = path.join(cacheDir, CACHE_FILENAME);
-    this.cacheIO = new CacheIO(cachePath);
+    this.cacheIO = new CacheIO(cachePath, logger);
   }
 
   /** Load cache from disk */
@@ -90,13 +91,14 @@ export class CacheManager {
   /** Create cached route info from routes with metadata for filtering */
   createCachedRouteInfo(routes: RouteConfig[]): CachedRouteInfo[] {
     const cachedRoutes = routes.map((route) => {
-      // Type guard for enhanced route with metadata
-      const enhancedRoute = route as {
-        plugin?: { name?: string };
-        props?: { categoryGeneratedIndex?: unknown };
-        __docusaurus_version?: string;
-        __docusaurus_isVersioned?: boolean;
-      };
+      // Safe access to route properties - cast to access plugin info
+      const pluginName = (route as PluginRouteConfig).plugin?.name;
+      const isGeneratedIndex = route.props && 
+        typeof route.props === 'object' && 
+        'categoryGeneratedIndex' in route.props;
+      const isVersioned = '__docusaurus_isVersioned' in route ? 
+        (route as RouteConfig & { __docusaurus_isVersioned?: boolean }).__docusaurus_isVersioned : 
+        undefined;
 
       const baseInfo = {
         path: route.path,
@@ -107,16 +109,13 @@ export class CacheManager {
         ),
       };
 
-      const pluginInfo = enhancedRoute.plugin?.name
-        ? { plugin: enhancedRoute.plugin.name }
-        : {};
+      const pluginInfo = pluginName ? { plugin: pluginName } : {} as const;
 
       // Extract metadata for cache-based filtering
       const metadata = {
-        contentType: classifyRoute(enhancedRoute as PluginRouteConfig),
-        isVersioned: enhancedRoute.__docusaurus_isVersioned,
-        isGeneratedIndex:
-          enhancedRoute.props?.categoryGeneratedIndex !== undefined,
+        contentType: classifyRoute(route as PluginRouteConfig),
+        isVersioned,
+        isGeneratedIndex,
       };
 
       return {
