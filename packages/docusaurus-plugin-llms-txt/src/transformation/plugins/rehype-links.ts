@@ -24,7 +24,10 @@ function isInternalLink(href: string): boolean {
 /**
  * Resolve a link pathname to its actual route using the route lookup table
  */
-function resolvePathname(pathname: string, routeLookup?: Map<string, CachedRouteInfo>): string {
+function resolvePathname(
+  pathname: string,
+  routeLookup?: Map<string, CachedRouteInfo>
+): string {
   if (!routeLookup) {
     return pathname;
   }
@@ -41,13 +44,17 @@ function resolvePathname(pathname: string, routeLookup?: Map<string, CachedRoute
   }
 
   // Try without trailing slash
-  const withoutTrailingSlash = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+  const withoutTrailingSlash = pathname.endsWith('/')
+    ? pathname.slice(0, -1)
+    : pathname;
   if (routeLookup.has(withoutTrailingSlash)) {
     return withoutTrailingSlash;
   }
 
   // Try with index suffix
-  const withIndex = pathname.endsWith('/') ? pathname + 'index' : pathname + '/index';
+  const withIndex = pathname.endsWith('/')
+    ? pathname + 'index'
+    : pathname + '/index';
   if (routeLookup.has(withIndex)) {
     return withIndex;
   }

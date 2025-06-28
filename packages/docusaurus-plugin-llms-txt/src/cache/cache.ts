@@ -93,12 +93,15 @@ export class CacheManager {
     const cachedRoutes = routes.map((route) => {
       // Safe access to route properties - cast to access plugin info
       const pluginName = (route as PluginRouteConfig).plugin?.name;
-      const isGeneratedIndex = route.props && 
-        typeof route.props === 'object' && 
+      const isGeneratedIndex =
+        route.props &&
+        typeof route.props === 'object' &&
         'categoryGeneratedIndex' in route.props;
-      const isVersioned = '__docusaurus_isVersioned' in route ? 
-        (route as RouteConfig & { __docusaurus_isVersioned?: boolean }).__docusaurus_isVersioned : 
-        undefined;
+      const isVersioned =
+        '__docusaurus_isVersioned' in route
+          ? (route as RouteConfig & { __docusaurus_isVersioned?: boolean })
+              .__docusaurus_isVersioned
+          : undefined;
 
       const baseInfo = {
         path: route.path,
@@ -109,7 +112,7 @@ export class CacheManager {
         ),
       };
 
-      const pluginInfo = pluginName ? { plugin: pluginName } : {} as const;
+      const pluginInfo = pluginName ? { plugin: pluginName } : ({} as const);
 
       // Extract metadata for cache-based filtering
       const metadata = {

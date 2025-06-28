@@ -49,7 +49,8 @@ export class CacheIO {
         return data;
       } else {
         // Cache schema is invalid - clean up corrupted cache
-        const message = 'Cache file format is invalid (possibly from an older plugin version). Clearing corrupted cache and regenerating - this is safe and will not affect your site content.';
+        const message =
+          'Cache file format is invalid (possibly from an older plugin version). Clearing corrupted cache and regenerating - this is safe and will not affect your site content.';
         this._logger.warn(message);
         await this.clearCorruptedCache();
         return { pluginVersion: '', configHash: '', routes: [] };

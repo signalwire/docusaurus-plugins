@@ -123,18 +123,23 @@ function enhanceRoutesWithPluginInfo(
 
       // Add version metadata if available
       if (pluginInfo.isVersioned !== undefined) {
-        (enhancedRoute as PluginRouteConfig & { __docusaurus_isVersioned?: boolean }).__docusaurus_isVersioned =
-          pluginInfo.isVersioned;
+        (
+          enhancedRoute as PluginRouteConfig & {
+            __docusaurus_isVersioned?: boolean;
+          }
+        ).__docusaurus_isVersioned = pluginInfo.isVersioned;
       }
 
       return enhancedRoute;
     }
 
     // Return original route with plugin info (if it exists) or fallback
-    return route.plugin ? (route as PluginRouteConfig) : {
-      ...route,
-      plugin: { name: 'unknown', id: 'unknown' }
-    };
+    return route.plugin
+      ? (route as PluginRouteConfig)
+      : {
+          ...route,
+          plugin: { name: 'unknown', id: 'unknown' },
+        };
   });
 }
 

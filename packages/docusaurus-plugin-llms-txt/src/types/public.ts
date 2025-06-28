@@ -200,8 +200,8 @@ const globPatternValidator = Joi.string().custom((value: string, helpers) => {
     minimatch('test/path', value);
     return value;
   } catch {
-    return helpers.error('any.invalid', { 
-      message: `Invalid glob pattern "${value}". Use patterns like "*", "docs/**", or "!blog/**" to match routes.` 
+    return helpers.error('any.invalid', {
+      message: `Invalid glob pattern "${value}". Use patterns like "*", "docs/**", or "!blog/**" to match routes.`,
     });
   }
 }, 'glob pattern validation');

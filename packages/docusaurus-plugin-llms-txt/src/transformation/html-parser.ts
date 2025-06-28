@@ -130,8 +130,8 @@ export function convertHtmlToMarkdown(
     if (!content) {
       throw createProcessingError(
         `No content could be extracted from HTML using the provided contentSelectors: [${contentSelectors.join(', ')}]. ` +
-        `The HTML file may not contain elements matching these CSS selectors. ` +
-        `Try using more general selectors like 'main', 'article', or inspect the HTML structure to find the right selectors.`
+          `The HTML file may not contain elements matching these CSS selectors. ` +
+          `Try using more general selectors like 'main', 'article', or inspect the HTML structure to find the right selectors.`
       );
     }
 
