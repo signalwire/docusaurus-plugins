@@ -98,11 +98,16 @@ export const INDEX_MD = '/index.md' as const;
 
 /** Validation error messages */
 export const VALIDATION_MESSAGES = {
-  OBJECT_REQUIRED: 'Plugin options must be an object. Example: { outputDir: "llms", includeRoutes: ["*"] }',
-  PARENT_DIR_FORBIDDEN: 'cannot contain parent directory references (..) for security reasons. Use paths relative to your project root.',
-  RELATIVE_PATH_REQUIRED: 'must be relative to project root. Remove leading "/" or use paths like "docs/" instead of "/docs/"',
-  INVALID_CONFIG: 'Invalid plugin configuration. Check your docusaurus.config.js plugin options against the documentation.',
-  UNKNOWN_ERROR: 'Unknown error during configuration validation. Please check your plugin options and try again. Consider enabling debug logging for more details.',
+  OBJECT_REQUIRED:
+    'Plugin options must be an object. Example: { outputDir: "llms", includeRoutes: ["*"] }',
+  PARENT_DIR_FORBIDDEN:
+    'cannot contain parent directory references (..) for security reasons. Use paths relative to your project root.',
+  RELATIVE_PATH_REQUIRED:
+    'must be relative to project root. Remove leading "/" or use paths like "docs/" instead of "/docs/"',
+  INVALID_CONFIG:
+    'Invalid plugin configuration. Check your docusaurus.config.js plugin options against the documentation.',
+  UNKNOWN_ERROR:
+    'Unknown error during configuration validation. Please check your plugin options and try again. Consider enabling debug logging for more details.',
   ROUTE_RULE_MULTIPLE_CATEGORIES: 'Multiple categories defined for route',
   ROUTE_RULE_MULTIPLE_ORDERS: 'Multiple includeOrders defined for route',
   USING_LAST_DEFINITION: 'Using last definition.',
@@ -110,10 +115,12 @@ export const VALIDATION_MESSAGES = {
 
 /** Cache error messages */
 export const CACHE_MESSAGES = {
-  NO_ROUTES: 'No cached routes found. Run "npm run build" to generate the Docusaurus site first, then use the CLI commands.',
+  NO_ROUTES:
+    'No cached routes found. Run "npm run build" to generate the Docusaurus site first, then use the CLI commands.',
   CONFIG_CHANGED_CLI:
     'Configuration changed since last build - applying current plugin settings to cached routes',
-  CONFIG_CHANGED_BUILD: 'Configuration changed - rebuilding cache with new settings',
+  CONFIG_CHANGED_BUILD:
+    'Configuration changed - rebuilding cache with new settings',
   USING_CACHED: 'Using cached data from previous build',
   CONFIG_CHANGED_REGENERATE:
     'Configuration changed - regenerating output files with current plugin settings',
@@ -136,7 +143,7 @@ export const ERROR_MESSAGES = {
   CLI_OPERATION_FAILED: (operation: string, error: string): string =>
     `❌ ${operation} failed: ${error}\n\nTroubleshooting steps:\n1. Ensure you've run "npm run build" first to generate the site\n2. Check file permissions in your project directory\n3. Run with --verbose flag for more detailed error information`,
 
-  PLUGIN_BUILD_FAILED: (error: string): string => 
+  PLUGIN_BUILD_FAILED: (error: string): string =>
     `Plugin build failed: ${error}\n\nThis error occurred during the Docusaurus build process. Check your plugin configuration in docusaurus.config.js and ensure all required dependencies are installed.`,
 
   // Specific operation failures

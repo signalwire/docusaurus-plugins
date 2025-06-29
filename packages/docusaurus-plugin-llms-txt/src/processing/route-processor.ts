@@ -162,7 +162,9 @@ async function processRoutesStream(
       // Check if we can use cached data
       let canUseCache = false;
       try {
-        canUseCache = useCache && (await cacheManager.isCachedRouteValid(cachedRoute, options));
+        canUseCache =
+          useCache &&
+          (await cacheManager.isCachedRouteValid(cachedRoute, options));
       } catch (error) {
         const errorMessage = getErrorMessage(error);
         logger.debug(
@@ -202,11 +204,11 @@ async function processRoutesStream(
 
   // Collect results safely
   const docs: DocInfo[] = results
-    .map(r => r.doc)
+    .map((r) => r.doc)
     .filter((doc): doc is DocInfo => doc !== undefined);
   const updatedCachedRoutes: CachedRouteInfo[] = [...cachedRoutes];
-  
-  results.forEach(result => {
+
+  results.forEach((result) => {
     if (result.updatedCachedRoute) {
       updatedCachedRoutes[result.originalIndex] = result.updatedCachedRoute;
     }

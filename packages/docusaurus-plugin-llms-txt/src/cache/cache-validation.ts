@@ -167,17 +167,27 @@ export async function hashFile(filePath: string): Promise<string> {
  */
 export function calcConfigHash(options: Partial<PluginOptions>): string {
   const contentOptions = options.content ?? {};
-  
+
   // Only include options that affect file content, not filtering
   // Create a copy of contentOptions excluding filtering-related fields
   const fileGenerationOptions = Object.fromEntries(
-    Object.entries(contentOptions).filter(([key]) => 
-      !['includeBlog', 'includePages', 'includeDocs', 'includeVersionedDocs', 'includeGeneratedIndex', 'excludeRoutes'].includes(key)
+    Object.entries(contentOptions).filter(
+      ([key]) =>
+        ![
+          'includeBlog',
+          'includePages',
+          'includeDocs',
+          'includeVersionedDocs',
+          'includeGeneratedIndex',
+          'excludeRoutes',
+        ].includes(key)
     )
   );
-  
+
   const stableOptions = Object.fromEntries(
-    Object.entries(fileGenerationOptions).filter(([, value]) => value !== undefined)
+    Object.entries(fileGenerationOptions).filter(
+      ([, value]) => value !== undefined
+    )
   );
   const sortedKeys = Object.keys(stableOptions).sort();
   const stable = JSON.stringify(stableOptions, sortedKeys);

@@ -102,11 +102,14 @@ export function shouldProcessRoute(
     contentConfig.includeVersionedDocs === false
   ) {
     // Check if this is a versioned docs route (not current version)
-    const isVersionedRoute = '__docusaurus_isVersioned' in route ? 
-      (route as PluginRouteConfig & { 
-        __docusaurus_isVersioned?: boolean 
-      }).__docusaurus_isVersioned :
-      undefined;
+    const isVersionedRoute =
+      '__docusaurus_isVersioned' in route
+        ? (
+            route as PluginRouteConfig & {
+              __docusaurus_isVersioned?: boolean;
+            }
+          ).__docusaurus_isVersioned
+        : undefined;
     if (isVersionedRoute === true) {
       return false; // Skip versioned docs when includeVersionedDocs is false
     }

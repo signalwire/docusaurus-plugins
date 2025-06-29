@@ -98,9 +98,7 @@ export function applyRouteRule(
 /**
  * Validate route rules for conflicts and throw errors for true conflicts
  */
-export function validateRouteRules(
-  routeRules: readonly RouteRule[]
-): void {
+export function validateRouteRules(routeRules: readonly RouteRule[]): void {
   if (routeRules.length === 0) {
     return;
   }
@@ -110,26 +108,32 @@ export function validateRouteRules(
   // Throw errors for true conflicts (same route pattern with conflicting properties)
   conflicts.forEach((conflict) => {
     const conflictMessages: string[] = [];
-    
+
     if (conflict.categories.length > 1) {
-      conflictMessages.push(`categoryName: [${conflict.categories.join(', ')}]`);
+      conflictMessages.push(
+        `categoryName: [${conflict.categories.join(', ')}]`
+      );
     }
-    
+
     if (conflict.depths.length > 1) {
       conflictMessages.push(`depth: [${conflict.depths.join(', ')}]`);
     }
-    
+
     if (conflict.includeOrders > 1) {
-      conflictMessages.push(`includeOrder: ${conflict.includeOrders} different definitions`);
+      conflictMessages.push(
+        `includeOrder: ${conflict.includeOrders} different definitions`
+      );
     }
-    
+
     if (conflict.contentSelectors > 1) {
-      conflictMessages.push(`contentSelectors: ${conflict.contentSelectors} different definitions`);
+      conflictMessages.push(
+        `contentSelectors: ${conflict.contentSelectors} different definitions`
+      );
     }
-    
+
     if (conflictMessages.length > 0) {
       const errorMessage = `Route rule conflict detected for pattern "${conflict.route}". Multiple conflicting values found for: ${conflictMessages.join(', ')}. Each route pattern should have only one value for each property. Please consolidate or use more specific route patterns.`;
-      
+
       throw createConfigError(errorMessage, {
         conflictingRoute: conflict.route,
         conflictDetails: {
@@ -138,7 +142,8 @@ export function validateRouteRules(
           includeOrders: conflict.includeOrders,
           contentSelectors: conflict.contentSelectors,
         },
-        suggestion: 'Use more specific route patterns (e.g., "/api/v1/**" vs "/api/v2/**") or consolidate conflicting rules into a single rule definition.',
+        suggestion:
+          'Use more specific route patterns (e.g., "/api/v1/**" vs "/api/v2/**") or consolidate conflicting rules into a single rule definition.',
       });
     }
   });
@@ -158,7 +163,9 @@ interface RouteRuleConflict {
 /**
  * Find conflicts between route rules - enhanced to detect all property conflicts
  */
-function findRouteRuleConflicts(routeRules: readonly RouteRule[]): RouteRuleConflict[] {
+function findRouteRuleConflicts(
+  routeRules: readonly RouteRule[]
+): RouteRuleConflict[] {
   const routeMap = new Map<string, RouteRule[]>();
 
   // Group rules by route pattern
@@ -205,7 +212,7 @@ function findRouteRuleConflicts(routeRules: readonly RouteRule[]): RouteRuleConf
     const uniqueContentSelectors = contentSelectors.length;
 
     // Only report if there are actual conflicts (multiple different values for same property)
-    const hasConflicts = 
+    const hasConflicts =
       uniqueCategories.length > 1 ||
       uniqueDepths.length > 1 ||
       uniqueIncludeOrders > 1 ||
