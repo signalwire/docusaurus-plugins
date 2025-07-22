@@ -190,7 +190,6 @@ export interface Logger {
 // VALIDATION SCHEMA
 // ============================================================================
 
-
 /**
  * Joi schema for plugin options validation
  * @internal - This is used by Docusaurus framework for options validation
