@@ -49,7 +49,6 @@
     "hast-util-select": "^6.0.4",
     "hast-util-to-html": "^9.0.5",
     "hast-util-to-string": "^3.0.1",
-    "minimatch": "^10.0.3",
     "p-map": "^7.0.2",
     "rehype-parse": "^9",
     "rehype-remark": "^10",
