@@ -37,7 +37,7 @@ function createPluginInfoMapping(
       version?: string;
       isVersioned?: boolean;
     }
-  ) {
+  ): void {
     for (const route of routeList) {
       // Check if this route has valid plugin info
       let currentPluginInfo:
