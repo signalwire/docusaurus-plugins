@@ -1,7 +1,7 @@
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import type { PluginOptions } from '../packages/docusaurus-plugin-llms-txt/lib/public';
+import type { PluginOptions } from '@signalwire/docusaurus-plugin-llms-txt/public';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
@@ -39,21 +39,23 @@ const config: Config = {
   },
 
   plugins: [
+    'docusaurus-plugin-sass',
     [
-      require.resolve('../packages/docusaurus-plugin-llms-txt/lib'),
+      '@signalwire/docusaurus-plugin-llms-txt',
       {
         siteTitle: 'My Docusaurus Plugins Collection',
         siteDescription: 'Documentation for Docusaurus plugins',
         logLevel: 3,
         onRouteError: 'throw',
         depth: 1,
+        copyPageContent: true,
         content: {
           includeBlog: true,
           includePages: true,
           includeDocs: true,
           includeVersionedDocs: true,
           includeGeneratedIndex: false,
-          enableMarkdownFiles: false,
+          enableMarkdownFiles: true,
           relativePaths: true,
           enableLlmsFullTxt: true,
           excludeRoutes: ['/docs/tutorial-extras/**'],
@@ -110,6 +112,10 @@ const config: Config = {
         },
       },
     ],
+  ],
+
+  themes: [
+    '@signalwire/docusaurus-theme-llms-txt'
   ],
 
   presets: [

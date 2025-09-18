@@ -1,13 +1,17 @@
 /**
- * Tree markdown rendering
- * Render document tree structure as markdown
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import { createSlugger } from '@docusaurus/utils';
 
 import { DEFAULT_MARKDOWN_HEADER_LEVEL } from '../constants';
-import type { TreeNode, DocInfo } from '../types';
 import { formatUrl } from '../utils/url';
+
+import type { TreeNode, DocInfo } from '../types';
 
 /**
  * Check if two titles are similar using slug comparison
@@ -97,7 +101,7 @@ export function renderTreeAsMarkdown(
   if (node.subCategories.length) {
     node.subCategories.forEach((sub: TreeNode) => {
       md +=
-        `\n` +
+        `\n${ 
         renderTreeAsMarkdown(
           sub,
           isRoot ? level : level + 1,
@@ -106,7 +110,7 @@ export function renderTreeAsMarkdown(
           useRelativePaths,
           enableMarkdownFiles,
           enableDescriptions
-        );
+        )}`;
     });
   }
   return md;

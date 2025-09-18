@@ -1,0 +1,10 @@
+/**
+ * Icons component styles
+ * Styles for icon sizing, alignment, and theming
+ */
+
+.icon {
+  width: var(--llms-copy-icon-size);
+  height: var(--llms-copy-icon-size);
+  fill: currentColor;
+}

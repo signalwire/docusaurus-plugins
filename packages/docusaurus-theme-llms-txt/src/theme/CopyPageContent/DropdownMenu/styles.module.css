@@ -1,0 +1,27 @@
+/**
+ * DropdownMenu component styles
+ * Main dropdown container with visibility animations
+ */
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + var(--llms-copy-dropdown-offset));
+  right: 0;
+  width: var(--llms-copy-dropdown-width);
+  background: var(--llms-copy-dropdown-bg);
+  border: var(--llms-copy-border-width) solid var(--llms-copy-dropdown-border);
+  border-radius: var(--llms-copy-radius);
+  box-shadow: var(--llms-copy-dropdown-shadow);
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(var(--llms-copy-dropdown-initial-transform));
+  transition: var(--llms-copy-transition);
+  z-index: var(--llms-copy-dropdown-z-index);
+}
+
+.dropdownVisible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}

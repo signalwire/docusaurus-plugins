@@ -11,6 +11,8 @@
 *.sln.docstates
 .cursor
 .temp
+development
+.serena
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -207,6 +209,7 @@ PublishScripts/
 !**/[Pp]ackages/build/
 # Allow npm workspace packages directory (not NuGet packages)
 !/packages/
+!/packages/*/
 # Uncomment if necessary however generally it will be regenerated when needed
 #!**/[Pp]ackages/repositories.config
 # NuGet v3's project.json files produces more ignorable files

@@ -1,6 +1,10 @@
 /**
- * Utilities for URL handling and formatting
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import { normalizeUrl } from '@docusaurus/utils';
 
@@ -47,7 +51,7 @@ export function stripBaseUrl(routePath: string, baseUrl: string): string {
   if (routePath.startsWith(baseForComparison)) {
     const stripped = routePath.slice(baseForComparison.length);
     // Ensure the result starts with / or is empty for root
-    if (stripped === '') return '/';
+    if (stripped === '') {return '/';}
     return stripped.startsWith('/') ? stripped : `/${stripped}`;
   }
 

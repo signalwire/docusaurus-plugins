@@ -1,13 +1,17 @@
 /**
- * Title extraction strategies
- * Multiple strategies for extracting document titles from HTML
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-import type { Root } from 'hast';
+
 
 import { DEFAULT_DOCUMENT_TITLE, HTML_SELECTORS } from '../constants';
-import type { TitleExtractor } from '../types';
 import { selectText } from '../utils/html';
+
+import type { TitleExtractor } from '../types';
+import type { Root } from 'hast';
 
 /**
  * Extract title from first h1 element found anywhere on the page

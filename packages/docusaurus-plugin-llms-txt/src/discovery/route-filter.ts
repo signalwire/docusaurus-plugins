@@ -1,16 +1,19 @@
 /**
- * Route filtering and validation
- * Handles route discovery and filtering logic
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-import type { PluginRouteConfig } from '@docusaurus/types';
+
 
 import { INDEX_HTML } from '../constants';
-import type { PluginOptions, Logger } from '../types';
 import { removeLeadingSlash, stripBaseUrl } from '../utils';
-
 import { shouldProcessRoute } from './content-classifier';
 import { isRouteExcluded } from './exclusion-matcher';
+
+import type { PluginOptions, Logger } from '../types';
+import type { PluginRouteConfig } from '@docusaurus/types';
 
 /**
  * Validate routes and return filtering summary for info logging
@@ -27,12 +30,12 @@ export function validateAndLogRouteFiltering(
 
   const validRoutes = routes.filter((route) => {
     if (!shouldProcessRoute(route, options)) {
-      contentTypeFiltered++;
+      contentTypeFiltered += 1;
       return false;
     }
 
     if (isRouteExcluded(route.path, isExcluded)) {
-      excludedCount++;
+      excludedCount += 1;
       logger.debug(`Skipping excluded route: ${route.path}`);
       return false;
     }
@@ -77,8 +80,8 @@ export function validateRouteForProcessing(
  */
 export function routePathToHtmlPath(
   routePath: string,
-  baseUrl: string = '/',
-  trailingSlash?: boolean
+  trailingSlash?: boolean,
+  baseUrl = '/'
 ): string {
   // First strip the baseUrl from the route
   const pathWithoutBase = stripBaseUrl(routePath, baseUrl);

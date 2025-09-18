@@ -1,7 +1,10 @@
 /**
- * Cache validation utilities
- * Focused module for validating cache entries and configurations
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import path from 'path';
 
@@ -9,6 +12,7 @@ import { md5Hash } from '@docusaurus/utils';
 import fs from 'fs-extra';
 
 import { getContentConfig } from '../config';
+
 import type {
   CachedRouteInfo,
   PluginOptions,
@@ -162,7 +166,8 @@ export async function hashFile(filePath: string): Promise<string> {
 }
 
 /**
- * Calculate hash of options that affect individual file generation and require cache invalidation
+ * Calculate hash of options that affect individual file generation and require
+ * cache invalidation
  * Excludes filtering options since they are applied at runtime
  */
 export function calcConfigHash(options: Partial<PluginOptions>): string {

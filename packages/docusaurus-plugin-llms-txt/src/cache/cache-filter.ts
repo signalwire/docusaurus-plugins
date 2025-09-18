@@ -1,11 +1,15 @@
 /**
- * Cache-based route filtering
- * Unified filtering logic for both build and CLI contexts
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import { getContentConfig } from '../config';
 import { CONTENT_TYPES } from '../constants';
 import { createExclusionMatcher } from '../discovery/exclusion-matcher';
+
 import type { CachedRouteInfo, PluginOptions, Logger } from '../types';
 
 /**
@@ -32,17 +36,17 @@ export function filterCachedRoutesForConfig(
     switch (route.contentType) {
       case CONTENT_TYPES.BLOG:
         shouldIncludeType = contentConfig.includeBlog;
-        if (!shouldIncludeType) excludedByType++;
+        if (!shouldIncludeType) {excludedByType += 1;}
         break;
       case CONTENT_TYPES.PAGES:
         shouldIncludeType = contentConfig.includePages;
-        if (!shouldIncludeType) excludedByType++;
+        if (!shouldIncludeType) {excludedByType += 1;}
         break;
       case CONTENT_TYPES.DOCS:
       case CONTENT_TYPES.UNKNOWN:
       default:
         shouldIncludeType = contentConfig.includeDocs;
-        if (!shouldIncludeType) excludedByType++;
+        if (!shouldIncludeType) {excludedByType += 1;}
         break;
     }
 
@@ -51,21 +55,22 @@ export function filterCachedRoutesForConfig(
     }
 
     // Apply versioned docs filter
-    // Only filter out non-latest versions (isLast=false) when includeVersionedDocs=false
+    // Only filter out non-latest versions (isLast=false) when
+    // includeVersionedDocs=false
     if (route.isVersioned && !contentConfig.includeVersionedDocs) {
-      excludedByVersion++;
+      excludedByVersion += 1;
       return false;
     }
 
     // Apply generated index filter
     if (route.isGeneratedIndex && !contentConfig.includeGeneratedIndex) {
-      excludedByGenerated++;
+      excludedByGenerated += 1;
       return false;
     }
 
     // Apply route exclusion patterns
     if (isExcludedByPattern(route.path)) {
-      excludedByPattern++;
+      excludedByPattern += 1;
       return false;
     }
 
@@ -92,7 +97,8 @@ export function filterCachedRoutesForConfig(
 }
 
 /**
- * Check if cache-based filtering would produce different results than current cache
+ * Check if cache-based filtering would produce different results than
+ * current cache
  * This helps determine if the CLI needs to warn about config changes
  */
 export function wouldFilteringChangeCachedRoutes(

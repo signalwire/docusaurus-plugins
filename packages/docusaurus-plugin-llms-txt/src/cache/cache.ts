@@ -1,27 +1,29 @@
 /**
- * Simplified cache management service
- * Uses focused modules for validation and I/O operations
- * @internal
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import path from 'path';
 
-import type { RouteConfig, PluginRouteConfig } from '@docusaurus/types';
 
 import packageJson from '../../package.json';
 import { CACHE_FILENAME } from '../constants';
+import { CacheIO } from './cache-io';
+import { isCachedRouteValid, calcConfigHash } from './cache-validation';
 import { classifyRoute } from '../discovery/content-classifier';
 import { routePathToHtmlPath } from '../discovery/route-filter';
 import { PathManager, htmlPathToMdPath } from '../filesystem/paths';
+
 import type {
   DocInfo,
   PluginOptions,
   CachedRouteInfo,
   CacheSchema,
 } from '../types';
-
-import { CacheIO } from './cache-io';
-import { isCachedRouteValid, calcConfigHash } from './cache-validation';
+import type { RouteConfig, PluginRouteConfig } from '@docusaurus/types';
 
 /**
  * Simplified cache management service
@@ -107,8 +109,8 @@ export class CacheManager {
         path: route.path,
         htmlPath: routePathToHtmlPath(
           route.path,
-          this.siteConfig?.baseUrl ?? '/',
-          this.siteConfig?.trailingSlash
+          this.siteConfig?.trailingSlash,
+          this.siteConfig?.baseUrl ?? '/'
         ),
       };
 

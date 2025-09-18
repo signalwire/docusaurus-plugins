@@ -1,7 +1,11 @@
+/**
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import path from 'path';
 
-import type { LoadContext } from '@docusaurus/types';
-import type { CommanderStatic } from 'commander';
 import fs from 'fs-extra';
 
 import { CacheManager } from '../cache/cache';
@@ -16,7 +20,10 @@ import { getErrorMessage } from '../errors';
 import { setupDirectories } from '../filesystem/paths';
 import { createPluginLogger } from '../logging';
 import { orchestrateProcessing } from '../orchestrator';
+
 import type { PluginOptions } from '../types';
+import type { LoadContext } from '@docusaurus/types';
+import type { CommanderStatic } from 'commander';
 
 /**
  * CLI-specific conversion function
@@ -132,11 +139,12 @@ export function registerLlmsTxtClean(
           const updatedRoutes = [...cache.routes];
 
           if (cache.routes?.length > 0) {
-            for (let i = 0; i < updatedRoutes.length; i++) {
+            for (let i = 0; i < updatedRoutes.length; i += 1) {
               const cachedRoute = updatedRoutes[i];
               if (cachedRoute?.markdownFile) {
                 try {
-                  // The cached markdownFile is already a relative path, use it directly
+                  // The cached markdownFile is already a relative path, use it
+                  // directly
                   const fullMarkdownPath = path.join(
                     directories.mdOutDir,
                     cachedRoute.markdownFile
@@ -145,7 +153,7 @@ export function registerLlmsTxtClean(
                   // Try to remove file if it exists
                   if (await fs.pathExists(fullMarkdownPath)) {
                     await fs.remove(fullMarkdownPath);
-                    cleanedFiles++;
+                    cleanedFiles += 1;
                     log.debug(`Removed: ${cachedRoute.markdownFile}`);
                   } else {
                     log.debug(`Not found: ${cachedRoute.markdownFile}`);
@@ -156,7 +164,7 @@ export function registerLlmsTxtClean(
                   void markdownFile; // Explicitly ignore the destructured value
                   updatedRoutes[i] = restOfRoute;
                   cacheUpdated = true;
-                  cacheEntriesCleared++;
+                  cacheEntriesCleared += 1;
                 } catch (error) {
                   const errorMessage = getErrorMessage(error);
                   log.warn(
@@ -171,7 +179,7 @@ export function registerLlmsTxtClean(
                   void markdownFile; // Explicitly ignore the destructured value
                   updatedRoutes[i] = restOfRoute;
                   cacheUpdated = true;
-                  cacheEntriesCleared++;
+                  cacheEntriesCleared += 1;
                 }
               }
             }
@@ -205,19 +213,17 @@ export function registerLlmsTxtClean(
                 `Cache directory not found: ${cacheInfo.dir} (already clean)`
               );
             }
-          } else {
+          } else if (cacheUpdated) {
             // Update cache if we modified any routes and not clearing cache
-            if (cacheUpdated) {
-              const updatedCache = {
-                ...cache,
-                routes: updatedRoutes,
-              };
+            const updatedCache = {
+              ...cache,
+              routes: updatedRoutes,
+            };
 
-              await cacheManager.saveCache(updatedCache);
-              log.debug(
-                `Updated cache to clear ${cacheEntriesCleared} route entries`
-              );
-            }
+            await cacheManager.saveCache(updatedCache);
+            log.debug(
+              `Updated cache to clear ${cacheEntriesCleared} route entries`
+            );
           }
 
           const cacheStatus = options.clearCache

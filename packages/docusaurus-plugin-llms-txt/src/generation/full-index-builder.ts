@@ -1,7 +1,10 @@
 /**
- * llms-full.txt content generation
- * Simple concatenation of llms.txt + all markdown content
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import path from 'path';
 
@@ -29,7 +32,7 @@ export async function buildLlmsFullTxtContent(
   // Append all markdown content from docs that have markdown files or content
   for (const doc of docs) {
     // Skip documents without markdown files or in-memory content
-    if (!doc.markdownFile && !doc.markdownContent) continue;
+    if (!doc.markdownFile && !doc.markdownContent) {continue;}
 
     // Skip root/index documents as they're used for site metadata
     if (doc.routePath === '/' || doc.routePath === '/index') {

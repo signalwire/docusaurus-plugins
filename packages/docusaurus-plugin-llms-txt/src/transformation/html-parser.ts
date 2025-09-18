@@ -1,22 +1,25 @@
 /**
- * HTML content extraction using selectors
- * Handles HTML parsing and metadata extraction
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-import type { ElementContent, Root } from 'hast';
+
 import { select, selectAll } from 'hast-util-select';
 
 import { DEFAULT_DOCUMENT_TITLE, HTML_SELECTORS } from '../constants';
 import { getErrorMessage, createProcessingError } from '../errors';
+import { selectMetaContent } from '../utils/html';
+import { defaultPluginRegistry } from './plugins/plugin-registry';
+import { extractTitle } from './title-extractor';
+
 import type {
   Logger,
   MarkdownConversionOptions,
   ConversionResult,
 } from '../types';
-import { selectMetaContent } from '../utils/html';
-
-import { defaultPluginRegistry } from './plugins/plugin-registry';
-import { extractTitle } from './title-extractor';
+import type { ElementContent, Root } from 'hast';
 
 /**
  * Extract content, title, and description from HTML AST

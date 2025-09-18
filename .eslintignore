@@ -1,0 +1,14 @@
+node_modules/
+**/dist/
+**/lib/
+**/build/
+**/.docusaurus/
+coverage/
+**/*.d.ts
+website/
+**/assets/
+**/*.min.js
+**/*bundle*.js
+__tests__/
+development/
+.eslintrc.*

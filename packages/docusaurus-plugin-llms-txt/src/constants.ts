@@ -1,13 +1,21 @@
 /**
- * Constants used throughout the plugin
- * All magic numbers, strings, and repeated values should be defined here
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 // ============================================================================
 // PLUGIN METADATA
 // ============================================================================
 
 /** Plugin name used throughout the system */
+// Plugin configuration defaults
+import stringWidth from 'string-width';
+
+import type { Options as GfmOptions } from 'remark-gfm';
+
 export const PLUGIN_NAME = 'docusaurus-plugin-llms-txt' as const;
 
 // ============================================================================
@@ -164,7 +172,7 @@ export const MD_EXTENSION = '.md' as const;
 
 // File extension regex pattern
 /** @internal */
-export const HTML_OR_MD_EXTENSION_REGEX = /\.(html|md)$/;
+export const HTML_OR_MD_EXTENSION_REGEX = /\.(?:html|md)$/;
 
 // Default configuration values - these are public for user reference
 export const DEFAULT_SITE_TITLE = 'Documentation' as const;
@@ -191,10 +199,6 @@ export const DEFAULT_CONTENT_SELECTORS = [
 export const LLMS_TXT_FILENAME = 'llms.txt' as const;
 /** @internal */
 export const LLMS_FULL_TXT_FILENAME = 'llms-full.txt' as const;
-
-// Plugin configuration defaults
-import type { Options as GfmOptions } from 'remark-gfm';
-import stringWidth from 'string-width';
 
 /**
  * Default options for remark-gfm plugin

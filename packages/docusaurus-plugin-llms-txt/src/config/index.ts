@@ -1,15 +1,21 @@
+/**
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import { VALIDATION_MESSAGES } from '../constants';
 import { createConfigError } from '../errors';
-import type { PluginOptions, EffectiveConfig, ContentOptions } from '../types';
 import { pluginOptionsSchema } from '../types';
 import { ensureLeadingSlash } from '../utils';
-
 import { applyGfmConfiguration } from './gfm-resolver';
 import {
   validateRouteRules,
   findMostSpecificRule,
   applyRouteRule,
 } from './route-rules';
+
+import type { PluginOptions, EffectiveConfig, ContentOptions } from '../types';
 
 /**
  * Processes and validates plugin options, applying defaults
@@ -88,7 +94,8 @@ export function getContentConfig(
 
 /**
  * Gets config effective for a specific route, applying any matching route rules
- * Consolidated entry point for all route rule effects (depth, categoryName, includeOrder)
+ * Consolidated entry point for all route rule effects (depth, categoryName,
+ * includeOrder)
  * @internal
  */
 export function getEffectiveConfigForRoute(
@@ -99,7 +106,8 @@ export function getEffectiveConfigForRoute(
   const matchPath = ensureLeadingSlash(relPath);
   const contentConfig = getContentConfig(config);
 
-  // Use focused route rules engine - single source of truth for all rule effects
+  // Use focused route rules engine - single source of truth for all rule
+  // effects
   const rule = findMostSpecificRule(matchPath, contentConfig.routeRules);
   return applyRouteRule(rule, config, contentConfig, matchPath, routeSegment);
 }

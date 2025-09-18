@@ -1,12 +1,15 @@
 /**
- * Processing coordination
- * Handles document processing flow and cache management
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-import type { RouteConfig } from '@docusaurus/types';
+
+import { processDocuments } from './route-processor';
+import { filterCachedRoutesForConfig } from '../cache/cache-filter';
 
 import type { CacheManager } from '../cache/cache';
-import { filterCachedRoutesForConfig } from '../cache/cache-filter';
 import type {
   DocInfo,
   PluginOptions,
@@ -14,8 +17,10 @@ import type {
   CacheSchema,
   DirectoryConfig,
 } from '../types';
+import type { RouteConfig } from '@docusaurus/types';
 
-import { processDocuments } from './route-processor';
+
+
 
 /**
  * Processing coordination result
@@ -122,10 +127,10 @@ export async function coordinateProcessing(
     config,
     logger,
     siteUrl,
-    useCache,
     directories.outDir,
     generatedFilesDir,
-    siteConfig
+    siteConfig,
+    useCache
   );
 
   logger.debug(

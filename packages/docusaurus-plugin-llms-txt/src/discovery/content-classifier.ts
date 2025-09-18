@@ -1,9 +1,11 @@
 /**
- * Content classification logic
- * Classify routes as docs/blog/pages and apply include/exclude rules
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-import type { PluginRouteConfig } from '@docusaurus/types';
+
 
 import { getContentConfig } from '../config';
 import {
@@ -12,10 +14,13 @@ import {
   CONTENT_TYPES,
   type ContentType,
 } from '../constants';
+
 import type { PluginOptions } from '../types';
+import type { PluginRouteConfig } from '@docusaurus/types';
 
 /**
- * Classify a route by its plugin type, with fallback heuristics for routes without plugin info
+ * Classify a route by its plugin type, with fallback heuristics for routes
+ * without plugin info
  * @internal
  */
 export function classifyRoute(route: PluginRouteConfig): ContentType {
@@ -38,7 +43,8 @@ export function classifyRoute(route: PluginRouteConfig): ContentType {
 }
 
 /**
- * Classify routes using reliable component indicators when plugin info is not available
+ * Classify routes using reliable component indicators when plugin info is
+ * not available
  * Only uses reliable indicators, avoiding fragile path/filename matching
  * @internal
  */

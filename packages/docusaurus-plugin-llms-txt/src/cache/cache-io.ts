@@ -1,7 +1,10 @@
 /**
- * Cache I/O operations
- * Focused module for cache file reading, writing, and atomic operations
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import { randomUUID } from 'crypto';
 import path from 'path';
@@ -10,6 +13,7 @@ import fs from 'fs-extra';
 
 import { TEMP_FILE_PREFIX, JSON_INDENT } from '../constants';
 import { createCacheError, getErrorCause } from '../errors';
+
 import type { CacheSchema } from '../types';
 
 /**
@@ -32,10 +36,13 @@ function validateCacheSchema(data: unknown): data is CacheSchema {
  * Cache file I/O handler
  */
 export class CacheIO {
+  // eslint-disable-next-line no-useless-constructor
   constructor(
     private readonly _cachePath: string,
     private readonly _logger: { warn: (_msg: string) => void }
-  ) {}
+  ) {
+    // Initialize cache I/O with path and logger
+  }
 
   /**
    * Load cache from disk, returning empty cache if file doesn't exist
@@ -125,7 +132,8 @@ export class CacheIO {
     try {
       await fs.remove(this._cachePath);
     } catch {
-      // Ignore cleanup errors - cache directory might not exist or be accessible
+      // Ignore cleanup errors - cache directory might not exist or be
+      // accessible
     }
   }
 

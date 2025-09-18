@@ -1,13 +1,17 @@
 /**
- * Comprehensive path utilities for directory setup and cross-platform operations
- * Consolidates path handling logic from multiple modules for better maintainability
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import path from 'path';
 
 import { normalizeUrl } from '@docusaurus/utils';
 
 import { MD_EXTENSION } from '../constants';
+
 import type { PluginOptions, DirectoryConfig } from '../types';
 
 /**
@@ -121,18 +125,18 @@ export function htmlPathToMdPath(
   mdOutDir: string
 ): string {
   // Handle index.html files - convert to directory name
-  const indexMatch = relHtmlPath.match(/^(.*)\/index\.html?$/i);
+  const indexMatch = relHtmlPath.match(/^(?<dirPath>.*)\/index\.html?$/i);
   if (indexMatch) {
-    const dirPath = indexMatch[1] ?? '';
+    const dirPath = indexMatch.groups?.dirPath ?? '';
     // For root index.html, use 'index.md', for others use 'dirname.md'
     const mdFileName =
-      dirPath === '' ? 'index' + MD_EXTENSION : dirPath + MD_EXTENSION;
+      dirPath === '' ? `index${  MD_EXTENSION}` : dirPath + MD_EXTENSION;
     return path.join(mdOutDir, mdFileName);
   }
 
   // Handle root index.html case (just "index.html")
   if (relHtmlPath === 'index.html') {
-    return path.join(mdOutDir, 'index' + MD_EXTENSION);
+    return path.join(mdOutDir, `index${  MD_EXTENSION}`);
   }
 
   // Handle regular HTML files - replace extension

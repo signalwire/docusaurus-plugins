@@ -1,0 +1,137 @@
+/**
+ * CopyButton component styles
+ * Styles for the split button component with separate main and dropdown areas
+ */
+
+/* Split button container */
+.splitButton {
+  display: flex;
+  background: var(--llms-copy-bg);
+  border: var(--llms-copy-border-width) solid var(--llms-copy-border);
+  border-radius: var(--llms-copy-radius);
+  box-shadow: var(--llms-copy-shadow);
+  transition: var(--llms-copy-transition);
+  overflow: hidden;
+}
+
+/* Main copy button */
+.mainButton {
+  display: flex;
+  align-items: center;
+  gap: var(--llms-copy-gap);
+  padding: var(--llms-copy-padding);
+  background: transparent;
+  color: var(--llms-copy-text);
+  border: none;
+  cursor: pointer;
+  font-size: var(--llms-copy-font-size);
+  font-weight: var(--llms-copy-font-weight);
+  transition: var(--llms-copy-transition);
+  white-space: nowrap;
+  flex: 1;
+}
+
+.mainButton:hover {
+  background: var(--llms-copy-bg-hover);
+}
+
+.mainButton:active {
+  background: var(--llms-copy-bg-active);
+}
+
+.mainButton:disabled {
+  opacity: var(--llms-copy-disabled-opacity);
+  cursor: not-allowed;
+}
+
+/* Dropdown toggle button */
+.dropdownButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--llms-copy-padding);
+  background: transparent;
+  color: var(--llms-copy-text);
+  border: none;
+  border-left: var(--llms-copy-border-width) solid var(--llms-copy-border);
+  cursor: pointer;
+  transition: var(--llms-copy-transition);
+  min-width: 36px;
+}
+
+.dropdownButton:hover {
+  background: var(--llms-copy-bg-hover);
+}
+
+.dropdownButton:active {
+  background: var(--llms-copy-bg-active);
+}
+
+.dropdownButton:disabled {
+  opacity: var(--llms-copy-disabled-opacity);
+  cursor: not-allowed;
+}
+
+.arrowIcon {
+  width: var(--llms-copy-arrow-icon-size);
+  height: var(--llms-copy-arrow-icon-size);
+  fill: currentColor;
+  transition: var(--llms-copy-arrow-transition);
+}
+
+.arrowIconOpen {
+  transform: rotate(180deg);
+}
+
+/* Success state */
+.splitButton.success {
+  animation: successPulse var(--llms-copy-animation-duration) var(--llms-copy-animation-timing);
+}
+
+.splitButton.success .icon {
+  color: var(--ifm-color-success);
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Loading state */
+.loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--llms-copy-spinner-size);
+  height: var(--llms-copy-spinner-size);
+  margin: calc(var(--llms-copy-spinner-size) / -2) 0 0 calc(var(--llms-copy-spinner-size) / -2);
+  border: var(--llms-copy-spinner-border-width) solid var(--llms-copy-text);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin var(--llms-copy-spinner-animation-duration) linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}.icon {
+  width: var(--llms-copy-icon-size);
+  height: var(--llms-copy-icon-size);
+  fill: currentColor;
+}
+
+

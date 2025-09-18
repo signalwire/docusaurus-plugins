@@ -1,9 +1,11 @@
 /**
- * Simplified orchestrator using focused modules
- * Coordinates between all domains to process documents
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-import type { RouteConfig } from '@docusaurus/types';
+
 
 import { CacheManager } from './cache/cache';
 import {
@@ -13,14 +15,17 @@ import {
 import { setupDirectories, buildSiteUrl } from './filesystem/paths';
 import { generateOutputFiles } from './generation/output-generator';
 import { coordinateProcessing } from './processing/processing-coordinator';
+
 import type {
   ProcessingConfig,
   ProcessingResult,
   CachedRouteInfo,
 } from './types';
+import type { RouteConfig } from '@docusaurus/types';
 
 /**
- * Unified processing orchestrator that handles both build-time and CLI scenarios
+ * Unified processing orchestrator that handles both build-time and CLI
+ * scenarios
  * @internal
  */
 export async function orchestrateProcessing(

@@ -1,9 +1,10 @@
 /**
- * Route validation for processing pipeline
- * Focused module for validating routes before processing
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-import type { RouteConfig, PluginRouteConfig } from '@docusaurus/types';
 
 import type {
   PluginOptions,
@@ -11,6 +12,8 @@ import type {
   CachedRouteInfo,
   ValidationResult,
 } from '../types';
+import type { RouteConfig, PluginRouteConfig } from '@docusaurus/types';
+
 
 /**
  * Type guard to check if a route is a PluginRouteConfig with reliable structure
@@ -91,7 +94,8 @@ export function validateRoutesForProcessing(
   cachedRoute: CachedRouteInfo;
   isValid: boolean;
 }> {
-  // Log route info - no filtering at build time, all filtering happens during cache filtering
+  // Log route info - no filtering at build time, all filtering happens
+  // during cache filtering
   if (routes.length > 0) {
     logger.debug(
       `Processing ${routes.length} routes for caching (no filtering at build time)`

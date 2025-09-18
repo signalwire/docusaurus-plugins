@@ -1,12 +1,17 @@
 /**
- * Route rules engine
- * Handles route rule matching, validation, and application
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import { createMatcher } from '@docusaurus/utils';
 
 // import { VALIDATION_MESSAGES } from '../constants'; // Currently unused
 import { createConfigError } from '../errors';
+import { ensureLeadingSlash } from '../utils';
+
 import type {
   RouteRule,
   PluginOptions,
@@ -14,7 +19,6 @@ import type {
   ContentOptions,
   Depth,
 } from '../types';
-import { ensureLeadingSlash } from '../utils';
 
 /**
  * Find the most specific matching route rule
@@ -105,7 +109,8 @@ export function validateRouteRules(routeRules: readonly RouteRule[]): void {
 
   const conflicts = findRouteRuleConflicts(routeRules);
 
-  // Throw errors for true conflicts (same route pattern with conflicting properties)
+  // Throw errors for true conflicts (same route pattern with conflicting
+  // properties)
   conflicts.forEach((conflict) => {
     const conflictMessages: string[] = [];
 
@@ -161,7 +166,8 @@ interface RouteRuleConflict {
 }
 
 /**
- * Find conflicts between route rules - enhanced to detect all property conflicts
+ * Find conflicts between route rules - enhanced to detect all property
+ * conflicts
  */
 function findRouteRuleConflicts(
   routeRules: readonly RouteRule[]
@@ -173,9 +179,9 @@ function findRouteRuleConflicts(
     if (!routeMap.has(rule.route)) {
       routeMap.set(rule.route, []);
     }
-    const routeRules = routeMap.get(rule.route);
-    if (routeRules) {
-      routeRules.push(rule);
+    const existingRules = routeMap.get(rule.route);
+    if (existingRules) {
+      existingRules.push(rule);
     }
   });
 
@@ -211,7 +217,8 @@ function findRouteRuleConflicts(
       .filter(Boolean);
     const uniqueContentSelectors = contentSelectors.length;
 
-    // Only report if there are actual conflicts (multiple different values for same property)
+    // Only report if there are actual conflicts (multiple different values
+    // for same property)
     const hasConflicts =
       uniqueCategories.length > 1 ||
       uniqueDepths.length > 1 ||

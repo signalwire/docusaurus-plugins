@@ -1,19 +1,24 @@
 /**
- * Public type definitions for docusaurus-plugin-llms-txt
- * Only exports types that plugin users need to configure and use the plugin
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-import type { ReportingSeverity } from '@docusaurus/types';
+
 import { Joi } from '@docusaurus/utils-validation';
-import type { Options as RemarkGfmOptions } from 'remark-gfm';
-import type { Options as RemarkStringifyOptions } from 'remark-stringify';
-import type { Plugin, Settings } from 'unified';
 
 import {
   DEFAULT_CONTENT_SELECTORS,
   DEFAULT_DEPTH,
   PLUGIN_NAME,
 } from '../constants';
+
+import type { ReportingSeverity } from '@docusaurus/types';
+import type { Options as RemarkGfmOptions } from 'remark-gfm';
+import type { Options as RemarkStringifyOptions } from 'remark-stringify';
+import type { Plugin, Settings } from 'unified';
+
 
 // ============================================================================
 // USER CONFIGURATION TYPES
@@ -54,7 +59,8 @@ export interface OptionalLink {
 
 /**
  * Standard unified plugin input types
- * Follows unified.js conventions: function, [function, options], [function, options, settings]
+ * Follows unified.js conventions: function, [function, options],
+ * [function, options, settings]
  */
 /* eslint-disable @typescript-eslint/no-explicit-any -- unified Plugin type requires any for generic plugin support */
 export type PluginInput =
@@ -62,12 +68,14 @@ export type PluginInput =
   | [Plugin<unknown[], any, unknown>, unknown?, Settings?];
 
 /**
- * Content processing options that affect individual markdown file generation
+ * Content processing options that affect individual markdown file
+ * generation
  */
 export interface ContentOptions {
   /** Whether to generate individual markdown files (default: true) */
   readonly enableMarkdownFiles?: boolean;
-  /** Whether to generate llms-full.txt with complete content (default: false) */
+  /** Whether to generate llms-full.txt with complete content (default:
+   * false) */
   readonly enableLlmsFullTxt?: boolean;
   /** Whether to use relative paths in links (default: true) */
   readonly relativePaths?: boolean;
@@ -112,6 +120,30 @@ export interface ContentOptions {
 }
 
 /**
+ * Copy page button configuration options
+ */
+export interface CopyPageContentOptions {
+  /** Custom button label (default: 'Copy Page') */
+  readonly buttonLabel?: string;
+  /** Available copy and share actions */
+  readonly actions?: {
+    /** Enable markdown copy option (default: true) */
+    readonly markdown?: boolean;
+    /** AI integration options */
+    readonly ai?: {
+      /** ChatGPT integration - true enables with default prompt */
+      readonly chatGPT?: boolean | {
+        readonly prompt?: string;
+      };
+      /** Claude integration - true enables with default prompt */
+      readonly claude?: boolean | {
+        readonly prompt?: string;
+      };
+    };
+  };
+}
+
+/**
  * Main plugin configuration options
  */
 export interface PluginOptions {
@@ -139,10 +171,16 @@ export interface PluginOptions {
   /** Whether to run during postBuild phase (default: true) */
   readonly runOnPostBuild?: boolean;
 
+  // Copy page content options
+  /** Copy page content configuration (default: false) */
+  readonly copyPageContent?: boolean | CopyPageContentOptions;
+
   // Logging configuration
-  /** How to handle route processing failures: 'ignore' | 'log' | 'warn' | 'throw' (default: 'warn') */
+  /** How to handle route processing failures: 'ignore' | 'log' | 'warn' |
+   * 'throw' (default: 'warn') */
   readonly onRouteError?: ReportingSeverity;
-  /** Operational logging level: 0=quiet, 1=normal, 2=verbose, 3=debug (default: 1) */
+  /** Operational logging level: 0=quiet, 1=normal, 2=verbose, 3=debug
+   * (default: 1) */
   readonly logLevel?: 0 | 1 | 2 | 3;
 }
 
@@ -167,7 +205,8 @@ export { isPluginError } from '../errors';
 
 /**
  * Logger interface for plugin operations
- * Separated concerns: onRouteError for error handling, logLevel for operational verbosity
+ * Separated concerns: onRouteError for error handling, logLevel for
+ * operational verbosity
  */
 export interface Logger {
   /** Report a route processing error with configurable severity */
@@ -290,6 +329,37 @@ export const pluginOptionsSchema = Joi.object<PluginOptions>({
 
   // Environment options
   runOnPostBuild: Joi.boolean().default(true),
+
+  // Copy page content options
+  copyPageContent: Joi.alternatives()
+    .try(
+      Joi.boolean(),
+      Joi.object({
+        buttonLabel: Joi.string().default('Copy Page'),
+        actions: Joi.object({
+          markdown: Joi.boolean().default(true),
+          ai: Joi.object({
+            chatGPT: Joi.alternatives()
+              .try(
+                Joi.boolean(),
+                Joi.object({
+                  prompt: Joi.string().default('Analyze this documentation:'),
+                })
+              )
+              .default(true),
+            claude: Joi.alternatives()
+              .try(
+                Joi.boolean(),
+                Joi.object({
+                  prompt: Joi.string().default('Analyze this documentation:'),
+                })
+              )
+              .default(true),
+          }).default({}),
+        }).default({}),
+      })
+    )
+    .default(false),
 
   // Logging configuration
   onRouteError: Joi.string()

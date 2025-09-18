@@ -1,0 +1,77 @@
+{
+  "name": "@signalwire/docusaurus-theme-llms-txt",
+  "version": "1.0.0",
+  "description": "Docusaurus theme components for llms-txt plugin including CopyPageButton",
+  "main": "./lib/index.js",
+  "types": "src/theme-llms-txt.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/theme-llms-txt.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
+  "files": [
+    "lib",
+    "src/theme-llms-txt.d.ts",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc --build && node ../../scripts/copyUntypedFiles.js && prettier --config ../../.prettierrc.json --write \"lib/theme/**/*.js\"",
+    "build:watch": "tsc --build --watch",
+    "copy:watch": "node ../../scripts/copyUntypedFiles.js --watch",
+    "watch": "concurrently --names \"tsc,copy\" --kill-others \"yarn build:watch\" \"yarn copy:watch\"",
+    "clean": "rimraf lib",
+    "lint": "echo 'Linting handled at root level'",
+    "lint:fix": "echo 'Linting handled at root level'",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write src/**/*.{ts,tsx}",
+    "format:check": "prettier --check src/**/*.{ts,tsx}",
+    "prepublishOnly": "yarn run clean && yarn run build && yarn run lint && yarn run type-check"
+  },
+  "keywords": [
+    "signalwire",
+    "docusaurus",
+    "theme",
+    "llms-txt",
+    "copy-button",
+    "ai",
+    "llm"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.0.0",
+    "@docusaurus/theme-common": "^3.0.0",
+    "clsx": "^2.0.0",
+    "react-icons": "5.5.0"
+  },
+  "devDependencies": {
+    "@docusaurus/types": "^3.0.0",
+    "@types/node": "^22.15.19",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "concurrently": "^9.0.0",
+    "fs-extra": "^11.1.1"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "SignalWire <devon.white@signalwire.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/signalwire/docusaurus-plugins.git",
+    "directory": "packages/docusaurus-theme-llms-txt"
+  },
+  "homepage": "https://github.com/signalwire/docusaurus-plugins/tree/main/packages/docusaurus-theme-llms-txt#readme",
+  "bugs": {
+    "url": "https://github.com/signalwire/docusaurus-plugins/issues"
+  }
+}

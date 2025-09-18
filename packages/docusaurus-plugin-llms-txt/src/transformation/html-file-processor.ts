@@ -1,7 +1,10 @@
 /**
- * HTML file processing
- * Process individual HTML files to extract content and convert to markdown
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import path from 'path';
 
@@ -14,8 +17,10 @@ import {
   getErrorCause,
   createProcessingError,
 } from '../errors';
+import { extractHtmlMetadata, convertHtmlToMarkdown } from './html-parser';
 import { PathManager, htmlPathToMdPath } from '../filesystem/paths';
 import { saveMarkdownFile } from '../generation/markdown-writer';
+
 import type {
   DocInfo,
   PluginOptions,
@@ -24,7 +29,6 @@ import type {
   CachedRouteInfo,
 } from '../types';
 
-import { extractHtmlMetadata, convertHtmlToMarkdown } from './html-parser';
 
 /**
  * Process a single HTML file → Markdown + metadata
@@ -55,7 +59,8 @@ export async function processHtmlFileWithContext(
     let description: string;
     let markdown = '';
 
-    // Process content if markdown files are enabled OR if llms-full.txt is enabled
+    // Process content if markdown files are enabled OR if llms-full.txt is
+    // enabled
     if (contentConfig.enableMarkdownFiles || contentConfig.enableLlmsFullTxt) {
       // Full processing for individual markdown files
       const conversionOptions: MarkdownConversionOptions = {
@@ -68,8 +73,8 @@ export async function processHtmlFileWithContext(
         enableMarkdownFiles: contentConfig.enableMarkdownFiles,
         excludeRoutes: contentConfig.excludeRoutes,
         fullConfig: config,
-        logger: logger,
-        routeLookup: routeLookup,
+        logger,
+        routeLookup,
         // Pass simplified plugin arrays to the conversion pipeline
         beforeDefaultRehypePlugins: contentConfig.beforeDefaultRehypePlugins,
         rehypePlugins: contentConfig.rehypePlugins,
@@ -87,13 +92,13 @@ export async function processHtmlFileWithContext(
       markdown = result.content;
 
       if (!markdown)
-        throw createProcessingError(
+        {throw createProcessingError(
           `HTML to Markdown conversion resulted in empty content for "${relHtmlPath}". This usually means your contentSelectors didn't match any elements in the HTML. Try using different CSS selectors or check if the HTML file contains the expected content structure.`,
           {
             filePath: relHtmlPath,
             contentSelectors,
           }
-        );
+        );}
 
       // Save markdown files if enableMarkdownFiles is true
       if (contentConfig.enableMarkdownFiles) {

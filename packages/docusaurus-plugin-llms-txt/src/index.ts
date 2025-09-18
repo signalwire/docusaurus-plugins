@@ -1,22 +1,31 @@
+/**
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+import { flattenRoutes } from '@docusaurus/utils';
+
+import { registerLlmsTxt, registerLlmsTxtClean } from './cli/command';
+import { getConfig, validateUserInputs } from './config';
+import { ERROR_MESSAGES, PLUGIN_NAME } from './constants';
+import { generateCopyContentJson } from './copy-button/json-generator';
+import { getErrorMessage, createConfigError, isPluginError } from './errors';
+import { createPluginLogger } from './logging';
+import { orchestrateProcessing } from './orchestrator';
+import { pluginOptionsSchema } from './types';
+
+import type { PluginOptions } from './types';
 import type {
   LoadContext,
   Plugin,
   PluginRouteConfig,
   RouteConfig,
 } from '@docusaurus/types';
-import { flattenRoutes } from '@docusaurus/utils';
-
-import { registerLlmsTxt, registerLlmsTxtClean } from './cli/command';
-import { getConfig, validateUserInputs } from './config';
-import { ERROR_MESSAGES, PLUGIN_NAME } from './constants';
-import { getErrorMessage, createConfigError, isPluginError } from './errors';
-import { createPluginLogger } from './logging';
-import { orchestrateProcessing } from './orchestrator';
-import type { PluginOptions } from './types';
-import { pluginOptionsSchema } from './types';
 
 /**
- * Create a mapping of route paths to their plugin and version information by traversing the nested route structure
+ * Create a mapping of route paths to their plugin and version information by
+ * traversing the nested route structure
  */
 function createPluginInfoMapping(
   routes: RouteConfig[]
@@ -72,7 +81,8 @@ function createPluginInfoMapping(
       ) {
         // Docusaurus versioning: isLast=true for latest released version
         // Note: "current" version might be unreleased/future state
-        // Only isLast=false routes should be filtered when includeVersionedDocs=false
+        // Only isLast=false routes should be filtered when
+        // includeVersionedDocs=false
         const isLast = route.props.version.isLast;
         const isVersioned = !isLast; // Only non-latest versions are "versioned"
 
@@ -144,7 +154,8 @@ function enhanceRoutesWithPluginInfo(
 }
 
 /**
- * Docusaurus plugin to generate Markdown versions of HTML pages and an llms.txt index file.
+ * Docusaurus plugin to generate Markdown versions of HTML pages and an
+ * llms.txt index file.
  *
  * This plugin runs after the build process and:
  * 1. Processes routes from Docusaurus to find relevant content
@@ -156,6 +167,7 @@ export default function llmsTxtPlugin(
   options: Partial<PluginOptions> = {}
 ): Plugin<void> {
   const name = PLUGIN_NAME;
+  const config = getConfig(options);
 
   // Validate user inputs for security
   try {
@@ -170,8 +182,45 @@ export default function llmsTxtPlugin(
     });
   }
 
+  // Generate timestamp for JSON filename at plugin initialization
+  const buildTimestamp = Date.now();
+
   return {
     name,
+
+    // Provide JSON URL and config to components via global data
+    contentLoaded({actions}): void {
+      const {setGlobalData} = actions;
+
+      const globalData: {
+        copyContentConfig: typeof config.copyPageContent;
+        siteConfig: {
+          baseUrl: string;
+          url: string;
+          trailingSlash?: boolean;
+        };
+        copyContentDataUrl?: string;
+      } = {
+        copyContentConfig: config.copyPageContent,
+        siteConfig: {
+          baseUrl: context.siteConfig.baseUrl,
+          url: context.siteConfig.url,
+          trailingSlash: context.siteConfig.trailingSlash
+        }
+      };
+
+      // Only add URL if copy content is enabled
+      if (config.copyPageContent !== false) {
+        globalData.copyContentDataUrl = `/copy-content-data.${buildTimestamp}.json`;
+      }
+
+      setGlobalData(globalData);
+    },
+
+    // Note: Theme components are now provided by
+    // @signalwire/docusaurus-theme-llms-txt
+    // The plugin only provides data via global data, the theme package
+    // handles UI
 
     async postBuild({
       outDir,
@@ -180,7 +229,6 @@ export default function llmsTxtPlugin(
       siteConfig,
       routes,
     }): Promise<void> {
-      const config = getConfig(options);
       const log = createPluginLogger(config);
 
       log.debug(`outDir: ${outDir}`);
@@ -239,6 +287,19 @@ export default function llmsTxtPlugin(
           enhancedCachedRoutes
         );
 
+        // Generate JSON file for copy content data if enabled
+        if (config.copyPageContent !== false) {
+          // Reload the cache to get the updated routes with markdownFile
+          // populated after processing
+          const updatedCache = await cacheManager.loadCache();
+          await generateCopyContentJson(
+            [...updatedCache.routes],
+            outDir,
+            buildTimestamp,
+            log
+          );
+        }
+
         log.success(
           `Plugin completed successfully - processed ${result.processedCount} documents`
         );
@@ -271,9 +332,18 @@ export default function llmsTxtPlugin(
 }
 
 /**
+ * Static function to mark components as safe for swizzling
+ * This is required for Docusaurus to allow users to swizzle components
+ * without --danger flag
+ */
+// Note: Swizzlable components are now provided by
+// @signalwire/docusaurus-theme-llms-txt
+
+/**
  * Type-safe validation function with enhanced error handling
  * @internal
- * This function is called by Docusaurus framework - users should not call directly
+ * This function is called by Docusaurus framework - users should not call
+ * directly
  */
 export function validateOptions({
   options: _options,

@@ -1,14 +1,21 @@
 /**
- * Simplified plugin registry for unified processors
- * Follows Docusaurus pattern: before/after arrays with simple order
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import rehypeParse from 'rehype-parse';
 import rehypeRemark from 'rehype-remark';
 import remarkGfm from 'remark-gfm';
 import remarkStringify from 'remark-stringify';
 import { unified } from 'unified';
-import type { Processor } from 'unified';
+
+
+
+import rehypeLinks from './rehype-links';
+import rehypeTables from './rehype-tables';
 
 import type {
   Logger,
@@ -16,9 +23,7 @@ import type {
   RehypeLinksOptions,
   PluginInput,
 } from '../../types';
-
-import rehypeLinks from './rehype-links';
-import rehypeTables from './rehype-tables';
+import type { Processor } from 'unified';
 
 /**
  * Simplified plugin registry class
@@ -52,8 +57,8 @@ export class PluginRegistry {
    */
   private applyPluginArray(
     processor: Processor,
-    plugins: readonly PluginInput[] = [],
-    logger?: Logger
+    logger?: Logger,
+    plugins: readonly PluginInput[] = []
   ): void {
     for (const pluginInput of plugins) {
       try {
@@ -131,15 +136,15 @@ export class PluginRegistry {
     // 1. Apply "before" plugins first
     this.applyPluginArray(
       processor,
-      options.beforeDefaultRehypePlugins,
-      options.logger
+      options.logger,
+      options.beforeDefaultRehypePlugins
     );
 
     // 2. Apply built-in plugins in fixed order
     this.applyBuiltinRehypePlugins(processor, options);
 
     // 3. Apply "after" plugins last
-    this.applyPluginArray(processor, options.rehypePlugins, options.logger);
+    this.applyPluginArray(processor, options.logger, options.rehypePlugins);
   }
 
   /**
@@ -152,15 +157,15 @@ export class PluginRegistry {
     // 1. Apply "before" plugins first
     this.applyPluginArray(
       processor,
-      options.beforeDefaultRemarkPlugins,
-      options.logger
+      options.logger,
+      options.beforeDefaultRemarkPlugins
     );
 
     // 2. Apply built-in plugins in fixed order
     this.applyBuiltinRemarkPlugins(processor, options);
 
     // 3. Apply "after" plugins last
-    this.applyPluginArray(processor, options.remarkPlugins, options.logger);
+    this.applyPluginArray(processor, options.logger, options.remarkPlugins);
   }
 
   /**

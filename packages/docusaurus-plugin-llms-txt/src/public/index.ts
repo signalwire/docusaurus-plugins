@@ -1,9 +1,10 @@
 /**
- * Public API for docusaurus-plugin-llms-txt
+ * Copyright (c) SignalWire, Inc. and its affiliates.
  *
- * This module exports only what plugin users need.
- * Internal implementation details are not exposed.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 /**
  * Public API exports

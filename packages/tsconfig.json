@@ -29,7 +29,8 @@
   },
   "files": [],
   "references": [
-    { "path": "./docusaurus-plugin-llms-txt" }
+    { "path": "./docusaurus-plugin-llms-txt" },
+    { "path": "./docusaurus-theme-llms-txt" }
   ],
   "include": ["../__tests__/**/*"],
   "exclude": [

@@ -1,7 +1,10 @@
 /**
- * Minimal security validation for things Joi can't handle
- * Joi handles type checking, required fields, etc. - we only need custom security checks
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import { VALIDATION_MESSAGES } from '../constants';
 import { createValidationError } from '../errors';
@@ -17,5 +20,6 @@ export function validateUserInputs(
     throw createValidationError(VALIDATION_MESSAGES.OBJECT_REQUIRED);
   }
 
-  // No path security validation needed since docsRoot and outputDir have been removed
+  // No path security validation needed since docsRoot and outputDir have
+  // been removed
 }

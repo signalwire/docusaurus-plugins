@@ -1,7 +1,10 @@
 /**
- * Output file generation
- * Handles the generation and saving of output files
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
+
 
 import path from 'path';
 
@@ -11,11 +14,11 @@ import {
   LLMS_FULL_TXT_FILENAME,
   PROCESSING_MESSAGES,
 } from '../constants';
-import type { DocInfo, PluginOptions, Logger, DirectoryConfig } from '../types';
-
 import { buildLlmsFullTxtContent } from './full-index-builder';
 import { buildLlmsTxtContent } from './index-builder';
 import { saveMarkdownFile } from './markdown-writer';
+
+import type { DocInfo, PluginOptions, Logger, DirectoryConfig } from '../types';
 
 /**
  * Output generation result
