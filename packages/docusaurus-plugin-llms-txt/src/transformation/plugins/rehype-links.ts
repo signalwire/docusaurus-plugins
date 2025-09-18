@@ -45,7 +45,7 @@ function resolvePathname(
   }
 
   // Try with trailing slash
-  const withTrailingSlash = pathname.endsWith('/') ? pathname : `${pathname  }/`;
+  const withTrailingSlash = pathname.endsWith('/') ? pathname : `${pathname}/`;
   if (routeLookup.has(withTrailingSlash)) {
     return withTrailingSlash;
   }
@@ -60,8 +60,8 @@ function resolvePathname(
 
   // Try with index suffix
   const withIndex = pathname.endsWith('/')
-    ? `${pathname  }index`
-    : `${pathname  }/index`;
+    ? `${pathname}index`
+    : `${pathname}/index`;
   if (routeLookup.has(withIndex)) {
     return withIndex;
   }
@@ -246,21 +246,20 @@ function processAnchorElement(
  * - If relativePaths=false → excluded links get baseUrl but NO .md extension
  * - If relativePaths=true → excluded links are left unchanged
  */
-const rehypeLinks: Plugin<[RehypeLinksOptions], Root, Root> = function rehypeLinksPlugin(
-  options: RehypeLinksOptions = {}
-) {
-  return function transformer(tree: Root): Root {
-    // Check if we should skip transformation entirely
-    if (shouldSkipLinkTransformation(options)) {
+const rehypeLinks: Plugin<[RehypeLinksOptions], Root, Root> =
+  function rehypeLinksPlugin(options: RehypeLinksOptions = {}) {
+    return function transformer(tree: Root): Root {
+      // Check if we should skip transformation entirely
+      if (shouldSkipLinkTransformation(options)) {
+        return tree;
+      }
+
+      visit(tree, 'element', (node: Element) => {
+        processAnchorElement(node, options);
+      });
+
       return tree;
-    }
-
-    visit(tree, 'element', (node: Element) => {
-      processAnchorElement(node, options);
-    });
-
-    return tree;
+    };
   };
-};
 
 export default rehypeLinks;

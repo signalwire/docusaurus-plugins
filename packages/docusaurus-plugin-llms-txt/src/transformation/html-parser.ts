@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import { select, selectAll } from 'hast-util-select';
 
 import { DEFAULT_DOCUMENT_TITLE, HTML_SELECTORS } from '../constants';

@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import { getContentConfig } from '../config';
 import { CONTENT_TYPES } from '../constants';
 import { createExclusionMatcher } from '../discovery/exclusion-matcher';
@@ -36,17 +35,23 @@ export function filterCachedRoutesForConfig(
     switch (route.contentType) {
       case CONTENT_TYPES.BLOG:
         shouldIncludeType = contentConfig.includeBlog;
-        if (!shouldIncludeType) {excludedByType += 1;}
+        if (!shouldIncludeType) {
+          excludedByType += 1;
+        }
         break;
       case CONTENT_TYPES.PAGES:
         shouldIncludeType = contentConfig.includePages;
-        if (!shouldIncludeType) {excludedByType += 1;}
+        if (!shouldIncludeType) {
+          excludedByType += 1;
+        }
         break;
       case CONTENT_TYPES.DOCS:
       case CONTENT_TYPES.UNKNOWN:
       default:
         shouldIncludeType = contentConfig.includeDocs;
-        if (!shouldIncludeType) {excludedByType += 1;}
+        if (!shouldIncludeType) {
+          excludedByType += 1;
+        }
         break;
     }
 

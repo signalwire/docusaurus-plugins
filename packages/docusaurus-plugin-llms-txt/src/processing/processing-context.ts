@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-
 import { cachedRoutesToRouteConfigs } from '../discovery/route-converter';
 
 import type { CacheSchema, Logger } from '../types';

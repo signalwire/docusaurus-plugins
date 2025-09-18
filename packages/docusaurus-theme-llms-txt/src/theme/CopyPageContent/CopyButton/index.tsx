@@ -8,8 +8,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 
-import { MdCheck , MdFileCopy } from "react-icons/md";
-
+import { MdCheck, MdFileCopy } from 'react-icons/md';
 
 import ChevronIcon from '@theme/CopyPageContent/Icons/ChevronIcon';
 
@@ -30,26 +29,39 @@ export default function CopyButton({
   finalConfig,
   isOpen,
   onMainAction,
-  onDropdownToggle
+  onDropdownToggle,
 }: CopyButtonProps): React.JSX.Element {
   return (
-    <div className={clsx(styles.splitButton, copyStatus === 'success' && styles.success)}>
+    <div
+      className={clsx(
+        styles.splitButton,
+        copyStatus === 'success' && styles.success
+      )}
+    >
       <button
-        type="button"
+        type='button'
         className={styles.mainButton}
         onClick={onMainAction}
-        aria-label={copyStatus === 'success' ? 'Copied!' : 'Copy page as Markdown'}
+        aria-label={
+          copyStatus === 'success' ? 'Copied!' : 'Copy page as Markdown'
+        }
       >
-        {copyStatus === 'success' ? <MdCheck className={styles.icon} /> : <MdFileCopy className={styles.icon} />}
-        <span>{copyStatus === 'success' ? 'Copied!' : finalConfig.buttonLabel}</span>
+        {copyStatus === 'success' ? (
+          <MdCheck className={styles.icon} />
+        ) : (
+          <MdFileCopy className={styles.icon} />
+        )}
+        <span>
+          {copyStatus === 'success' ? 'Copied!' : finalConfig.buttonLabel}
+        </span>
       </button>
       <button
-        type="button"
+        type='button'
         className={styles.dropdownButton}
         onClick={onDropdownToggle}
         aria-expanded={isOpen}
-        aria-haspopup="true"
-        aria-label="More copy options"
+        aria-haspopup='true'
+        aria-label='More copy options'
       >
         <ChevronIcon isOpen={isOpen} />
       </button>

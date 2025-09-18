@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import { Joi } from '@docusaurus/utils-validation';
 
 import {
@@ -18,7 +17,6 @@ import type { ReportingSeverity } from '@docusaurus/types';
 import type { Options as RemarkGfmOptions } from 'remark-gfm';
 import type { Options as RemarkStringifyOptions } from 'remark-stringify';
 import type { Plugin, Settings } from 'unified';
-
 
 // ============================================================================
 // USER CONFIGURATION TYPES
@@ -132,13 +130,17 @@ export interface CopyPageContentOptions {
     /** AI integration options */
     readonly ai?: {
       /** ChatGPT integration - true enables with default prompt */
-      readonly chatGPT?: boolean | {
-        readonly prompt?: string;
-      };
+      readonly chatGPT?:
+        | boolean
+        | {
+            readonly prompt?: string;
+          };
       /** Claude integration - true enables with default prompt */
-      readonly claude?: boolean | {
-        readonly prompt?: string;
-      };
+      readonly claude?:
+        | boolean
+        | {
+            readonly prompt?: string;
+          };
     };
   };
 }

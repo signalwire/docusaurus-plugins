@@ -5,12 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import path from 'path';
 
 import type { Plugin } from '@docusaurus/types';
 
-export {default as getSwizzleConfig} from './getSwizzleConfig';
+export { default as getSwizzleConfig } from './getSwizzleConfig';
 
 export default function themeLlmsTxt(): Plugin<void> {
   return {

@@ -85,7 +85,8 @@
 
 /* Success state */
 .splitButton.success {
-  animation: successPulse var(--llms-copy-animation-duration) var(--llms-copy-animation-timing);
+  animation: successPulse var(--llms-copy-animation-duration)
+    var(--llms-copy-animation-timing);
 }
 
 .splitButton.success .icon {
@@ -117,7 +118,8 @@
   left: 50%;
   width: var(--llms-copy-spinner-size);
   height: var(--llms-copy-spinner-size);
-  margin: calc(var(--llms-copy-spinner-size) / -2) 0 0 calc(var(--llms-copy-spinner-size) / -2);
+  margin: calc(var(--llms-copy-spinner-size) / -2) 0 0
+    calc(var(--llms-copy-spinner-size) / -2);
   border: var(--llms-copy-spinner-border-width) solid var(--llms-copy-text);
   border-top-color: transparent;
   border-radius: 50%;
@@ -128,10 +130,9 @@
   to {
     transform: rotate(360deg);
   }
-}.icon {
+}
+.icon {
   width: var(--llms-copy-icon-size);
   height: var(--llms-copy-icon-size);
   fill: currentColor;
 }
-
-

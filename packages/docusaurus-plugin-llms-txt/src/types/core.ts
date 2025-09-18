@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import type { ContentType } from '../constants';
 import type {
   ContentOptions,
@@ -16,8 +15,6 @@ import type {
 import type { Root } from 'hast';
 import type { Options as RemarkGfmOptions } from 'remark-gfm';
 import type { Options as RemarkStringifyOptions } from 'remark-stringify';
-
-
 
 // ============================================================================
 // CACHE AND FILE SYSTEM TYPES

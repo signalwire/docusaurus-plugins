@@ -5,10 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import type { CachedRouteInfo } from '../types';
 import type { RouteConfig } from '@docusaurus/types';
-
 
 /**
  * Convert cached route info back to RouteConfig objects

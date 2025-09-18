@@ -45,15 +45,24 @@ export function constructMarkdownUrl(pathname: string): string {
  * Construct full absolute URL for AI prompts
  * Example: "/api/intro" → "https://site.com/baseUrl/api/intro.md"
  */
-export function constructFullUrl(pathname: string, siteConfig: SiteConfig): string {
+export function constructFullUrl(
+  pathname: string,
+  siteConfig: SiteConfig
+): string {
   const markdownPath = constructMarkdownUrl(pathname);
 
   // Remove leading slash from markdownPath for joining
-  const pathWithoutSlash = markdownPath.startsWith('/') ? markdownPath.slice(1) : markdownPath;
+  const pathWithoutSlash = markdownPath.startsWith('/')
+    ? markdownPath.slice(1)
+    : markdownPath;
 
   // Build full URL: siteUrl + baseUrl + markdownPath
-  const siteUrl = siteConfig.url.endsWith('/') ? siteConfig.url.slice(0, -1) : siteConfig.url;
-  const baseUrl = siteConfig.baseUrl.startsWith('/') ? siteConfig.baseUrl : `/${siteConfig.baseUrl}`;
+  const siteUrl = siteConfig.url.endsWith('/')
+    ? siteConfig.url.slice(0, -1)
+    : siteConfig.url;
+  const baseUrl = siteConfig.baseUrl.startsWith('/')
+    ? siteConfig.baseUrl
+    : `/${siteConfig.baseUrl}`;
 
   return `${siteUrl}${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}${pathWithoutSlash}`;
 }

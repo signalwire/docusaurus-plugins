@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import { HASH_DISPLAY_LENGTH, CACHE_MESSAGES } from '../constants';
 
 import type { PluginOptions, Logger, CacheSchema } from '../types';

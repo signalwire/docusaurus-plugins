@@ -5,14 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import rehypeParse from 'rehype-parse';
 import rehypeRemark from 'rehype-remark';
 import remarkGfm from 'remark-gfm';
 import remarkStringify from 'remark-stringify';
 import { unified } from 'unified';
-
-
 
 import rehypeLinks from './rehype-links';
 import rehypeTables from './rehype-tables';

@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import path from 'path';
 
 import fs from 'fs-extra';
@@ -28,7 +27,6 @@ import type {
   MarkdownConversionOptions,
   CachedRouteInfo,
 } from '../types';
-
 
 /**
  * Process a single HTML file → Markdown + metadata
@@ -91,14 +89,15 @@ export async function processHtmlFileWithContext(
       description = result.description;
       markdown = result.content;
 
-      if (!markdown)
-        {throw createProcessingError(
+      if (!markdown) {
+        throw createProcessingError(
           `HTML to Markdown conversion resulted in empty content for "${relHtmlPath}". This usually means your contentSelectors didn't match any elements in the HTML. Try using different CSS selectors or check if the HTML file contains the expected content structure.`,
           {
             filePath: relHtmlPath,
             contentSelectors,
           }
-        );}
+        );
+      }
 
       // Save markdown files if enableMarkdownFiles is true
       if (contentConfig.enableMarkdownFiles) {

@@ -10,8 +10,8 @@ import type { CopyPageContentOptions } from '../types/copyButton';
 export interface ResolvedCopyPageContentOptions {
   buttonLabel: string;
   markdown: boolean;
-  chatGPT: { enabled: boolean; prompt: string; };
-  claude: { enabled: boolean; prompt: string; };
+  chatGPT: { enabled: boolean; prompt: string };
+  claude: { enabled: boolean; prompt: string };
 }
 
 // Default configuration
@@ -20,11 +20,11 @@ const DEFAULT_CONFIG: ResolvedCopyPageContentOptions = {
   markdown: true,
   chatGPT: {
     enabled: true,
-    prompt: 'Analyze this documentation:'
+    prompt: 'Analyze this documentation:',
   },
   claude: {
     enabled: true,
-    prompt: 'Analyze this documentation:'
+    prompt: 'Analyze this documentation:',
   },
 };
 
@@ -50,28 +50,40 @@ export default function useCopyButtonConfig(
           if (typeof pluginConfig.actions?.ai?.chatGPT === 'boolean') {
             return pluginConfig.actions.ai.chatGPT;
           }
-          if (pluginConfig.actions?.ai?.chatGPT && typeof pluginConfig.actions.ai.chatGPT === 'object') {
+          if (
+            pluginConfig.actions?.ai?.chatGPT &&
+            typeof pluginConfig.actions.ai.chatGPT === 'object'
+          ) {
             return true;
           }
           return baseConfig.chatGPT.enabled;
         })(),
-        prompt: pluginConfig.actions?.ai?.chatGPT && typeof pluginConfig.actions.ai.chatGPT === 'object'
-          ? (pluginConfig.actions.ai.chatGPT.prompt ?? baseConfig.chatGPT.prompt)
-          : baseConfig.chatGPT.prompt,
+        prompt:
+          pluginConfig.actions?.ai?.chatGPT &&
+          typeof pluginConfig.actions.ai.chatGPT === 'object'
+            ? (pluginConfig.actions.ai.chatGPT.prompt ??
+              baseConfig.chatGPT.prompt)
+            : baseConfig.chatGPT.prompt,
       },
       claude: {
         enabled: (() => {
           if (typeof pluginConfig.actions?.ai?.claude === 'boolean') {
             return pluginConfig.actions.ai.claude;
           }
-          if (pluginConfig.actions?.ai?.claude && typeof pluginConfig.actions.ai.claude === 'object') {
+          if (
+            pluginConfig.actions?.ai?.claude &&
+            typeof pluginConfig.actions.ai.claude === 'object'
+          ) {
             return true;
           }
           return baseConfig.claude.enabled;
         })(),
-        prompt: pluginConfig.actions?.ai?.claude && typeof pluginConfig.actions.ai.claude === 'object'
-          ? (pluginConfig.actions.ai.claude.prompt ?? baseConfig.claude.prompt)
-          : baseConfig.claude.prompt,
+        prompt:
+          pluginConfig.actions?.ai?.claude &&
+          typeof pluginConfig.actions.ai.claude === 'object'
+            ? (pluginConfig.actions.ai.claude.prompt ??
+              baseConfig.claude.prompt)
+            : baseConfig.claude.prompt,
       },
     };
   }

@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import { createMatcher } from '@docusaurus/utils';
 
 import { getEffectiveConfigForRoute } from '../config';
@@ -45,7 +44,9 @@ function applyOrdering(node: TreeNode, globalConfig: PluginOptions): void {
       if (includeOrder && includeOrder.length > 0) {
         for (let i = 0; i < includeOrder.length; i += 1) {
           const pattern = includeOrder[i];
-          if (!pattern) {continue;} // Skip undefined patterns
+          if (!pattern) {
+            continue;
+          } // Skip undefined patterns
 
           // Create matcher for the pattern
           const matcher = createMatcher([pattern]);
@@ -68,14 +69,22 @@ function applyOrdering(node: TreeNode, globalConfig: PluginOptions): void {
           }
 
           // Break early if both found
-          if (aIndex !== -1 && bIndex !== -1) {break;}
+          if (aIndex !== -1 && bIndex !== -1) {
+            break;
+          }
         }
       }
 
       // Items matching includeOrder patterns come first, in pattern order
-      if (aIndex !== -1 && bIndex !== -1) {return aIndex - bIndex;}
-      if (aIndex !== -1) {return -1;}
-      if (bIndex !== -1) {return 1;}
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+      if (aIndex !== -1) {
+        return -1;
+      }
+      if (bIndex !== -1) {
+        return 1;
+      }
 
       // Items not matching any pattern come after, alphabetically
       return a.name.localeCompare(b.name);
@@ -138,7 +147,9 @@ export function buildDocumentTree(
     // Build the hierarchy up to depth levels (or segments length if shorter)
     for (let i = 0; i < Math.min(depth, segments.length); i += 1) {
       const segment = segments[i];
-      if (!segment) {continue;} // Skip undefined segments
+      if (!segment) {
+        continue;
+      } // Skip undefined segments
 
       const nextPath = categoryPath ? `${categoryPath}/${segment}` : segment;
       if (!categoryMap.has(nextPath)) {

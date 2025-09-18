@@ -22,7 +22,8 @@ export default function useCopyContentData(dataUrl: string | undefined): {
   copyContentData: CopyContentData | null;
   isLoading: boolean;
 } {
-  const [copyContentData, setCopyContentData] = useState<CopyContentData | null>(null);
+  const [copyContentData, setCopyContentData] =
+    useState<CopyContentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -42,17 +43,19 @@ export default function useCopyContentData(dataUrl: string | undefined): {
 
     // If a fetch is already in progress for the same URL, wait for it
     if (cachePromise && cachedDataUrl === dataUrl) {
-      void cachePromise.then((data) => {
-        if (!isCancelled) {
-          setCopyContentData(data);
-          setIsLoading(false);
-        }
-      }).catch(() => {
-        if (!isCancelled) {
-          setCopyContentData(null);
-          setIsLoading(false);
-        }
-      });
+      void cachePromise
+        .then((data) => {
+          if (!isCancelled) {
+            setCopyContentData(data);
+            setIsLoading(false);
+          }
+        })
+        .catch(() => {
+          if (!isCancelled) {
+            setCopyContentData(null);
+            setIsLoading(false);
+          }
+        });
       return undefined;
     }
 
@@ -60,9 +63,11 @@ export default function useCopyContentData(dataUrl: string | undefined): {
     const fetchData = async (): Promise<CopyContentData> => {
       const response = await fetch(dataUrl);
       if (!response.ok) {
-        throw new Error(`Failed to fetch copy content data: ${response.status}`);
+        throw new Error(
+          `Failed to fetch copy content data: ${response.status}`
+        );
       }
-      return await response.json() as CopyContentData;
+      return (await response.json()) as CopyContentData;
     };
 
     // Store the URL and promise for cache validation
@@ -70,25 +75,27 @@ export default function useCopyContentData(dataUrl: string | undefined): {
     cachePromise = fetchData();
 
     // Handle the promise
-    void cachePromise.then((data) => {
-      // Cache the successful result
-      cachedCopyContentData = data;
-      if (!isCancelled) {
-        setCopyContentData(data);
-        setIsLoading(false);
-      }
-      return undefined;
-    }).catch((error) => {
-      console.error('Failed to load copy content data:', error);
-      // Clear cache on error
-      cachePromise = null;
-      cachedCopyContentData = null;
-      if (!isCancelled) {
-        setCopyContentData(null);
-        setIsLoading(false);
-      }
-      return undefined;
-    });
+    void cachePromise
+      .then((data) => {
+        // Cache the successful result
+        cachedCopyContentData = data;
+        if (!isCancelled) {
+          setCopyContentData(data);
+          setIsLoading(false);
+        }
+        return undefined;
+      })
+      .catch((error) => {
+        console.error('Failed to load copy content data:', error);
+        // Clear cache on error
+        cachePromise = null;
+        cachedCopyContentData = null;
+        if (!isCancelled) {
+          setCopyContentData(null);
+          setIsLoading(false);
+        }
+        return undefined;
+      });
 
     return () => {
       isCancelled = true;

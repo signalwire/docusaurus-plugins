@@ -30,7 +30,7 @@ if (process.argv.includes('--watch')) {
     persistent: true,
   });
   ['add', 'change', 'unlink', 'addDir', 'unlinkDir'].forEach((event) =>
-    watcher.on(event, copy),
+    watcher.on(event, copy)
   );
 } else {
   await copy();

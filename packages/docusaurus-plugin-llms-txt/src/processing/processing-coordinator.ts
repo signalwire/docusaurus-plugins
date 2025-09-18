@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import { processDocuments } from './route-processor';
 import { filterCachedRoutesForConfig } from '../cache/cache-filter';
 
@@ -18,9 +17,6 @@ import type {
   DirectoryConfig,
 } from '../types';
 import type { RouteConfig } from '@docusaurus/types';
-
-
-
 
 /**
  * Processing coordination result

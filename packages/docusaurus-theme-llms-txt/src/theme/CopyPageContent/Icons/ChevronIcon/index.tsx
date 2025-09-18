@@ -16,10 +16,15 @@ interface ChevronIconProps {
   isOpen: boolean;
 }
 
-export default function ChevronIcon({ isOpen }: ChevronIconProps): React.JSX.Element {
+export default function ChevronIcon({
+  isOpen,
+}: ChevronIconProps): React.JSX.Element {
   return (
     <FiChevronDown
-      className={clsx(buttonStyles.arrowIcon, isOpen && buttonStyles.arrowIconOpen)}
+      className={clsx(
+        buttonStyles.arrowIcon,
+        isOpen && buttonStyles.arrowIconOpen
+      )}
     />
   );
 }

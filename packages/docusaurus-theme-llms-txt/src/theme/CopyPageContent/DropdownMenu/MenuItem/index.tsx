@@ -15,16 +15,15 @@ interface MenuItemProps {
   onClick: () => void;
 }
 
-export default function MenuItem({ icon, children, description, onClick }: MenuItemProps): React.JSX.Element {
+export default function MenuItem({
+  icon,
+  children,
+  description,
+  onClick,
+}: MenuItemProps): React.JSX.Element {
   return (
-    <button
-      type="button"
-      className={styles.menuItem}
-      onClick={onClick}
-    >
-      <div className={styles.iconContainer}>
-        {icon}
-      </div>
+    <button type='button' className={styles.menuItem} onClick={onClick}>
+      <div className={styles.iconContainer}>{icon}</div>
       <div className={styles.menuItemContent}>
         <span className={styles.menuItemLabel}>{children}</span>
         {description && (

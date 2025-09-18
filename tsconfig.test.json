@@ -7,8 +7,6 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": [
-    "__tests__/**/*"
-  ],
+  "include": ["__tests__/**/*"],
   "exclude": []
 }

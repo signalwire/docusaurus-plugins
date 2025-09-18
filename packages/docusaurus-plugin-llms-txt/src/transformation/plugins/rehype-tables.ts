@@ -9,7 +9,6 @@ import { visit } from 'unist-util-visit';
 import type { Root, Element, ElementContent, Text } from 'hast';
 import type { Plugin } from 'unified';
 
-
 /**
  * Rehype plugin that flattens <ul>/<ol> lists that appear *inside* table cells.
  * Each list item becomes text prefixed with a dash or index and
@@ -20,7 +19,9 @@ import type { Plugin } from 'unified';
 const rehypeTables: Plugin<[], Root, Root> = function rehypeTablesPlugin() {
   return function transformer(tree: Root): Root {
     visit(tree, 'element', (node: Element) => {
-      if (node.tagName !== 'td' && node.tagName !== 'th') {return;}
+      if (node.tagName !== 'td' && node.tagName !== 'th') {
+        return;
+      }
 
       visit(node, 'element', (listNode: Element, listIndex, listParent) => {
         if (
@@ -36,7 +37,9 @@ const rehypeTables: Plugin<[], Root, Root> = function rehypeTablesPlugin() {
           (c) =>
             (c as Element).type === 'element' && (c as Element).tagName === 'li'
         ) as Element[];
-        if (listItems.length === 0) {return undefined;}
+        if (listItems.length === 0) {
+          return undefined;
+        }
 
         const replacement: ElementContent[] = [];
         listItems.forEach((li, idx) => {

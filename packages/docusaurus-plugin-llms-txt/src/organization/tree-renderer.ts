@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import { createSlugger } from '@docusaurus/utils';
 
 import { DEFAULT_MARKDOWN_HEADER_LEVEL } from '../constants';
@@ -100,17 +99,15 @@ export function renderTreeAsMarkdown(
   // Process subcategories (already ordered by tree builder)
   if (node.subCategories.length) {
     node.subCategories.forEach((sub: TreeNode) => {
-      md +=
-        `\n${ 
-        renderTreeAsMarkdown(
-          sub,
-          isRoot ? level : level + 1,
-          false,
-          baseUrl,
-          useRelativePaths,
-          enableMarkdownFiles,
-          enableDescriptions
-        )}`;
+      md += `\n${renderTreeAsMarkdown(
+        sub,
+        isRoot ? level : level + 1,
+        false,
+        baseUrl,
+        useRelativePaths,
+        enableMarkdownFiles,
+        enableDescriptions
+      )}`;
     });
   }
   return md;

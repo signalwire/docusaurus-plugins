@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-
 import { INDEX_HTML } from '../constants';
 import { removeLeadingSlash, stripBaseUrl } from '../utils';
 import { shouldProcessRoute } from './content-classifier';

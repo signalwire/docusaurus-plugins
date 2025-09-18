@@ -61,11 +61,17 @@ async function getTsconfigFiles(): Promise<TsconfigFile[]> {
 }
 
 const tsconfigSchema = Joi.object({
-  extends: Joi.valid('../../tsconfig.base.json', '../../tsconfig.base.client.json', '@docusaurus/tsconfig'),
+  extends: Joi.valid(
+    '../../tsconfig.base.json',
+    '../../tsconfig.base.client.json',
+    '@docusaurus/tsconfig'
+  ),
   compilerOptions: Joi.object({
     outDir: Joi.string().optional(),
     rootDir: Joi.string().optional(),
-  }).unknown().optional(),
+  })
+    .unknown()
+    .optional(),
 }).unknown();
 
 const packageJsonSchema = Joi.object({

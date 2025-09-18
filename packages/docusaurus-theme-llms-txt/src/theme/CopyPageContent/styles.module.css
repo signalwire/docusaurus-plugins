@@ -104,7 +104,6 @@
   --llms-copy-icon-container-bg: rgba(255, 255, 255, 0.08);
 }
 
-
 /* Print styles */
 @media print {
   .copyButton {

@@ -7,22 +7,22 @@
  */
 
 declare module '@signalwire/docusaurus-plugin-llms-txt' {
-  import type {LoadContext, Plugin, PluginModule} from '@docusaurus/types';
-  import type {Options} from './types/public';
+  import type { LoadContext, Plugin, PluginModule } from '@docusaurus/types';
+  import type { Options } from './types/public';
 
-  export type {Options};
+  export type { Options };
 
   export const getSwizzleConfig: PluginModule['getSwizzleConfig'];
 
   export default function pluginLlmsTxt(
     context: LoadContext,
-    options: Options,
+    options: Options
   ): Plugin<undefined>;
 }
 
 // Main CopyPageContent component
 declare module '@theme/CopyPageContent' {
-  import type {ReactNode} from 'react';
+  import type { ReactNode } from 'react';
 
   export interface Props {
     readonly className?: string;
@@ -33,7 +33,7 @@ declare module '@theme/CopyPageContent' {
 
 // CopyButton subcomponent
 declare module '@theme/CopyPageContent/CopyButton' {
-  import type {ReactNode} from 'react';
+  import type { ReactNode } from 'react';
 
   export interface Props {
     readonly copyStatus: 'idle' | 'success' | 'error';
@@ -48,7 +48,7 @@ declare module '@theme/CopyPageContent/CopyButton' {
 
 // DropdownMenu components
 declare module '@theme/CopyPageContent/DropdownMenu' {
-  import type {ReactNode} from 'react';
+  import type { ReactNode } from 'react';
 
   export interface Props {
     readonly isOpen: boolean;
@@ -60,7 +60,7 @@ declare module '@theme/CopyPageContent/DropdownMenu' {
 }
 
 declare module '@theme/CopyPageContent/DropdownMenu/MenuItem' {
-  import type {ReactNode} from 'react';
+  import type { ReactNode } from 'react';
 
   export interface Props {
     readonly icon: ReactNode;
@@ -74,14 +74,14 @@ declare module '@theme/CopyPageContent/DropdownMenu/MenuItem' {
 
 // Icon components
 declare module '@theme/CopyPageContent/Icons' {
-  export {default as ChevronIcon} from '@theme/CopyPageContent/Icons/ChevronIcon';
-  export {default as MarkdownIcon} from '@theme/CopyPageContent/Icons/MarkdownIcon';
-  export {default as ChatGPTIcon} from '@theme/CopyPageContent/Icons/ChatGPTIcon';
-  export {default as ClaudeIcon} from '@theme/CopyPageContent/Icons/ClaudeIcon';
+  export { default as ChevronIcon } from '@theme/CopyPageContent/Icons/ChevronIcon';
+  export { default as MarkdownIcon } from '@theme/CopyPageContent/Icons/MarkdownIcon';
+  export { default as ChatGPTIcon } from '@theme/CopyPageContent/Icons/ChatGPTIcon';
+  export { default as ClaudeIcon } from '@theme/CopyPageContent/Icons/ClaudeIcon';
 }
 
 declare module '@theme/CopyPageContent/Icons/ChevronIcon' {
-  import type {ReactNode} from 'react';
+  import type { ReactNode } from 'react';
   export interface Props {
     readonly isOpen?: boolean;
   }
@@ -89,24 +89,24 @@ declare module '@theme/CopyPageContent/Icons/ChevronIcon' {
 }
 
 declare module '@theme/CopyPageContent/Icons/MarkdownIcon' {
-  import type {ReactNode} from 'react';
+  import type { ReactNode } from 'react';
   export default function MarkdownIcon(): ReactNode;
 }
 
 declare module '@theme/CopyPageContent/Icons/ChatGPTIcon' {
-  import type {ReactNode} from 'react';
+  import type { ReactNode } from 'react';
   export default function ChatGPTIcon(): ReactNode;
 }
 
 declare module '@theme/CopyPageContent/Icons/ClaudeIcon' {
-  import type {ReactNode} from 'react';
+  import type { ReactNode } from 'react';
   export default function ClaudeIcon(): ReactNode;
 }
 
 // DocItem Content component (existing)
 declare module '@theme/DocItem/Content' {
-  import type {ReactNode} from 'react';
-  import type {WrapperProps} from '@docusaurus/types';
+  import type { ReactNode } from 'react';
+  import type { WrapperProps } from '@docusaurus/types';
   import type ContentType from '@theme-init/DocItem/Content';
 
   export type Props = WrapperProps<typeof ContentType>;

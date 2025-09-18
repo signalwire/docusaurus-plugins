@@ -25,13 +25,17 @@ export interface CopyPageContentOptions {
     /** AI integration options */
     readonly ai?: {
       /** ChatGPT integration - true enables with default prompt */
-      readonly chatGPT?: boolean | {
-        readonly prompt?: string;
-      };
+      readonly chatGPT?:
+        | boolean
+        | {
+            readonly prompt?: string;
+          };
       /** Claude integration - true enables with default prompt */
-      readonly claude?: boolean | {
-        readonly prompt?: string;
-      };
+      readonly claude?:
+        | boolean
+        | {
+            readonly prompt?: string;
+          };
     };
   };
 }

@@ -26,7 +26,7 @@ export default function getSwizzleConfig(): SwizzleConfig {
       'CopyPageContent/CopyButton': {
         actions: {
           eject: 'unsafe',
-          wrap: 'unsafe'
+          wrap: 'unsafe',
         },
         description:
           'Internal button component with complex state management and animations. Swizzling may break functionality. Use CSS variables for styling or swizzle the parent CopyPageContent instead.',

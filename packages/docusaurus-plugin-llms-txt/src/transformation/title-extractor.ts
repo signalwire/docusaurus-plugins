@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
-
 import { DEFAULT_DOCUMENT_TITLE, HTML_SELECTORS } from '../constants';
 import { selectText } from '../utils/html';
 

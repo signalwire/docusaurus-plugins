@@ -1,12 +1,12 @@
 /**
- * 
+ *
  * /**
  * Copyright (c) SignalWire, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- * 
- * 
+ *
+ *
  * @signalwire/docusaurus-theme-llms-txt
  *
  * Docusaurus theme package providing UI components for llms-txt functionality.
@@ -27,7 +27,7 @@
 // the same pattern as docusaurus-openapi-docs.
 
 declare module '@signalwire/docusaurus-theme-llms-txt' {
-  import type {LoadContext, Plugin, PluginModule} from '@docusaurus/types';
+  import type { LoadContext, Plugin, PluginModule } from '@docusaurus/types';
 
   export type ThemeOptions = {};
 
@@ -37,6 +37,6 @@ declare module '@signalwire/docusaurus-theme-llms-txt' {
 
   export default function themeLlmsTxt(
     context: LoadContext,
-    options: Options,
+    options: Options
   ): Plugin<undefined>;
 }

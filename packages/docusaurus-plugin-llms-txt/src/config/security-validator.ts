@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import { VALIDATION_MESSAGES } from '../constants';
 import { createValidationError } from '../errors';
 

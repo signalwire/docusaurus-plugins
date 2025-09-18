@@ -33,7 +33,9 @@ export async function generateCopyContentJson(
     await fs.writeFile(filePath, JSON.stringify(copyContentData, null, 2));
 
     logger.success(`Generated copy content data file: ${filename}`);
-    logger.debug(`Copy content data contains ${Object.keys(copyContentData).length} routes`);
+    logger.debug(
+      `Copy content data contains ${Object.keys(copyContentData).length} routes`
+    );
   } catch (error) {
     logger.error(`Failed to generate copy content data file: ${String(error)}`);
     throw error;

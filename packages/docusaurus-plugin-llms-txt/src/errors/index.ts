@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 /**
  * Abstract base class for all plugin-specific errors
  */

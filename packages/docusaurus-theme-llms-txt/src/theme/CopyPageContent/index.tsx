@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import React from 'react';
 
 import clsx from 'clsx';
@@ -30,14 +29,18 @@ import styles from './styles.module.css';
 /**
  * Main Copy Page Button component
  */
-export default function CopyPageContent({ className }: CopyPageContentProps): React.JSX.Element | null {
+export default function CopyPageContent({
+  className,
+}: CopyPageContentProps): React.JSX.Element | null {
   // ALL HOOKS MUST BE CALLED FIRST - Rules of Hooks compliance
   // Get current pathname from Docusaurus router
   const location = useLocation();
   const pathname = location.pathname;
 
   // Get plugin configuration from global data
-  const pluginData = usePluginData('docusaurus-plugin-llms-txt', undefined) as PluginGlobalData | undefined;
+  const pluginData = usePluginData('docusaurus-plugin-llms-txt', undefined) as
+    | PluginGlobalData
+    | undefined;
   const pluginConfig = pluginData?.copyContentConfig;
   const dataUrl = pluginData?.copyContentDataUrl;
   const siteConfig = pluginData?.siteConfig;
@@ -47,7 +50,9 @@ export default function CopyPageContent({ className }: CopyPageContentProps): Re
   const { isOpen, toggleDropdown, dropdownRef, setIsOpen } = useDropdownState();
 
   // Resolve final configuration - call hook unconditionally with safe fallback
-  const finalConfig = useCopyButtonConfig(pluginConfig === false ? undefined : pluginConfig);
+  const finalConfig = useCopyButtonConfig(
+    pluginConfig === false ? undefined : pluginConfig
+  );
 
   // Action handlers - call hook unconditionally with safe fallbacks
   const { copyStatus, handleAction } = useCopyActions(
@@ -72,13 +77,7 @@ export default function CopyPageContent({ className }: CopyPageContentProps): Re
 
   // Clean CSS-positioned rendering
   return (
-    <div
-      className={clsx(
-        styles.copyButton,
-        className
-      )}
-      ref={dropdownRef}
-    >
+    <div className={clsx(styles.copyButton, className)} ref={dropdownRef}>
       <CopyButton
         copyStatus={copyStatus}
         finalConfig={finalConfig}
@@ -95,4 +94,3 @@ export default function CopyPageContent({ className }: CopyPageContentProps): Re
     </div>
   );
 }
-

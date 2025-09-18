@@ -1,14 +1,20 @@
 # @signalwire/docusaurus-plugin-llms-txt
 
-A powerful Docusaurus plugin that generates Markdown versions of your HTML pages and creates an `llms.txt` index file for AI/LLM consumption. Perfect for making your documentation easily accessible to Large Language Models while maintaining human-readable markdown files.
+A powerful Docusaurus plugin that generates Markdown versions of your HTML pages and creates an
+`llms.txt` index file for AI/LLM consumption. Perfect for making your documentation easily
+accessible to Large Language Models while maintaining human-readable markdown files.
 
 ## Features
 
-- 🔄 **HTML to Markdown Conversion**: Automatically converts your Docusaurus HTML pages to clean markdown files
-- 📝 **llms.txt Generation**: Creates a comprehensive index file with links to all your documentation
-- 🗂️ **Hierarchical Organization**: Intelligently organizes documents into categories with configurable depth
+- 🔄 **HTML to Markdown Conversion**: Automatically converts your Docusaurus HTML pages to clean
+  markdown files
+- 📝 **llms.txt Generation**: Creates a comprehensive index file with links to all your
+  documentation
+- 🗂️ **Hierarchical Organization**: Intelligently organizes documents into categories with
+  configurable depth
 - ⚡ **Smart Caching**: Efficient caching system for fast incremental builds
-- 🎯 **Content Filtering**: Flexible filtering by content type (docs, blog, pages) and custom patterns
+- 🎯 **Content Filtering**: Flexible filtering by content type (docs, blog, pages) and custom
+  patterns
 - 🔧 **Route Rules**: Advanced configuration for specific routes with custom processing
 - 💻 **CLI Commands**: Standalone CLI for generation and cleanup operations
 - 🎨 **Customizable Content Extraction**: Configurable CSS selectors for precise content extraction
@@ -22,7 +28,6 @@ npm install @signalwire/docusaurus-plugin-llms-txt
 # or
 yarn add @signalwire/docusaurus-plugin-llms-txt
 ```
-
 
 ## Quick Start
 
@@ -41,8 +46,8 @@ module.exports = {
         includePatterns: ['**/*.html'],
         excludePatterns: ['**/404.html'],
       },
-    ]
-  ]
+    ],
+  ],
 };
 ```
 
@@ -60,15 +65,16 @@ module.exports = {
         content: {
           includeBlog: true,
           includePages: true,
-          enableLlmsFullTxt: true  // Optional: generates llms-full.txt
-        }
-      }
-    ]
-  ]
+          enableLlmsFullTxt: true, // Optional: generates llms-full.txt
+        },
+      },
+    ],
+  ],
 };
 ```
 
 After building your site (`npm run build`), you'll find:
+
 - `llms.txt` in your build output directory
 - Individual markdown files for each page (if enabled)
 
@@ -76,55 +82,60 @@ After building your site (`npm run build`), you'll find:
 
 ### Main Plugin Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `siteTitle` | `string` | Site config title | Title for the llms.txt header. Can be empty string. |
-| `siteDescription` | `string` | `undefined` | Description for the llms.txt header. Can be empty string. |
-| `depth` | `1\|2\|3\|4\|5` | `1` | Categorization depth for document hierarchy. [Details →](#depth-configuration) |
-| `enableDescriptions` | `boolean` | `true` | Include descriptions in llms.txt links |
-| `optionalLinks` | `OptionalLink[]` | `[]` | Additional external links. [Details →](#optional-links) |
-| `includeOrder` | `string[]` | `[]` | Global category ordering (glob patterns). [Details →](#include-order) |
-| `runOnPostBuild` | `boolean` | `true` | Whether to run during postBuild phase |
-| `copyPageContent` | `boolean \| CopyPageContentOptions` | `false` | Enable copy page content button. [Details →](#copy-page-content-feature) |
-| `onRouteError` | `'ignore'\|'log'\|'warn'\|'throw'` | `'warn'` | Route processing failure handling. [Details →](#error-handling) |
-| `logLevel` | `0\|1\|2\|3` | `1` | Logging verbosity. **Range**: 0-3. [Details →](#logging-levels) |
+| Option               | Type                                | Default           | Description                                                                    |
+| -------------------- | ----------------------------------- | ----------------- | ------------------------------------------------------------------------------ |
+| `siteTitle`          | `string`                            | Site config title | Title for the llms.txt header. Can be empty string.                            |
+| `siteDescription`    | `string`                            | `undefined`       | Description for the llms.txt header. Can be empty string.                      |
+| `depth`              | `1\|2\|3\|4\|5`                     | `1`               | Categorization depth for document hierarchy. [Details →](#depth-configuration) |
+| `enableDescriptions` | `boolean`                           | `true`            | Include descriptions in llms.txt links                                         |
+| `optionalLinks`      | `OptionalLink[]`                    | `[]`              | Additional external links. [Details →](#optional-links)                        |
+| `includeOrder`       | `string[]`                          | `[]`              | Global category ordering (glob patterns). [Details →](#include-order)          |
+| `runOnPostBuild`     | `boolean`                           | `true`            | Whether to run during postBuild phase                                          |
+| `copyPageContent`    | `boolean \| CopyPageContentOptions` | `false`           | Enable copy page content button. [Details →](#copy-page-content-feature)       |
+| `onRouteError`       | `'ignore'\|'log'\|'warn'\|'throw'`  | `'warn'`          | Route processing failure handling. [Details →](#error-handling)                |
+| `logLevel`           | `0\|1\|2\|3`                        | `1`               | Logging verbosity. **Range**: 0-3. [Details →](#logging-levels)                |
 
 ### Content Options (`content`)
 
-**Note**: All content options are optional. If you don't specify a `content` object, all options use their defaults.
+**Note**: All content options are optional. If you don't specify a `content` object, all options use
+their defaults.
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `enableMarkdownFiles` | `boolean` | `true` | Generate individual markdown files |
-| `enableLlmsFullTxt` | `boolean` | `false` | Generate llms-full.txt with index + full content. [Details →](#llms-full-txt) |
-| `relativePaths` | `boolean` | `true` | Use relative paths in links. [Details →](#path-configuration) |
-| `includeBlog` | `boolean` | `false` | Include blog posts |
-| `includePages` | `boolean` | `false` | Include pages |
-| `includeDocs` | `boolean` | `true` | Include documentation |
-| `includeVersionedDocs` | `boolean` | `true` | Include versioned documentation (when false, only current version is included) |
-| `includeGeneratedIndex` | `boolean` | `true` | Include generated category index pages |
-| `excludeRoutes` | `string[]` | `[]` | Glob patterns to exclude. [Details →](#route-exclusion) |
-| `contentSelectors` | `string[]` | Default selectors | CSS selectors for content extraction. [Details →](#content-selectors) |
-| `routeRules` | `RouteRule[]` | `[]` | Route-specific processing rules. [Details →](#route-rules) |
-| `remarkStringify` | `object` | `{}` | Markdown formatting options. [Details →](#markdown-processing) |
-| `remarkGfm` | `boolean\|object` | `true` | GitHub Flavored Markdown options. [Details →](#markdown-processing) |
-| `rehypeProcessTables` | `boolean` | `true` | Process HTML tables for markdown conversion |
+| Option                  | Type              | Default           | Description                                                                    |
+| ----------------------- | ----------------- | ----------------- | ------------------------------------------------------------------------------ |
+| `enableMarkdownFiles`   | `boolean`         | `true`            | Generate individual markdown files                                             |
+| `enableLlmsFullTxt`     | `boolean`         | `false`           | Generate llms-full.txt with index + full content. [Details →](#llms-full-txt)  |
+| `relativePaths`         | `boolean`         | `true`            | Use relative paths in links. [Details →](#path-configuration)                  |
+| `includeBlog`           | `boolean`         | `false`           | Include blog posts                                                             |
+| `includePages`          | `boolean`         | `false`           | Include pages                                                                  |
+| `includeDocs`           | `boolean`         | `true`            | Include documentation                                                          |
+| `includeVersionedDocs`  | `boolean`         | `true`            | Include versioned documentation (when false, only current version is included) |
+| `includeGeneratedIndex` | `boolean`         | `true`            | Include generated category index pages                                         |
+| `excludeRoutes`         | `string[]`        | `[]`              | Glob patterns to exclude. [Details →](#route-exclusion)                        |
+| `contentSelectors`      | `string[]`        | Default selectors | CSS selectors for content extraction. [Details →](#content-selectors)          |
+| `routeRules`            | `RouteRule[]`     | `[]`              | Route-specific processing rules. [Details →](#route-rules)                     |
+| `remarkStringify`       | `object`          | `{}`              | Markdown formatting options. [Details →](#markdown-processing)                 |
+| `remarkGfm`             | `boolean\|object` | `true`            | GitHub Flavored Markdown options. [Details →](#markdown-processing)            |
+| `rehypeProcessTables`   | `boolean`         | `true`            | Process HTML tables for markdown conversion                                    |
 
 ## Detailed Configuration
 
 ### Copy Page Content Feature
 
-The plugin includes an optional copy page content feature that integrates with the `@signalwire/docusaurus-theme-llms-txt` theme package to provide a floating button on documentation pages. This button allows users to:
+The plugin includes an optional copy page content feature that integrates with the
+`@signalwire/docusaurus-theme-llms-txt` theme package to provide a floating button on documentation
+pages. This button allows users to:
 
 - Copy the markdown content of the current page
 - Share content directly with AI assistants (ChatGPT, Claude)
 - Access the original markdown files generated by the plugin
 
-**⚠️ Important**: The copy page content feature requires both the plugin AND the theme package to work.
+**⚠️ Important**: The copy page content feature requires both the plugin AND the theme package to
+work.
 
 #### Quick Setup
 
 **1. Install both packages:**
+
 ```bash
 npm install @signalwire/docusaurus-plugin-llms-txt @signalwire/docusaurus-theme-llms-txt
 # or
@@ -132,32 +143,35 @@ yarn add @signalwire/docusaurus-plugin-llms-txt @signalwire/docusaurus-theme-llm
 ```
 
 **2. Configure both in `docusaurus.config.js`:**
+
 ```javascript
 module.exports = {
   themes: [
-    '@signalwire/docusaurus-theme-llms-txt'  // Required for UI
+    '@signalwire/docusaurus-theme-llms-txt', // Required for UI
   ],
   plugins: [
     [
       '@signalwire/docusaurus-plugin-llms-txt',
       {
-        copyPageContent: true  // Enable the feature
-      }
-    ]
-  ]
+        copyPageContent: true, // Enable the feature
+      },
+    ],
+  ],
 };
 ```
 
 #### Configuration Options
 
 **Basic Usage:**
+
 ```javascript
 {
-  copyPageContent: true  // Enable with defaults
+  copyPageContent: true; // Enable with defaults
 }
 ```
 
 **Advanced Configuration:**
+
 ```javascript
 {
   copyPageContent: {
@@ -178,38 +192,48 @@ module.exports = {
 ```
 
 **Disabled (default):**
+
 ```javascript
 {
-  copyPageContent: false  // No button, no JSON generation
+  copyPageContent: false; // No button, no JSON generation
 }
 ```
 
 #### Theme Customization
 
-For UI customization, styling options, and component swizzling, see the [theme package documentation](../docusaurus-theme-llms-txt/README.md).
+For UI customization, styling options, and component swizzling, see the
+[theme package documentation](../docusaurus-theme-llms-txt/README.md).
 
-The theme provides extensive CSS variables for customization without swizzling, plus safe swizzling options for individual icons and layout integration.
+The theme provides extensive CSS variables for customization without swizzling, plus safe swizzling
+options for individual icons and layout integration.
 
 ### Depth Configuration
 
-The `depth` option controls how deep the hierarchical organization goes in your document tree. This is crucial for determining how your URLs are categorized.
+The `depth` option controls how deep the hierarchical organization goes in your document tree. This
+is crucial for determining how your URLs are categorized.
 
 **How it works:**
+
 - **`depth: 1`**: `/api/users` → `api` category
-- **`depth: 2`**: `/api/users/create` → `api/users` category  
+- **`depth: 2`**: `/api/users/create` → `api/users` category
 - **`depth: 3`**: `/api/users/create/advanced` → `api/users/create` category
 
 ```javascript
 // Shallow categorization - good for simple sites
-{ depth: 1 }  // /docs/guide/advanced → "docs" category
+{
+  depth: 1;
+} // /docs/guide/advanced → "docs" category
 
 // Deep categorization - good for complex sites
-{ depth: 3 }  // /docs/guide/advanced → "docs/guide/advanced" category
+{
+  depth: 3;
+} // /docs/guide/advanced → "docs/guide/advanced" category
 ```
 
 **Use cases:**
+
 - `depth: 1` - Simple sites with few top-level sections
-- `depth: 2` - Most documentation sites with clear section/subsection structure  
+- `depth: 2` - Most documentation sites with clear section/subsection structure
 - `depth: 3+` - Complex sites with deep hierarchies or very specific organization needs
 
 ### Optional Links
@@ -217,6 +241,7 @@ The `depth` option controls how deep the hierarchical organization goes in your 
 Add external or additional links to your llms.txt in a separate "Optional" section.
 
 **Structure:**
+
 ```typescript
 {
   title: string;        // REQUIRED: Display text for the link
@@ -226,35 +251,39 @@ Add external or additional links to your llms.txt in a separate "Optional" secti
 ```
 
 **Required fields:**
+
 - `title` - Display text for the link
 - `url` - The URL to link to
 
 **Example:**
+
 ```javascript
 {
   optionalLinks: [
     {
-      title: 'Live API Status',          // REQUIRED
-      url: 'https://status.myapi.com',   // REQUIRED
-      description: 'Real-time system status and uptime monitoring'
+      title: 'Live API Status', // REQUIRED
+      url: 'https://status.myapi.com', // REQUIRED
+      description: 'Real-time system status and uptime monitoring',
     },
     {
-      title: 'Community Discord',        // REQUIRED
-      url: 'https://discord.gg/myapi'   // REQUIRED
+      title: 'Community Discord', // REQUIRED
+      url: 'https://discord.gg/myapi', // REQUIRED
       // description is optional
     },
     {
-      title: 'Legacy v1 Docs',          // REQUIRED
-      url: '/legacy/v1/',               // REQUIRED
-      description: 'Documentation for API version 1.x (deprecated)'
-    }
-  ]
+      title: 'Legacy v1 Docs', // REQUIRED
+      url: '/legacy/v1/', // REQUIRED
+      description: 'Documentation for API version 1.x (deprecated)',
+    },
+  ];
 }
 ```
 
 **Output:**
+
 ```markdown
 ## Optional
+
 - [Live API Status](https://status.myapi.com): Real-time system status and uptime monitoring
 - [Community Discord](https://discord.gg/myapi)
 - [Legacy v1 Docs](/legacy/v1/): Documentation for API version 1.x (deprecated)
@@ -262,21 +291,23 @@ Add external or additional links to your llms.txt in a separate "Optional" secti
 
 ### Include Order
 
-Controls the order in which categories appear in your llms.txt using glob patterns. Categories matching earlier patterns appear first.
+Controls the order in which categories appear in your llms.txt using glob patterns. Categories
+matching earlier patterns appear first.
 
 ```javascript
 {
   includeOrder: [
-    '/getting-started/**',  // Getting started content first
-    '/api/auth/**',         // Authentication second
-    '/api/reference/**',    // API reference third
-    '/guides/**',           // Guides fourth
-    '/examples/**'          // Examples last
-  ]
+    '/getting-started/**', // Getting started content first
+    '/api/auth/**', // Authentication second
+    '/api/reference/**', // API reference third
+    '/guides/**', // Guides fourth
+    '/examples/**', // Examples last
+  ];
 }
 ```
 
 **Pattern matching rules:**
+
 - Use `/**` for matching entire directory trees
 - Use `*` for single-level wildcards
 - Patterns are matched against the full route path
@@ -284,7 +315,8 @@ Controls the order in which categories appear in your llms.txt using glob patter
 
 ### Error Handling
 
-The `onRouteError` option controls what happens when individual pages fail to process. **Valid values**: `'ignore'`, `'log'`, `'warn'`, `'throw'`.
+The `onRouteError` option controls what happens when individual pages fail to process. **Valid
+values**: `'ignore'`, `'log'`, `'warn'`, `'throw'`.
 
 - **`'ignore'`**: Skip failed routes silently
 - **`'log'`**: Log failures but continue (no console output in normal mode)
@@ -293,13 +325,19 @@ The `onRouteError` option controls what happens when individual pages fail to pr
 
 ```javascript
 // For production builds - continue despite individual failures
-{ onRouteError: 'warn' }
+{
+  onRouteError: 'warn';
+}
 
 // For development - fail fast to catch issues
-{ onRouteError: 'throw' }
+{
+  onRouteError: 'throw';
+}
 
 // For large sites with some problematic pages
-{ onRouteError: 'ignore' }
+{
+  onRouteError: 'ignore';
+}
 ```
 
 ### Logging Levels
@@ -307,38 +345,48 @@ The `onRouteError` option controls what happens when individual pages fail to pr
 The `logLevel` option controls verbosity of console output. **Range**: 0-3 (integer).
 
 - **`0` (Quiet)**: Only errors and final success/failure
-- **`1` (Normal)**: Errors, warnings, and completion messages *(default)*
+- **`1` (Normal)**: Errors, warnings, and completion messages _(default)_
 - **`2` (Verbose)**: Above + processing info and statistics
 - **`3` (Debug)**: Above + detailed debug information
 
 ```javascript
 // Production builds - minimal output
-{ logLevel: 0 }
+{
+  logLevel: 0;
+}
 
 // Development - maximum detail
-{ logLevel: 3 }
+{
+  logLevel: 3;
+}
 
 // CI/CD - standard output
-{ logLevel: 1 }
+{
+  logLevel: 1;
+}
 ```
 
 ### llms-full.txt
 
-The `enableLlmsFullTxt` option generates a comprehensive `llms-full.txt` file that combines the index and full content in a single file, following the llms.txt standard format.
+The `enableLlmsFullTxt` option generates a comprehensive `llms-full.txt` file that combines the
+index and full content in a single file, following the llms.txt standard format.
 
 **What it does:**
+
 - Creates `llms-full.txt` alongside the regular `llms.txt`
 - Starts with the complete llms.txt index content
 - Appends the full processed markdown content of each document below the index
 - Automatically enables `enableMarkdownFiles` when activated
 
 **When to use:**
+
 - When you want a single file containing all documentation
 - For LLMs that benefit from having full context in one file
 - When you need both navigation structure and complete content together
 - For offline usage or distribution as a single resource
 
 **Example configuration:**
+
 ```javascript
 {
   content: {
@@ -351,16 +399,19 @@ The `enableLlmsFullTxt` option generates a comprehensive `llms-full.txt` file th
 ```
 
 **Output structure:**
+
 ```markdown
 # Site Title
 
 > Site description
 
 ## Getting Started
+
 - [Introduction](./getting-started/intro.md): Get started with our platform
 - [Installation](./getting-started/install.md): How to install
 
 ## API Reference
+
 - [Authentication](./api/auth.md): API authentication guide
 
 ---
@@ -381,6 +432,7 @@ The `enableLlmsFullTxt` option generates a comprehensive `llms-full.txt` file th
 ```
 
 **Notes:**
+
 - The file can be large for documentation sites with extensive content
 - Generation time increases with the amount of content
 - Useful for creating comprehensive training datasets for LLMs
@@ -394,11 +446,13 @@ The `relativePaths` option controls link format in both `llms.txt` and markdown 
 - **`false`**: `https://mysite.com/getting-started/`, `https://mysite.com/api/reference/`
 
 **When to use relative paths:**
+
 - Documentation distributed as files
 - Offline usage requirements
 - Maximum portability
 
 **When to use absolute paths:**
+
 - Web-only consumption
 - Integration with web-based tools
 - Cleaner link appearance
@@ -406,20 +460,25 @@ The `relativePaths` option controls link format in both `llms.txt` and markdown 
 
 ### Generated Index Pages
 
-The `includeGeneratedIndex` option controls whether Docusaurus-generated category index pages are included in the output. These are pages automatically created from `_category_.json` or `_category_.yaml` files with `link.type: "generated-index"`, or from sidebar configurations.
+The `includeGeneratedIndex` option controls whether Docusaurus-generated category index pages are
+included in the output. These are pages automatically created from `_category_.json` or
+`_category_.yaml` files with `link.type: "generated-index"`, or from sidebar configurations.
 
 **When to exclude generated index pages (`includeGeneratedIndex: false`):**
+
 - You only want actual content pages, not navigation pages
 - Generated indexes duplicate information already in your documentation structure
 - You're focusing on content extraction rather than site navigation
 - You want to reduce the number of processed pages
 
 **Generated index pages include:**
+
 - Category pages created from `_category_.json/yaml` files
 - Sidebar category pages with `type: "generated-index"`
 - Auto-generated category overview pages
 
-These pages typically contain a list of links to documents within that category rather than substantial content.
+These pages typically contain a list of links to documents within that category rather than
+substantial content.
 
 ### Route Exclusion
 
@@ -429,20 +488,21 @@ Use glob patterns to exclude specific routes or route patterns:
 {
   content: {
     excludeRoutes: [
-      '/admin/**',           // Exclude all admin pages
-      '/api/internal/**',    // Exclude internal API docs
-      '**/_category_/**',    // Exclude Docusaurus category pages
-      '/legacy/**',          // Exclude legacy documentation
-      '**/*.xml',           // Exclude XML files
-      '**/*.json',          // Exclude JSON files
-      '/search',            // Exclude specific page
-      '/404'                // Exclude error pages
-    ]
+      '/admin/**', // Exclude all admin pages
+      '/api/internal/**', // Exclude internal API docs
+      '**/_category_/**', // Exclude Docusaurus category pages
+      '/legacy/**', // Exclude legacy documentation
+      '**/*.xml', // Exclude XML files
+      '**/*.json', // Exclude JSON files
+      '/search', // Exclude specific page
+      '/404', // Exclude error pages
+    ];
   }
 }
 ```
 
 **Common exclusion patterns:**
+
 - `**/_category_/**` - Docusaurus auto-generated category pages
 - `/tags/**` - Blog tag pages
 - `/archive/**` - Archived content
@@ -451,48 +511,54 @@ Use glob patterns to exclude specific routes or route patterns:
 
 ### Content Selectors
 
-CSS selectors used to extract main content from HTML pages. The plugin tries each selector in order until it finds content.
+CSS selectors used to extract main content from HTML pages. The plugin tries each selector in order
+until it finds content.
 
 **Default selectors (used when `contentSelectors` is not specified):**
+
 ```javascript
 [
-  '.theme-doc-markdown',     // Docusaurus main content area
-  'main .container .col',    // Bootstrap-style layout
+  '.theme-doc-markdown', // Docusaurus main content area
+  'main .container .col', // Bootstrap-style layout
   'main .theme-doc-wrapper', // Docusaurus wrapper
-  'article',                 // Semantic article element
-  'main .container',         // Broader container
-  'main'                     // Fallback to main element
-]
+  'article', // Semantic article element
+  'main .container', // Broader container
+  'main', // Fallback to main element
+];
 ```
 
 **How it works:**
+
 - The plugin tries each selector in the array order
 - First selector that finds content is used
 - If no selectors find content, the page is skipped with a warning
 - Empty array `[]` will use the default selectors above
 
 **Custom selectors for different themes:**
+
 ```javascript
 {
   content: {
     contentSelectors: [
-      '.custom-content-area',    // Your custom theme
-      '.docs-wrapper .content',  // Custom documentation wrapper
-      '#main-content',           // ID-based selector
-      '.prose',                  // Tailwind typography
-      'main'                     // Fallback
-    ]
+      '.custom-content-area', // Your custom theme
+      '.docs-wrapper .content', // Custom documentation wrapper
+      '#main-content', // ID-based selector
+      '.prose', // Tailwind typography
+      'main', // Fallback
+    ];
   }
 }
 ```
 
 **Important notes:**
+
 - More specific selectors should come first
 - Always include a fallback selector (like `'main'` or `'article'`)
 - Selectors are standard CSS selectors (class, ID, element, attribute, etc.)
 - Use browser dev tools to inspect your page structure if content isn't being extracted
 
 **Debugging content extraction:**
+
 1. Set `logLevel: 3` to see which selector is being used for each page
 2. Use browser dev tools to inspect your page's HTML structure
 3. Test selectors in browser console with `document.querySelector('your-selector')`
@@ -502,7 +568,9 @@ CSS selectors used to extract main content from HTML pages. The plugin tries eac
 
 #### `remarkStringify` Options
 
-Controls how the HTML→Markdown conversion formats the output. These options are passed directly to the **[remark-stringify](https://github.com/remarkjs/remark/tree/main/packages/remark-stringify)** library.
+Controls how the HTML→Markdown conversion formats the output. These options are passed directly to
+the **[remark-stringify](https://github.com/remarkjs/remark/tree/main/packages/remark-stringify)**
+library.
 
 ```javascript
 {
@@ -522,11 +590,14 @@ Controls how the HTML→Markdown conversion formats the output. These options ar
 }
 ```
 
-📖 **For complete option reference, see**: [remark-stringify options](https://github.com/remarkjs/remark/tree/main/packages/remark-stringify#options)
+📖 **For complete option reference, see**:
+[remark-stringify options](https://github.com/remarkjs/remark/tree/main/packages/remark-stringify#options)
 
 #### `remarkGfm` Options
 
-Controls table processing, strikethrough text, task lists, and other GitHub-style markdown features. These options are passed directly to the **[remark-gfm](https://github.com/remarkjs/remark-gfm)** library.
+Controls table processing, strikethrough text, task lists, and other GitHub-style markdown features.
+These options are passed directly to the **[remark-gfm](https://github.com/remarkjs/remark-gfm)**
+library.
 
 ```javascript
 // Enable with defaults
@@ -548,18 +619,20 @@ Controls table processing, strikethrough text, task lists, and other GitHub-styl
 }
 ```
 
-**Default values when `remarkGfm: true`:**
-When you set `remarkGfm: true`, the plugin automatically applies these defaults:
+**Default values when `remarkGfm: true`:** When you set `remarkGfm: true`, the plugin automatically
+applies these defaults:
+
 ```javascript
 {
   singleTilde: false,        // Require ~~ for strikethrough
-  tableCellPadding: true,    // Add padding around table cells  
+  tableCellPadding: true,    // Add padding around table cells
   tablePipeAlign: true,      // Align table pipes
   stringLength: stringWidth  // Use string-width for accurate measurements
 }
 ```
 
 You can override any of these by providing an object instead of `true`:
+
 ```javascript
 {
   content: {
@@ -571,17 +644,21 @@ You can override any of these by providing an object instead of `true`:
 }
 ```
 
-📖 **For complete option reference, see**: [remark-gfm options](https://github.com/remarkjs/remark-gfm#options)
+📖 **For complete option reference, see**:
+[remark-gfm options](https://github.com/remarkjs/remark-gfm#options)
 
 #### `rehypeProcessTables` (Plugin Option)
 
 **Type**: `boolean` | **Default**: `true`
 
-This is a plugin-specific option that controls whether to process HTML tables for better markdown conversion. When enabled, the plugin intelligently processes HTML tables to create clean markdown tables. When disabled, tables are left as raw HTML in the markdown output.
+This is a plugin-specific option that controls whether to process HTML tables for better markdown
+conversion. When enabled, the plugin intelligently processes HTML tables to create clean markdown
+tables. When disabled, tables are left as raw HTML in the markdown output.
 
 ### Route Rules
 
-Route rules provide powerful per-route customization capabilities. They allow you to override any processing option for specific routes or route patterns.
+Route rules provide powerful per-route customization capabilities. They allow you to override any
+processing option for specific routes or route patterns.
 
 #### Basic Route Rule Structure
 
@@ -596,9 +673,11 @@ Route rules provide powerful per-route customization capabilities. They allow yo
 ```
 
 **Required fields:**
+
 - `route` - The glob pattern to match routes against
 
 **Optional fields (all have validation constraints):**
+
 - `depth` - Must be integer 1-5
 - `categoryName` - Any string
 - `contentSelectors` - Array of CSS selector strings
@@ -606,11 +685,13 @@ Route rules provide powerful per-route customization capabilities. They allow yo
 
 #### Route Pattern Matching
 
-Route rules use **glob patterns** to match routes. This gives you powerful pattern-matching capabilities for targeting specific parts of your documentation.
+Route rules use **glob patterns** to match routes. This gives you powerful pattern-matching
+capabilities for targeting specific parts of your documentation.
 
 **Basic Glob Patterns:**
+
 - `**` - Matches any number of directories/segments
-- `*` - Matches any single directory/segment  
+- `*` - Matches any single directory/segment
 - `[]` - Character classes (e.g., `[0-9]` for digits)
 - `{}` - Alternation (e.g., `{v1,v2,v3}` for specific versions)
 
@@ -619,22 +700,22 @@ Route rules use **glob patterns** to match routes. This gives you powerful patte
   content: {
     routeRules: [
       {
-        route: '/api/**',              // Matches all API routes
-        depth: 3
+        route: '/api/**', // Matches all API routes
+        depth: 3,
       },
       {
         route: '/guides/getting-started', // Exact match
-        categoryName: 'Quick Start'
+        categoryName: 'Quick Start',
       },
       {
-        route: '/blog/2024/**',        // Year-specific blog posts
-        categoryName: '2024 Posts'
+        route: '/blog/2024/**', // Year-specific blog posts
+        categoryName: '2024 Posts',
       },
       {
-        route: '*/advanced',           // Any route ending in /advanced
-        depth: 4
-      }
-    ]
+        route: '*/advanced', // Any route ending in /advanced
+        depth: 4,
+      },
+    ];
   }
 }
 ```
@@ -651,51 +732,53 @@ For Docusaurus sites with versioned documentation, use these patterns to target 
       {
         route: '/api/v[0-9]*/**',
         depth: 2,
-        categoryName: 'Versioned API Docs'
+        categoryName: 'Versioned API Docs',
       },
-      
+
       // Match specific versions only
       {
         route: '/api/{v1,v2,v3}/**',
         depth: 2,
-        categoryName: 'Legacy API Versions'
+        categoryName: 'Legacy API Versions',
       },
-      
+
       // Match current version (non-versioned paths)
       {
-        route: '/api/!(v*)**',          // Exclude paths starting with 'v'
+        route: '/api/!(v*)**', // Exclude paths starting with 'v'
         depth: 3,
-        categoryName: 'Current API'
+        categoryName: 'Current API',
       },
-      
+
       // Separate rules for different version behaviors
       {
         route: '/docs/v1/**',
-        depth: 1,                     // Shallow depth for legacy
-        categoryName: 'v1 (Legacy)'
+        depth: 1, // Shallow depth for legacy
+        categoryName: 'v1 (Legacy)',
       },
       {
-        route: '/docs/v2/**', 
-        depth: 2,                     // Medium depth for stable
-        categoryName: 'v2 (Stable)'
+        route: '/docs/v2/**',
+        depth: 2, // Medium depth for stable
+        categoryName: 'v2 (Stable)',
       },
       {
-        route: '/docs/**',            // Current version (no v prefix)
-        depth: 3,                     // Full depth for current
-        categoryName: 'Latest Documentation'
-      }
-    ]
+        route: '/docs/**', // Current version (no v prefix)
+        depth: 3, // Full depth for current
+        categoryName: 'Latest Documentation',
+      },
+    ];
   }
 }
 ```
 
 **Pattern Specificity Examples:**
+
 - `/api/v*/**` matches `/api/video/upload` (any path starting with 'v')
 - `/api/v[0-9]*/**` matches `/api/v1/users` but NOT `/api/video/upload`
 - `/api/{v1,v2}/**` matches only `/api/v1/` and `/api/v2/` paths
 - `/api/!(v*)/**` matches `/api/users` but NOT `/api/v1/users`
 
 **Common Use Cases:**
+
 - **Versioned APIs**: Use `v[0-9]*` to target only numbered versions
 - **Language variants**: Use `{en,es,fr}` for specific locales
 - **Content types**: Use `/{guides,tutorials}/**` for specific content sections
@@ -710,16 +793,16 @@ When multiple rules match the same route, the **most specific** rule wins:
   content: {
     routeRules: [
       {
-        route: '/api/**',              // Less specific
+        route: '/api/**', // Less specific
         depth: 2,
-        categoryName: 'API'
+        categoryName: 'API',
       },
       {
-        route: '/api/reference/**',    // More specific - this wins
+        route: '/api/reference/**', // More specific - this wins
         depth: 4,
-        categoryName: 'API Reference'
-      }
-    ]
+        categoryName: 'API Reference',
+      },
+    ];
   }
 }
 ```
@@ -727,36 +810,38 @@ When multiple rules match the same route, the **most specific** rule wins:
 #### Advanced Examples
 
 **API Documentation with Custom Structure:**
+
 ```javascript
 {
   content: {
     routeRules: [
       {
-        route: '/api',                    // REQUIRED field
+        route: '/api', // REQUIRED field
         categoryName: 'API Overview',
-        depth: 1                         // Must be 1-5
+        depth: 1, // Must be 1-5
       },
       {
-        route: '/api/reference/**',       // REQUIRED field
-        depth: 4,                        // Must be 1-5
+        route: '/api/reference/**', // REQUIRED field
+        depth: 4, // Must be 1-5
         categoryName: 'API Reference',
-        contentSelectors: ['.openapi-content', '.api-docs']
+        contentSelectors: ['.openapi-content', '.api-docs'],
       },
       {
-        route: '/api/guides/**',          // REQUIRED field
+        route: '/api/guides/**', // REQUIRED field
         categoryName: 'API Guides',
         includeOrder: [
           '/api/guides/quickstart',
           '/api/guides/authentication/**',
-          '/api/guides/rate-limiting/**'
-        ]
-      }
-    ]
+          '/api/guides/rate-limiting/**',
+        ],
+      },
+    ];
   }
 }
 ```
 
 **Multi-Language Documentation:**
+
 ```javascript
 {
   content: {
@@ -764,14 +849,14 @@ When multiple rules match the same route, the **most specific** rule wins:
       {
         route: '/en/**',
         categoryName: 'English Documentation',
-        includeOrder: ['/en/getting-started/**', '/en/api/**']
+        includeOrder: ['/en/getting-started/**', '/en/api/**'],
       },
       {
         route: '/es/**',
         categoryName: 'Documentación en Español',
-        includeOrder: ['/es/comenzar/**', '/es/api/**']
-      }
-    ]
+        includeOrder: ['/es/comenzar/**', '/es/api/**'],
+      },
+    ];
   }
 }
 ```
@@ -789,12 +874,14 @@ npx docusaurus llms-txt [siteDir]
 Generates `llms.txt` and markdown files using cached routes from a previous build.
 
 **Arguments:**
-- `siteDir` (optional) - Path to your Docusaurus site directory. Defaults to current working directory.
 
-**Prerequisites:** 
-You must run `npm run build` first to create the route cache.
+- `siteDir` (optional) - Path to your Docusaurus site directory. Defaults to current working
+  directory.
+
+**Prerequisites:** You must run `npm run build` first to create the route cache.
 
 **Examples:**
+
 ```bash
 # Generate in current directory
 npx docusaurus llms-txt
@@ -807,12 +894,14 @@ npx docusaurus llms-txt /home/user/projects/docs
 ```
 
 **How it works:**
+
 1. Loads cached route information from the previous build
 2. Validates that configuration hasn't changed significantly
 3. Processes routes using the current plugin configuration
 4. Generates output files in the build directory
 
 **When to use:**
+
 - You want to regenerate llms.txt without rebuilding the entire site
 - You're in a CI/CD pipeline and want separate build steps
 - You have `runOnPostBuild: false` configured
@@ -826,12 +915,16 @@ npx docusaurus llms-txt-clean [siteDir] [options]
 Removes all generated markdown files and `llms.txt` using cached file information.
 
 **Arguments:**
-- `siteDir` (optional) - Path to your Docusaurus site directory. Defaults to current working directory.
+
+- `siteDir` (optional) - Path to your Docusaurus site directory. Defaults to current working
+  directory.
 
 **Options:**
+
 - `--clear-cache` - Also clear the plugin cache directory
 
 **Examples:**
+
 ```bash
 # Clean generated files but keep cache
 npx docusaurus llms-txt-clean
@@ -847,6 +940,7 @@ npx docusaurus llms-txt-clean ./docs --clear-cache
 ```
 
 **What gets cleaned:**
+
 - All individual markdown files generated by the plugin
 - The `llms.txt` index file
 - The `llms-full.txt` file (if generated)
@@ -854,12 +948,14 @@ npx docusaurus llms-txt-clean ./docs --clear-cache
 - With `--clear-cache`: The entire plugin cache directory
 
 **Safe operation:**
+
 - Only removes files that were generated by the plugin (tracked in cache)
 - Will not remove files that weren't created by the plugin
 - Updates cache to maintain consistency
 - Provides detailed logging of what was removed
 
 **When to use:**
+
 - Switching between `enableMarkdownFiles: true/false`
 - Cleaning up before changing major configuration
 - Debugging generation issues
@@ -876,13 +972,13 @@ npx docusaurus llms-txt-clean ./docs --clear-cache
       {
         route: '/en/**',
         categoryName: 'English Documentation',
-        includeOrder: ['/en/getting-started/**', '/en/api/**']
+        includeOrder: ['/en/getting-started/**', '/en/api/**'],
       },
       {
         route: '/es/**',
-        categoryName: 'Documentación en Español'
-      }
-    ]
+        categoryName: 'Documentación en Español',
+      },
+    ];
   }
 }
 ```
@@ -997,19 +1093,23 @@ The generated `llms.txt` follows this structure:
 > Site description (if provided)
 
 ## Category Name
+
 - [Document Title](link): description
 - [Another Document](link): description
 
 ### Subcategory
+
 - [Subcategory Document](link): description
 
 ## Optional
+
 - [External Link](url): description
 ```
 
 ### Markdown Files
 
 When `enableMarkdownFiles` is true, individual markdown files are created for each page:
+
 - Files are saved with clean markdown content
 - Internal links are processed based on `relativePaths` setting
 - Tables are processed for better markdown compatibility
@@ -1020,15 +1120,18 @@ When `enableMarkdownFiles` is true, individual markdown files are created for ea
 ### Common Issues
 
 **"No cached routes found"**
+
 - Run `npm run build` first to generate the cache
 - Ensure the plugin is properly configured in `docusaurus.config.js`
 
 **Empty or minimal content**
+
 - Check your `contentSelectors` configuration
 - Verify that your content matches the default selectors
 - Use `logLevel: 3` for debug output
 
 **Route processing failures**
+
 - Set `onRouteError: 'ignore'` to skip problematic routes
 - Use `logLevel: 2` to see which routes are failing
 - Check `excludeRoutes` to filter out problematic paths
@@ -1066,6 +1169,7 @@ For large sites:
 ## Caching
 
 The plugin uses intelligent caching to speed up subsequent builds:
+
 - Cache is stored in `.docusaurus/docusaurus-plugin-llms-txt/`
 - Routes are cached with content hashes for change detection
 - Configuration changes automatically invalidate relevant cache entries
@@ -1075,12 +1179,13 @@ The plugin uses intelligent caching to speed up subsequent builds:
 
 MIT ## Public API
 
-The plugin exports types, utilities, and functions that you can import and use in your Docusaurus configuration and custom plugins.
+The plugin exports types, utilities, and functions that you can import and use in your Docusaurus
+configuration and custom plugins.
 
 ### Available Imports
 
 ```javascript
-import { 
+import {
   // Types for TypeScript development
   type PluginOptions,
   type ContentOptions,
@@ -1089,16 +1194,16 @@ import {
   type PluginInput,
   type Depth,
   type Logger,
-  
+
   // Error handling types
   type PluginError,
   type PluginConfigError,
   type PluginValidationError,
-  
+
   // Utilities
   createLogger,
   isPluginError,
-  
+
   // Main plugin (usually not needed directly)
   default as llmsTxtPlugin,
   validateOptions
@@ -1109,22 +1214,23 @@ import {
 
 The plugin exports TypeScript types for configuration, plugin development, and error handling.
 
-| Type | Description | Used For |
-|------|-------------|----------|
-| `PluginOptions` | Main plugin configuration interface | Configuring the plugin in `docusaurus.config.js` |
-| `ContentOptions` | Content processing configuration | Configuring how content is processed and transformed |
-| `RouteRule` | Route-specific configuration override | Creating custom rules for specific URL patterns |
-| `OptionalLink` | Additional links for llms.txt | Adding external or additional links to the generated index |
-| `PluginInput` | Unified.js plugin input format | Defining custom rehype/remark plugins in configuration |
-| `Depth` | Categorization depth levels (1-5) | Controlling how deep the document hierarchy goes |
-| `Logger` | Logging interface for custom plugins | Creating consistent logging in custom plugins |
-| `PluginError` | Base class for all plugin errors | Error handling and type checking |
-| `PluginConfigError` | Configuration validation errors | Handling configuration-related errors |
-| `PluginValidationError` | Input validation errors | Handling input validation errors |
+| Type                    | Description                           | Used For                                                   |
+| ----------------------- | ------------------------------------- | ---------------------------------------------------------- |
+| `PluginOptions`         | Main plugin configuration interface   | Configuring the plugin in `docusaurus.config.js`           |
+| `ContentOptions`        | Content processing configuration      | Configuring how content is processed and transformed       |
+| `RouteRule`             | Route-specific configuration override | Creating custom rules for specific URL patterns            |
+| `OptionalLink`          | Additional links for llms.txt         | Adding external or additional links to the generated index |
+| `PluginInput`           | Unified.js plugin input format        | Defining custom rehype/remark plugins in configuration     |
+| `Depth`                 | Categorization depth levels (1-5)     | Controlling how deep the document hierarchy goes           |
+| `Logger`                | Logging interface for custom plugins  | Creating consistent logging in custom plugins              |
+| `PluginError`           | Base class for all plugin errors      | Error handling and type checking                           |
+| `PluginConfigError`     | Configuration validation errors       | Handling configuration-related errors                      |
+| `PluginValidationError` | Input validation errors               | Handling input validation errors                           |
 
 ### Core Configuration Types
 
 #### `PluginOptions`
+
 ```typescript
 interface PluginOptions {
   content?: ContentOptions;
@@ -1141,6 +1247,7 @@ interface PluginOptions {
 ```
 
 #### `ContentOptions`
+
 ```typescript
 interface ContentOptions {
   enableMarkdownFiles?: boolean;
@@ -1164,21 +1271,23 @@ interface ContentOptions {
 ```
 
 #### `RouteRule`
+
 ```typescript
 interface RouteRule {
-  route: string;                    // Glob pattern to match
-  depth?: Depth;                   // Override categorization depth
-  contentSelectors?: string[];     // Override content selectors
-  categoryName?: string;           // Override category display name
-  includeOrder?: string[];         // Override subcategory ordering
+  route: string; // Glob pattern to match
+  depth?: Depth; // Override categorization depth
+  contentSelectors?: string[]; // Override content selectors
+  categoryName?: string; // Override category display name
+  includeOrder?: string[]; // Override subcategory ordering
 }
 ```
 
 #### `OptionalLink`
+
 ```typescript
 interface OptionalLink {
-  title: string;        // Required: Display text
-  url: string;          // Required: Link URL
+  title: string; // Required: Display text
+  url: string; // Required: Link URL
   description?: string; // Optional description
 }
 ```
@@ -1186,18 +1295,21 @@ interface OptionalLink {
 ### Plugin Development Types
 
 #### `PluginInput`
+
 ```typescript
-type PluginInput = 
-  | Plugin<unknown[], any, unknown>                    // Direct function
+type PluginInput =
+  | Plugin<unknown[], any, unknown> // Direct function
   | [Plugin<unknown[], any, unknown>, unknown?, Settings?]; // Array with options
 ```
 
 #### `Depth`
+
 ```typescript
 type Depth = 1 | 2 | 3 | 4 | 5;
 ```
 
 #### `Logger`
+
 ```typescript
 interface Logger {
   reportRouteError: (msg: string) => void;
@@ -1214,21 +1326,23 @@ interface Logger {
 
 The plugin exports utility functions for logging, error handling, and plugin development.
 
-| Function | Parameters | Returns | Description |
-|----------|------------|---------|-------------|
-| `createLogger` | `name: string, onRouteError?: ReportingSeverity, logLevel?: number` | `Logger` | Creates a custom logger with plugin-style formatting and configurable verbosity |
-| `isPluginError` | `error: unknown` | `boolean` | Type guard to check if an error is a plugin-specific error with additional context |
+| Function        | Parameters                                                          | Returns   | Description                                                                        |
+| --------------- | ------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------- |
+| `createLogger`  | `name: string, onRouteError?: ReportingSeverity, logLevel?: number` | `Logger`  | Creates a custom logger with plugin-style formatting and configurable verbosity    |
+| `isPluginError` | `error: unknown`                                                    | `boolean` | Type guard to check if an error is a plugin-specific error with additional context |
 
 ### `createLogger(name, onRouteError?, logLevel?)`
 
 Creates a custom logger for your plugins with the same styling as the main plugin.
 
 **Parameters:**
+
 - `name` (string): Logger name for prefixing messages
 - `onRouteError` (optional): How to handle route errors - `'ignore' | 'log' | 'warn' | 'throw'`
 - `logLevel` (optional): Verbosity level - `0 | 1 | 2 | 3`
 
 **Example:**
+
 ```javascript
 import { createLogger } from 'docusaurus-plugin-llms-txt';
 
@@ -1253,6 +1367,7 @@ export const myPlugin = () => (tree) => {
 Type guard to check if an error is a plugin-specific error.
 
 **Example:**
+
 ```javascript
 import { isPluginError } from 'docusaurus-plugin-llms-txt';
 
@@ -1277,9 +1392,9 @@ import { visit } from 'unist-util-visit';
 
 export const myCustomPlugin: PluginInput = (options = {}) => (tree) => {
   const logger = createLogger('myCustomPlugin', 'warn', 2);
-  
+
   logger.info('Starting custom processing...');
-  
+
   let processedCount = 0;
   visit(tree, 'element', (node) => {
     if (node.tagName === 'img') {
@@ -1287,7 +1402,7 @@ export const myCustomPlugin: PluginInput = (options = {}) => (tree) => {
       processedCount++;
     }
   });
-  
+
   logger.success(`Processed ${processedCount} images`);
   return tree;
 };
@@ -1302,8 +1417,8 @@ const customRouteRules: RouteRule[] = [
   {
     route: '/api/**',
     depth: 3,
-    categoryName: 'API Reference'
-  }
+    categoryName: 'API Reference',
+  },
 ];
 
 const pluginConfig: PluginOptions = {
@@ -1312,8 +1427,8 @@ const pluginConfig: PluginOptions = {
   logLevel: 1,
   content: {
     routeRules: customRouteRules,
-    excludeRoutes: ['/internal/**']
-  }
+    excludeRoutes: ['/internal/**'],
+  },
 };
 ```
 
@@ -1339,4 +1454,3 @@ async function processDocuments() {
   }
 }
 ```
-

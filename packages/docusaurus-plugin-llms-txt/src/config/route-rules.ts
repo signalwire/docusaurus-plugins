@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import { createMatcher } from '@docusaurus/utils';
 
 // import { VALIDATION_MESSAGES } from '../constants'; // Currently unused

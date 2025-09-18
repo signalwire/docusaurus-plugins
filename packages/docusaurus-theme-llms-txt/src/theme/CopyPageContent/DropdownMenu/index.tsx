@@ -25,36 +25,50 @@ interface DropdownMenuProps {
   onAction: (action: string) => void;
 }
 
-export default function DropdownMenu({ isOpen, finalConfig, onAction }: DropdownMenuProps): React.JSX.Element {
+export default function DropdownMenu({
+  isOpen,
+  finalConfig,
+  onAction,
+}: DropdownMenuProps): React.JSX.Element {
   return (
     <div className={clsx(styles.dropdown, isOpen && styles.dropdownVisible)}>
       {finalConfig.markdown && (
         <MenuItem
           icon={<MarkdownIcon />}
-          description="Copy page as Markdown for LLMs"
-          onClick={() => { onAction('copyRaw'); }}
+          description='Copy page as Markdown for LLMs'
+          onClick={() => {
+            onAction('copyRaw');
+          }}
         >
-          <Translate id="copyPage.copyRawMarkdown">Copy Raw Markdown</Translate>
+          <Translate id='copyPage.copyRawMarkdown'>Copy Raw Markdown</Translate>
         </MenuItem>
       )}
 
       {finalConfig.chatGPT.enabled && (
         <MenuItem
           icon={<ChatGPTIcon />}
-          description="Ask questions about this page"
-          onClick={() => { onAction('openChatGPT'); }}
+          description='Ask questions about this page'
+          onClick={() => {
+            onAction('openChatGPT');
+          }}
         >
-          <Translate id="copyPage.referenceInChatGPT">Reference in ChatGPT</Translate>
+          <Translate id='copyPage.referenceInChatGPT'>
+            Reference in ChatGPT
+          </Translate>
         </MenuItem>
       )}
 
       {finalConfig.claude.enabled && (
         <MenuItem
           icon={<ClaudeIcon />}
-          description="Ask questions about this page"
-          onClick={() => { onAction('openClaude'); }}
+          description='Ask questions about this page'
+          onClick={() => {
+            onAction('openClaude');
+          }}
         >
-          <Translate id="copyPage.referenceInClaude">Reference in Claude</Translate>
+          <Translate id='copyPage.referenceInClaude'>
+            Reference in Claude
+          </Translate>
         </MenuItem>
       )}
     </div>

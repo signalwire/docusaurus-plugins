@@ -9,7 +9,6 @@ import baseLogger from '@docusaurus/logger';
 import type { Logger } from '../types';
 import type { ReportingSeverity } from '@docusaurus/types';
 
-
 /**
  * Logger implementation with separated concerns:
  * - onRouteError: Controls how route processing failures are handled

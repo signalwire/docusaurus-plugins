@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import path from 'path';
 
 import fs from 'fs-extra';
@@ -32,7 +31,9 @@ export async function buildLlmsFullTxtContent(
   // Append all markdown content from docs that have markdown files or content
   for (const doc of docs) {
     // Skip documents without markdown files or in-memory content
-    if (!doc.markdownFile && !doc.markdownContent) {continue;}
+    if (!doc.markdownFile && !doc.markdownContent) {
+      continue;
+    }
 
     // Skip root/index documents as they're used for site metadata
     if (doc.routePath === '/' || doc.routePath === '/index') {

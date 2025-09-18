@@ -224,12 +224,7 @@ module.exports = {
     'import/no-unresolved': [
       OFF,
       {
-        ignore: [
-          '^@theme',
-          '^@docusaurus',
-          '^@generated',
-          '^@site',
-        ],
+        ignore: ['^@theme', '^@docusaurus', '^@generated', '^@site'],
       },
     ],
     'import/order': [
@@ -279,11 +274,11 @@ module.exports = {
     'jest/expect-expect': OFF,
     'jest/no-large-snapshots': [
       WARNING,
-      {maxSize: Infinity, inlineMaxSize: 50},
+      { maxSize: Infinity, inlineMaxSize: 50 },
     ],
     'jest/no-test-return-statement': ERROR,
     'jest/prefer-expect-resolves': WARNING,
-    'jest/prefer-lowercase-title': [WARNING, {ignore: ['describe']}],
+    'jest/prefer-lowercase-title': [WARNING, { ignore: ['describe'] }],
     'jest/prefer-spy-on': WARNING,
     'jest/prefer-to-be': WARNING,
     'jest/prefer-to-have-length': WARNING,
@@ -321,7 +316,10 @@ module.exports = {
     'react/no-unstable-nested-components': [WARNING, { allowAsProps: true }],
     'react/prefer-stateless-function': WARNING,
     'react/prop-types': OFF,
-    'react/require-default-props': [ERROR, { ignoreFunctionalComponents: true }],
+    'react/require-default-props': [
+      ERROR,
+      { ignoreFunctionalComponents: true },
+    ],
 
     // Accessibility Rules
     'jsx-a11y/click-events-have-key-events': WARNING,
@@ -395,7 +393,11 @@ module.exports = {
   overrides: [
     // Theme components
     {
-      files: ['packages/*/src/theme/**/*.js', 'packages/*/src/theme/**/*.ts', 'packages/*/src/theme/**/*.tsx'],
+      files: [
+        'packages/*/src/theme/**/*.js',
+        'packages/*/src/theme/**/*.ts',
+        'packages/*/src/theme/**/*.tsx',
+      ],
       excludedFiles: ['*.test.js', '*.test.ts', '*.test.tsx'],
       rules: {
         // Disable import restrictions for theme components as they need internal imports

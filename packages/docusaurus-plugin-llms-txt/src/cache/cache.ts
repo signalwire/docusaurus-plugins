@@ -5,9 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import path from 'path';
-
 
 import packageJson from '../../package.json';
 import { CACHE_FILENAME } from '../constants';

@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import type {
   PluginOptions,
   Logger,
@@ -13,7 +12,6 @@ import type {
   ValidationResult,
 } from '../types';
 import type { RouteConfig, PluginRouteConfig } from '@docusaurus/types';
-
 
 /**
  * Type guard to check if a route is a PluginRouteConfig with reliable structure

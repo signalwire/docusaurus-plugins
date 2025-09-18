@@ -189,8 +189,8 @@ export default function llmsTxtPlugin(
     name,
 
     // Provide JSON URL and config to components via global data
-    contentLoaded({actions}): void {
-      const {setGlobalData} = actions;
+    contentLoaded({ actions }): void {
+      const { setGlobalData } = actions;
 
       const globalData: {
         copyContentConfig: typeof config.copyPageContent;
@@ -205,8 +205,8 @@ export default function llmsTxtPlugin(
         siteConfig: {
           baseUrl: context.siteConfig.baseUrl,
           url: context.siteConfig.url,
-          trailingSlash: context.siteConfig.trailingSlash
-        }
+          trailingSlash: context.siteConfig.trailingSlash,
+        },
       };
 
       // Only add URL if copy content is enabled

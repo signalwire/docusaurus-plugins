@@ -8,7 +8,11 @@ import { useState } from 'react';
 
 import { useLocation } from '@docusaurus/router';
 
-import { constructMarkdownUrl, constructFullUrl, type SiteConfig } from '../utils/copyButton';
+import {
+  constructMarkdownUrl,
+  constructFullUrl,
+  type SiteConfig,
+} from '../utils/copyButton';
 
 import type { ResolvedCopyPageContentOptions } from './useCopyButtonConfig';
 
@@ -20,7 +24,9 @@ export default function useCopyActions(
   copyStatus: 'idle' | 'success' | 'error';
   handleAction: (action: string) => Promise<void>;
 } {
-  const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>(
+    'idle'
+  );
   const location = useLocation();
   const pathname = location.pathname;
 
@@ -32,7 +38,9 @@ export default function useCopyActions(
       try {
         const markdownUrl = constructMarkdownUrl(pathname);
         const response = await fetch(markdownUrl);
-        if (!response.ok) {throw new Error('Failed to fetch markdown');}
+        if (!response.ok) {
+          throw new Error('Failed to fetch markdown');
+        }
         const content = await response.text();
         await navigator.clipboard.writeText(content);
 
@@ -46,7 +54,9 @@ export default function useCopyActions(
     } else if (action === 'openChatGPT' && siteConfig) {
       // Open ChatGPT with content
       const fullUrl = constructFullUrl(pathname, siteConfig);
-      const encodedPrompt = encodeURIComponent(`${finalConfig.chatGPT.prompt} ${fullUrl}`);
+      const encodedPrompt = encodeURIComponent(
+        `${finalConfig.chatGPT.prompt} ${fullUrl}`
+      );
       const chatUrl = `https://chatgpt.com/?q=${encodedPrompt}`;
       window.open(chatUrl, '_blank');
       setCopyStatus('success');
@@ -54,7 +64,9 @@ export default function useCopyActions(
     } else if (action === 'openClaude' && siteConfig) {
       // Open Claude with content
       const fullUrl = constructFullUrl(pathname, siteConfig);
-      const encodedPrompt = encodeURIComponent(`${finalConfig.claude.prompt} ${fullUrl}`);
+      const encodedPrompt = encodeURIComponent(
+        `${finalConfig.claude.prompt} ${fullUrl}`
+      );
       const claudeUrl = `https://claude.ai/new?q=${encodedPrompt}`;
       window.open(claudeUrl, '_blank');
       setCopyStatus('success');

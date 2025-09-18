@@ -11,16 +11,16 @@ module.exports = {
   roots: ['<rootDir>/__tests__'],
   testMatch: ['**/__tests__/**/*.test.ts'],
   transform: {
-    '^.+\\.ts$': ['ts-jest', {
-      tsconfig: 'tsconfig.test.json',
-      transpilation: true,
-    }],
+    '^.+\\.ts$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.test.json',
+        transpilation: true,
+      },
+    ],
   },
   moduleFileExtensions: ['ts', 'js'],
-  collectCoverageFrom: [
-    'packages/*/src/**/*.ts',
-    '!packages/*/src/**/*.d.ts',
-  ],
+  collectCoverageFrom: ['packages/*/src/**/*.ts', '!packages/*/src/**/*.d.ts'],
   // Ignore development and website directories with conflicting package.json
   testPathIgnorePatterns: [
     '/node_modules/',
@@ -28,10 +28,7 @@ module.exports = {
     '/website/',
     '/lib/',
   ],
-  modulePathIgnorePatterns: [
-    '/development/',
-    '/lib/',
-  ],
+  modulePathIgnorePatterns: ['/development/', '/lib/'],
   // Set up Jest globals
   setupFilesAfterEnv: [],
 };

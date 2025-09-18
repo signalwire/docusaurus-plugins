@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 import { DEFAULT_GFM } from '../constants';
 
 import type { PluginOptions, ContentOptions } from '../types';
