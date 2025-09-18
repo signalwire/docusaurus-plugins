@@ -8,7 +8,7 @@ import { useState } from 'react';
 
 import { useLocation } from '@docusaurus/router';
 
-import { constructMarkdownUrl, constructFullUrl, type SiteConfig } from '../lib/copyButton.utils';
+import { constructMarkdownUrl, constructFullUrl, type SiteConfig } from '../utils/copyButton';
 
 import type { ResolvedCopyPageContentOptions } from './useCopyButtonConfig';
 
