@@ -78,6 +78,9 @@ jobs:
       - name: Build packages first
         run: yarn run build:packages
 
+      - name: Force workspace linking
+        run: yarn install --force
+
       - name: Build website
         run: yarn run build:website
 
