@@ -34,18 +34,38 @@ export default function useCopyActions(
     setIsOpen(false);
 
     if (action === 'copyRaw') {
-      // Copy raw markdown content
+      // Copy raw markdown content using ClipboardItem with Promise
+      // This approach works across all modern browsers and maintains
+      // user gesture context required by Safari
       try {
         const markdownUrl = constructMarkdownUrl(pathname);
-        const response = await fetch(markdownUrl);
-        if (!response.ok) {
-          throw new Error('Failed to fetch markdown');
-        }
-        const content = await response.text();
-        await navigator.clipboard.writeText(content);
 
-        setCopyStatus('success');
-        setTimeout(() => setCopyStatus('idle'), 2000);
+        // Create a promise that fetches and returns the content as a Blob
+        const textPromise = fetch(markdownUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch markdown');
+            }
+            return response.text();
+          })
+          .then(text => new Blob([text], { type: 'text/plain' }));
+
+        // Create ClipboardItem with the promise
+        const clipboardItem = new ClipboardItem({
+          'text/plain': textPromise
+        });
+
+        // Write to clipboard (no await to maintain user gesture context)
+        navigator.clipboard.write([clipboardItem])
+          .then(() => {
+            setCopyStatus('success');
+            setTimeout(() => setCopyStatus('idle'), 2000);
+          })
+          .catch((error) => {
+            console.error('Copy action failed:', error);
+            setCopyStatus('error');
+            setTimeout(() => setCopyStatus('idle'), 3000);
+          });
       } catch (error) {
         console.error('Copy action failed:', error);
         setCopyStatus('error');
