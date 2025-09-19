@@ -1,5 +1,5 @@
 {
   "extends": "../../tsconfig.base.client.json",
-  "include": ["src/theme", "src/types", "src/utils", "src/hooks", "src/types.ts", "src/*.d.ts"],
+  "include": ["src"],
   "exclude": ["**/__tests__/**", "**/backup/**"]
 }

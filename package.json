@@ -39,7 +39,7 @@
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
-    "canary": "yarn canary:version && yarn canary:publish",
+    "canary": "yarn build:packages && yarn canary:version && yarn canary:publish",
     "canary:version": "changeset version --snapshot canary",
     "canary:publish": "changeset publish --tag canary",
     "changelog": "changeset status",
@@ -68,7 +68,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/signalwire/docusaurus-plugins.git"
+    "url": "git+https://github.com/signalwire/docusaurus-plugins.git"
   },
   "bugs": {
     "url": "https://github.com/signalwire/docusaurus-plugins/issues"
