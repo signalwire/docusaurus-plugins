@@ -42,21 +42,22 @@ export default function useCopyActions(
 
         // Create a promise that fetches and returns the content as a Blob
         const textPromise = fetch(markdownUrl)
-          .then(response => {
+          .then((response) => {
             if (!response.ok) {
               throw new Error('Failed to fetch markdown');
             }
             return response.text();
           })
-          .then(text => new Blob([text], { type: 'text/plain' }));
+          .then((text) => new Blob([text], { type: 'text/plain' }));
 
         // Create ClipboardItem with the promise
         const clipboardItem = new ClipboardItem({
-          'text/plain': textPromise
+          'text/plain': textPromise,
         });
 
         // Write to clipboard (no await to maintain user gesture context)
-        navigator.clipboard.write([clipboardItem])
+        navigator.clipboard
+          .write([clipboardItem])
           .then(() => {
             setCopyStatus('success');
             setTimeout(() => setCopyStatus('idle'), 2000);
