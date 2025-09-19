@@ -3584,23 +3584,15 @@
   resolved "https://registry.yarnpkg.com/@sideway/pinpoint/-/pinpoint-2.0.0.tgz#cff8ffadc372ad29fd3f78277aeb29e632cc70df"
   integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
 
-"@signalwire/docusaurus-plugin-llms-txt@*":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@signalwire/docusaurus-plugin-llms-txt/-/docusaurus-plugin-llms-txt-1.2.2.tgz#a18990f5df8733687492eb1d141b3160aa52df4f"
-  integrity sha512-Qo5ZBDZpyXFlcrWwise77vs6B0R3m3/qjIIm1IHf4VzW6sVYgaR/y46BJwoAxMrV3WJkn0CVGpyYC+pMASFBZw==
+"@signalwire/docusaurus-theme-llms-txt@0.0.0-canary-20250918223238":
+  version "0.0.0-canary-20250918223238"
+  resolved "https://registry.yarnpkg.com/@signalwire/docusaurus-theme-llms-txt/-/docusaurus-theme-llms-txt-0.0.0-canary-20250918223238.tgz#7d346ab8b03ebced2552998628781073e89a145e"
+  integrity sha512-ssP/Zypev7QquPGfbtxHVYy1NeVaJVKKOmca/eRT1LlJQknl2MtbKiyun6QhGDx2Z0Am98I1y5YK5dpmS64luw==
   dependencies:
-    fs-extra "^11.0.0"
-    hast-util-select "^6.0.4"
-    hast-util-to-html "^9.0.5"
-    hast-util-to-string "^3.0.1"
-    p-map "^7.0.2"
-    rehype-parse "^9"
-    rehype-remark "^10"
-    remark-gfm "^4"
-    remark-stringify "^11"
-    string-width "^5.0.0"
-    unified "^11"
-    unist-util-visit "^5"
+    "@docusaurus/core" "^3.0.0"
+    "@docusaurus/theme-common" "^3.0.0"
+    clsx "^2.0.0"
+    react-icons "5.5.0"
 
 "@sigstore/bundle@^1.1.0":
   version "1.1.0"
