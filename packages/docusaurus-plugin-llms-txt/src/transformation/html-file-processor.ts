@@ -9,7 +9,11 @@ import path from 'path';
 
 import fs from 'fs-extra';
 
-import { getContentConfig } from '../config';
+import {
+  getProcessingConfig,
+  getGenerateConfig,
+  getIncludeConfig,
+} from '../config';
 import { ERROR_MESSAGES } from '../constants';
 import {
   getErrorMessage,
@@ -50,8 +54,9 @@ export async function processHtmlFileWithContext(
 
   try {
     const html = await fs.readFile(fullHtmlPath, 'utf8');
-    const contentConfig = getContentConfig(config);
-    const contentSelectors = contentConfig.contentSelectors;
+    const processingConfig = getProcessingConfig(config);
+    const generateConfig = getGenerateConfig(config);
+    const contentSelectors = processingConfig.contentSelectors;
 
     let title: string;
     let description: string;
@@ -59,25 +64,28 @@ export async function processHtmlFileWithContext(
 
     // Process content if markdown files are enabled OR if llms-full.txt is
     // enabled
-    if (contentConfig.enableMarkdownFiles || contentConfig.enableLlmsFullTxt) {
+    if (
+      generateConfig.enableMarkdownFiles ||
+      generateConfig.enableLlmsFullTxt
+    ) {
       // Full processing for individual markdown files
       const conversionOptions: MarkdownConversionOptions = {
-        remarkStringify: contentConfig.remarkStringify,
-        remarkGfm: contentConfig.remarkGfm,
-        rehypeProcessTables: contentConfig.rehypeProcessTables,
+        remarkStringify: processingConfig.remarkStringify,
+        remarkGfm: processingConfig.remarkGfm,
+        rehypeProcessTables: processingConfig.rehypeProcessTables,
         rehypeProcessLinks: true,
         baseUrl: siteUrl,
-        relativePaths: contentConfig.relativePaths,
-        enableMarkdownFiles: contentConfig.enableMarkdownFiles,
-        excludeRoutes: contentConfig.excludeRoutes,
+        relativePaths: generateConfig.relativePaths,
+        enableMarkdownFiles: generateConfig.enableMarkdownFiles,
+        excludeRoutes: getIncludeConfig(config).excludeRoutes,
         fullConfig: config,
         logger,
         routeLookup,
         // Pass simplified plugin arrays to the conversion pipeline
-        beforeDefaultRehypePlugins: contentConfig.beforeDefaultRehypePlugins,
-        rehypePlugins: contentConfig.rehypePlugins,
-        beforeDefaultRemarkPlugins: contentConfig.beforeDefaultRemarkPlugins,
-        remarkPlugins: contentConfig.remarkPlugins,
+        beforeDefaultRehypePlugins: processingConfig.beforeDefaultRehypePlugins,
+        rehypePlugins: processingConfig.rehypePlugins,
+        beforeDefaultRemarkPlugins: processingConfig.beforeDefaultRemarkPlugins,
+        remarkPlugins: processingConfig.remarkPlugins,
       };
 
       const result = convertHtmlToMarkdown(
@@ -100,7 +108,7 @@ export async function processHtmlFileWithContext(
       }
 
       // Save markdown files if enableMarkdownFiles is true
-      if (contentConfig.enableMarkdownFiles) {
+      if (generateConfig.enableMarkdownFiles) {
         logger.debug(`Saving markdown: ${routePath}`);
         const mdPath = htmlPathToMdPath(relHtmlPath, mdOutDir);
         await saveMarkdownFile(mdPath, markdown);

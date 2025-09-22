@@ -7,22 +7,69 @@
 
 import { createMatcher } from '@docusaurus/utils';
 
-// import { VALIDATION_MESSAGES } from '../constants'; // Currently unused
-import { createConfigError } from '../errors';
-import { ensureLeadingSlash } from '../utils';
+import { ensureLeadingSlash, generateSectionId } from '../utils';
+import { getStructureConfig, getProcessingConfig } from './index';
 
 import type {
   RouteRule,
+  SectionRoute,
+  SectionDefinition,
   PluginOptions,
   EffectiveConfig,
-  ContentOptions,
-  Depth,
 } from '../types';
 
 /**
- * Find the most specific matching route rule
+ * Find matching section route with section ID
  */
-export function findMostSpecificRule(
+export function findMatchingSectionRoute(
+  path: string,
+  sections: readonly SectionDefinition[]
+): { sectionId: string; route: SectionRoute } | null {
+  const normalizedPath = ensureLeadingSlash(path);
+  const allMatches: {
+    sectionId: string;
+    route: SectionRoute;
+    specificity: number;
+  }[] = [];
+
+  // Recursively search through sections and subsections
+  function searchSections(sectionList: readonly SectionDefinition[]) {
+    for (const section of sectionList) {
+      if (section.routes) {
+        for (const route of section.routes) {
+          const matcher = createMatcher([route.route]);
+          if (matcher(normalizedPath)) {
+            const specificity = route.route.replace(/\/\*\*$/, '').length;
+            allMatches.push({ sectionId: section.id, route, specificity });
+          }
+        }
+      }
+      if (section.subsections) {
+        searchSections(section.subsections);
+      }
+    }
+  }
+
+  searchSections(sections);
+
+  if (allMatches.length === 0) {
+    return null;
+  }
+
+  // Sort by specificity (higher specificity wins)
+  allMatches.sort((a, b) => b.specificity - a.specificity);
+
+  const best = allMatches[0];
+  if (!best) {
+    return null;
+  }
+  return { sectionId: best.sectionId, route: best.route };
+}
+
+/**
+ * Find the most specific matching global route rule
+ */
+export function findMostSpecificGlobalRule(
   path: string,
   routeRules: readonly RouteRule[]
 ): RouteRule | null {
@@ -53,187 +100,74 @@ export function findMostSpecificRule(
 }
 
 /**
- * Check if a path exactly matches the base path of a route rule
- * Only applies categoryName to the exact base path, not subcategories
+ * Resolve route configuration using precedence logic
  */
-function isExactBasePath(path: string, rule: RouteRule): boolean {
-  if (!rule.categoryName) {
-    return false; // No categoryName to apply
-  }
-
-  // Extract base path from rule (remove /** suffix)
-  const ruleBasePath = rule.route.replace(/\/\*\*$/, '');
-
-  // Check if current path exactly matches the rule's base path
-  return path === ruleBasePath;
-}
-
-/**
- * Apply route rule to create effective configuration
- */
-export function applyRouteRule(
-  rule: RouteRule | null,
-  baseConfig: PluginOptions,
-  contentConfig: Required<ContentOptions>,
+export function resolveRouteConfiguration(
   path: string,
-  routeSegment?: string
+  baseConfig: PluginOptions
 ): EffectiveConfig {
-  const includeOrder = rule?.includeOrder ?? baseConfig.includeOrder ?? [];
+  // Get all config groups using the new structure
+  const structureConfig = getStructureConfig(baseConfig);
+  const processingConfig = getProcessingConfig(baseConfig);
 
-  // CategoryName: only apply if this is the exact base path of the rule
-  // Otherwise use routeSegment fallback (preserves subcategory names)
-  const categoryName =
-    rule && isExactBasePath(path, rule) ? rule.categoryName : routeSegment;
-
-  const effectiveConfig: EffectiveConfig = {
-    ...baseConfig,
-    includeOrder,
-    content: contentConfig,
-    path,
-    // Apply rule-specific overrides if rule exists, with proper fallbacks
-    ...(rule?.depth !== undefined && { depth: rule.depth }),
-    ...(categoryName !== undefined && { categoryName }),
-  };
-
-  return effectiveConfig;
-}
-
-/**
- * Validate route rules for conflicts and throw errors for true conflicts
- */
-export function validateRouteRules(routeRules: readonly RouteRule[]): void {
-  if (routeRules.length === 0) {
-    return;
+  // 1. Check section routes first (most specific)
+  const sectionMatch = findMatchingSectionRoute(path, structureConfig.sections);
+  if (sectionMatch) {
+    return {
+      ...baseConfig,
+      path,
+      section: sectionMatch.sectionId,
+      ...(sectionMatch.route.contentSelectors && {
+        contentSelectors: sectionMatch.route.contentSelectors,
+      }),
+    };
   }
 
-  const conflicts = findRouteRuleConflicts(routeRules);
+  // 2. Check global rules (less specific)
+  const globalMatch = findMostSpecificGlobalRule(
+    path,
+    processingConfig.routeRules
+  );
+  if (globalMatch) {
+    return {
+      ...baseConfig,
+      path,
+      section: autoAssignSection(path), // Auto-assign section for global rules
+      ...(globalMatch.contentSelectors && {
+        contentSelectors: globalMatch.contentSelectors,
+      }),
+    };
+  }
 
-  // Throw errors for true conflicts (same route pattern with conflicting
-  // properties)
-  conflicts.forEach((conflict) => {
-    const conflictMessages: string[] = [];
-
-    if (conflict.categories.length > 1) {
-      conflictMessages.push(
-        `categoryName: [${conflict.categories.join(', ')}]`
-      );
-    }
-
-    if (conflict.depths.length > 1) {
-      conflictMessages.push(`depth: [${conflict.depths.join(', ')}]`);
-    }
-
-    if (conflict.includeOrders > 1) {
-      conflictMessages.push(
-        `includeOrder: ${conflict.includeOrders} different definitions`
-      );
-    }
-
-    if (conflict.contentSelectors > 1) {
-      conflictMessages.push(
-        `contentSelectors: ${conflict.contentSelectors} different definitions`
-      );
-    }
-
-    if (conflictMessages.length > 0) {
-      const errorMessage = `Route rule conflict detected for pattern "${conflict.route}". Multiple conflicting values found for: ${conflictMessages.join(', ')}. Each route pattern should have only one value for each property. Please consolidate or use more specific route patterns.`;
-
-      throw createConfigError(errorMessage, {
-        conflictingRoute: conflict.route,
-        conflictDetails: {
-          categories: conflict.categories,
-          depths: conflict.depths,
-          includeOrders: conflict.includeOrders,
-          contentSelectors: conflict.contentSelectors,
-        },
-        suggestion:
-          'Use more specific route patterns (e.g., "/api/v1/**" vs "/api/v2/**") or consolidate conflicting rules into a single rule definition.',
-      });
-    }
-  });
+  // 3. Auto-assign (fallback)
+  return {
+    ...baseConfig,
+    path,
+    section: autoAssignSection(path),
+  };
 }
 
 /**
- * Enhanced conflict detection interface
+ * Auto-assign section based on first path segment only
+ * Pure path-based auto-generation algorithm
  */
-interface RouteRuleConflict {
-  route: string;
-  categories: string[];
-  depths: Depth[];
-  includeOrders: number;
-  contentSelectors: number;
+function autoAssignSection(routePath: string): string {
+  // Extract first URL segment only
+  const segments = routePath.split('/').filter(Boolean);
+  const firstSegment = segments[0] || 'root';
+
+  // Convert to kebab-case section ID
+  return generateSectionId(firstSegment);
 }
 
 /**
- * Find conflicts between route rules - enhanced to detect all property
- * conflicts
+ * Get effective configuration for a route with section-based logic
  */
-function findRouteRuleConflicts(
-  routeRules: readonly RouteRule[]
-): RouteRuleConflict[] {
-  const routeMap = new Map<string, RouteRule[]>();
-
-  // Group rules by route pattern
-  routeRules.forEach((rule) => {
-    if (!routeMap.has(rule.route)) {
-      routeMap.set(rule.route, []);
-    }
-    const existingRules = routeMap.get(rule.route);
-    if (existingRules) {
-      existingRules.push(rule);
-    }
-  });
-
-  const conflicts: RouteRuleConflict[] = [];
-
-  // Check for conflicts within each route group
-  routeMap.forEach((rulesForRoute, route) => {
-    if (rulesForRoute.length <= 1) {
-      return;
-    }
-
-    // Check categoryName conflicts
-    const categories = rulesForRoute
-      .map((r) => r.categoryName)
-      .filter((name): name is string => Boolean(name));
-    const uniqueCategories = [...new Set(categories)];
-
-    // Check depth conflicts
-    const depths = rulesForRoute
-      .map((r) => r.depth)
-      .filter((depth): depth is Depth => depth !== undefined);
-    const uniqueDepths = [...new Set(depths)];
-
-    // Check includeOrder conflicts
-    const includeOrders = rulesForRoute
-      .map((r) => r.includeOrder)
-      .filter(Boolean);
-    const uniqueIncludeOrders = includeOrders.length;
-
-    // Check contentSelectors conflicts
-    const contentSelectors = rulesForRoute
-      .map((r) => r.contentSelectors)
-      .filter(Boolean);
-    const uniqueContentSelectors = contentSelectors.length;
-
-    // Only report if there are actual conflicts (multiple different values
-    // for same property)
-    const hasConflicts =
-      uniqueCategories.length > 1 ||
-      uniqueDepths.length > 1 ||
-      uniqueIncludeOrders > 1 ||
-      uniqueContentSelectors > 1;
-
-    if (hasConflicts) {
-      conflicts.push({
-        route,
-        categories: uniqueCategories,
-        depths: uniqueDepths,
-        includeOrders: uniqueIncludeOrders,
-        contentSelectors: uniqueContentSelectors,
-      });
-    }
-  });
-
-  return conflicts;
+export function getEffectiveConfigForRoute(
+  routePath: string,
+  globalConfig: PluginOptions,
+  _fallbackSegment?: string
+): EffectiveConfig {
+  // Use new route resolution logic with the updated signature
+  return resolveRouteConfiguration(routePath, globalConfig);
 }

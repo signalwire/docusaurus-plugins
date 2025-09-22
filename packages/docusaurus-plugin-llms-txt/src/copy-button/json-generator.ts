@@ -13,8 +13,7 @@ import type { CachedRouteInfo, Logger } from '../types';
 
 export async function generateCopyContentJson(
   processedRoutes: CachedRouteInfo[],
-  outDir: string,
-  timestamp: number,
+  filePath: string,
   logger: Logger
 ): Promise<void> {
   try {
@@ -26,12 +25,9 @@ export async function generateCopyContentJson(
       copyContentData[route.path] = Boolean(route.markdownFile);
     }
 
-    // Generate JSON file with timestamp in filename for cache invalidation
-    const filename = `copy-content-data.${timestamp}.json`;
-    const filePath = path.join(outDir, filename);
-
     await fs.writeFile(filePath, JSON.stringify(copyContentData, null, 2));
 
+    const filename = path.basename(filePath);
     logger.success(`Generated copy content data file: ${filename}`);
     logger.debug(
       `Copy content data contains ${Object.keys(copyContentData).length} routes`

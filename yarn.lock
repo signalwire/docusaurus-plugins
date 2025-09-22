@@ -3584,10 +3584,24 @@
   resolved "https://registry.yarnpkg.com/@sideway/pinpoint/-/pinpoint-2.0.0.tgz#cff8ffadc372ad29fd3f78277aeb29e632cc70df"
   integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
 
-"@signalwire/docusaurus-theme-llms-txt@0.0.0-canary-20250918223238":
-  version "0.0.0-canary-20250918223238"
-  resolved "https://registry.yarnpkg.com/@signalwire/docusaurus-theme-llms-txt/-/docusaurus-theme-llms-txt-0.0.0-canary-20250918223238.tgz#7d346ab8b03ebced2552998628781073e89a145e"
-  integrity sha512-ssP/Zypev7QquPGfbtxHVYy1NeVaJVKKOmca/eRT1LlJQknl2MtbKiyun6QhGDx2Z0Am98I1y5YK5dpmS64luw==
+"@signalwire/docusaurus-plugin-llms-txt@file:packages/docusaurus-plugin-llms-txt":
+  version "0.0.0-canary-20250918205207"
+  dependencies:
+    fs-extra "^11.0.0"
+    hast-util-select "^6.0.4"
+    hast-util-to-html "^9.0.5"
+    hast-util-to-string "^3.0.1"
+    p-map "^7.0.2"
+    rehype-parse "^9"
+    rehype-remark "^10"
+    remark-gfm "^4"
+    remark-stringify "^11"
+    string-width "^5.0.0"
+    unified "^11"
+    unist-util-visit "^5"
+
+"@signalwire/docusaurus-theme-llms-txt@file:packages/docusaurus-theme-llms-txt":
+  version "0.0.0"
   dependencies:
     "@docusaurus/core" "^3.0.0"
     "@docusaurus/theme-common" "^3.0.0"
@@ -11030,9 +11044,9 @@ media-typer@0.3.0:
   integrity sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==
 
 memfs@^4.6.0:
-  version "4.42.0"
-  resolved "https://registry.yarnpkg.com/memfs/-/memfs-4.42.0.tgz#faa3b89d78fb723bef37370ca86a460763c23e15"
-  integrity sha512-RG+4HMGyIVp6UWDWbFmZ38yKrSzblPnfJu0PyPt0hw52KW4PPlPp+HdV4qZBG0hLDuYVnf8wfQT4NymKXnlQjA==
+  version "4.43.0"
+  resolved "https://registry.yarnpkg.com/memfs/-/memfs-4.43.0.tgz#8aeed4d242e29acf57dfdfe93fec4f84280f8df6"
+  integrity sha512-XCdhMy33sgxCwJ4JgjSasLGgOjFm9/i+IEhO03gPHroJeTBhM7ZQ1+v3j7di9nNKtcLGjVvKjHVOkTbVop/R/Q==
   dependencies:
     "@jsonjoy.com/json-pack" "^1.11.0"
     "@jsonjoy.com/util" "^1.9.0"
@@ -14345,9 +14359,9 @@ sass-loader@^16.0.2:
     neo-async "^2.6.2"
 
 sass@^1.92.1:
-  version "1.92.1"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.92.1.tgz#07fb1fec5647d7b712685d1090628bf52456fe86"
-  integrity sha512-ffmsdbwqb3XeyR8jJR6KelIXARM9bFQe8A6Q3W4Klmwy5Ckd5gz7jgUNHo4UOqutU5Sk1DtKLbpDP0nLCg1xqQ==
+  version "1.93.0"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.93.0.tgz#8252f61405be295f4755d1ed5df48bf118587aa5"
+  integrity sha512-CQi5/AzCwiubU3dSqRDJ93RfOfg/hhpW1l6wCIvolmehfwgCI35R/0QDs1+R+Ygrl8jFawwwIojE2w47/mf94A==
   dependencies:
     chokidar "^4.0.0"
     immutable "^5.0.2"
@@ -15380,9 +15394,9 @@ ts-api-utils@^2.1.0:
   integrity sha512-CUgTZL1irw8u29bzrOD/nH85jqyc74D6SshFgujOIA7osm2Rz7dYH77agkx7H4FBNxDq7Cjf+IjaX/8zwFW+ZQ==
 
 ts-jest@^29.4.3:
-  version "29.4.3"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.4.3.tgz#23264489bebb5b3e2c7966dbf6788e960f244f7c"
-  integrity sha512-KTWbK2Wot8VXargsLoxhSoEQ9OyMdzQXQoUDeIulWu2Tf7gghuBHeg+agZqVLdTOHhQHVKAaeuctBDRkhWE7hg==
+  version "29.4.4"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.4.4.tgz#fc6fefe28652ed81b8e1381ef8391901d9f81417"
+  integrity sha512-ccVcRABct5ZELCT5U0+DZwkXMCcOCLi2doHRrKy1nK/s7J7bch6TzJMsrY09WxgUUIP/ITfmcDS8D2yl63rnXw==
   dependencies:
     bs-logger "^0.2.6"
     fast-json-stable-stringify "^2.1.0"

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { getContentConfig } from '../config';
+import { getIncludeConfig } from '../config';
 import {
   DOCUSAURUS_BLOG_PLUGIN,
   DOCUSAURUS_PAGES_PLUGIN,
@@ -77,22 +77,22 @@ export function shouldProcessRoute(
   route: PluginRouteConfig,
   options: PluginOptions
 ): boolean {
-  const contentConfig = getContentConfig(options);
+  const includeConfig = getIncludeConfig(options);
   const routeType = classifyRoute(route);
 
   // First check if this content type should be included
   let shouldIncludeType = false;
   switch (routeType) {
     case CONTENT_TYPES.BLOG:
-      shouldIncludeType = contentConfig.includeBlog;
+      shouldIncludeType = includeConfig.includeBlog;
       break;
     case CONTENT_TYPES.PAGES:
-      shouldIncludeType = contentConfig.includePages;
+      shouldIncludeType = includeConfig.includePages;
       break;
     case CONTENT_TYPES.DOCS:
     case CONTENT_TYPES.UNKNOWN:
     default:
-      shouldIncludeType = contentConfig.includeDocs;
+      shouldIncludeType = includeConfig.includeDocs;
       break;
   }
 
@@ -103,7 +103,7 @@ export function shouldProcessRoute(
   // For docs routes, check versioned docs filtering
   if (
     (routeType === CONTENT_TYPES.DOCS || routeType === CONTENT_TYPES.UNKNOWN) &&
-    contentConfig.includeVersionedDocs === false
+    includeConfig.includeVersionedDocs === false
   ) {
     // Check if this is a versioned docs route (not current version)
     const isVersionedRoute =
@@ -120,7 +120,7 @@ export function shouldProcessRoute(
   }
 
   // Check if this is a generated category index page
-  if (contentConfig.includeGeneratedIndex === false) {
+  if (includeConfig.includeGeneratedIndex === false) {
     // Generated index pages have a categoryGeneratedIndex prop
     if (route.props?.categoryGeneratedIndex !== undefined) {
       return false; // Skip generated index pages when includeGeneratedIndex is false

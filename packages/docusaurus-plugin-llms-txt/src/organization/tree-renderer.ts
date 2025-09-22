@@ -36,21 +36,27 @@ export function renderTreeAsMarkdown(
 ): string {
   let md = '';
 
-  // Handle category heading and description
+  // Handle section heading and description
   if (!isRoot && node.name) {
     const shouldHeader =
       !node.indexDoc || !areSimilarTitles(node.name, node.indexDoc.title);
     if (shouldHeader) {
-      md += `${'#'.repeat(level)} ${node.name}\n\n`;
+      // Cap at H6 to respect markdown heading limits
+      const cappedLevel = Math.min(level, 6);
+      md += `${'#'.repeat(cappedLevel)} ${node.name}\n\n`;
 
-      if (enableDescriptions && node.indexDoc?.description) {
-        md += `${node.indexDoc.description}\n\n`;
+      // Prefer section description over index doc description
+      if (enableDescriptions && node.description) {
+        md += `> ${node.description}\n\n`;
+      } else if (enableDescriptions && node.indexDoc?.description) {
+        md += `> ${node.indexDoc.description}\n\n`;
       }
     }
   }
 
-  // Handle the category index document or root index
-  if (node.indexDoc) {
+  // Handle the category index document (skip root index as it's handled
+  // separately)
+  if (node.indexDoc && !isRoot) {
     const formatOptions: Parameters<typeof formatUrl>[1] = {
       relativePaths: useRelativePaths,
       enableMarkdownFiles,
@@ -66,16 +72,11 @@ export function renderTreeAsMarkdown(
       baseUrl
     );
 
-    if (isRoot) {
-      const rootTitle = node.title?.length ? node.title : node.indexDoc.title;
-      md += `- [${rootTitle}](${formattedUrl})\n`;
-    } else {
-      const categoryDesc =
-        enableDescriptions && node.indexDoc.description
-          ? `: ${node.indexDoc.description}`
-          : '';
-      md += `- [${node.indexDoc.title}](${formattedUrl})${categoryDesc}\n`;
-    }
+    const categoryDesc =
+      enableDescriptions && node.indexDoc.description
+        ? `: ${node.indexDoc.description}`
+        : '';
+    md += `- [${node.indexDoc.title}](${formattedUrl})${categoryDesc}\n`;
   }
 
   // Handle regular documents in this category
@@ -99,9 +100,11 @@ export function renderTreeAsMarkdown(
   // Process subcategories (already ordered by tree builder)
   if (node.subCategories.length) {
     node.subCategories.forEach((sub: TreeNode) => {
+      // Cap at H6 to respect markdown heading limits
+      const nextLevel = Math.min(isRoot ? level : level + 1, 6);
       md += `\n${renderTreeAsMarkdown(
         sub,
-        isRoot ? level : level + 1,
+        nextLevel,
         false,
         baseUrl,
         useRelativePaths,

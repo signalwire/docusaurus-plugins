@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import { getContentConfig } from '../config';
+import { getIncludeConfig } from '../config';
 import { CONTENT_TYPES } from '../constants';
 import { createExclusionMatcher } from '../discovery/exclusion-matcher';
 
@@ -20,9 +20,9 @@ export function filterCachedRoutesForConfig(
   config: PluginOptions,
   logger?: Logger
 ): CachedRouteInfo[] {
-  const contentConfig = getContentConfig(config);
+  const includeConfig = getIncludeConfig(config);
   const isExcludedByPattern = createExclusionMatcher(
-    contentConfig.excludeRoutes
+    includeConfig.excludeRoutes
   );
   let excludedByType = 0;
   let excludedByVersion = 0;
@@ -34,13 +34,13 @@ export function filterCachedRoutesForConfig(
     let shouldIncludeType = false;
     switch (route.contentType) {
       case CONTENT_TYPES.BLOG:
-        shouldIncludeType = contentConfig.includeBlog;
+        shouldIncludeType = includeConfig.includeBlog;
         if (!shouldIncludeType) {
           excludedByType += 1;
         }
         break;
       case CONTENT_TYPES.PAGES:
-        shouldIncludeType = contentConfig.includePages;
+        shouldIncludeType = includeConfig.includePages;
         if (!shouldIncludeType) {
           excludedByType += 1;
         }
@@ -48,7 +48,7 @@ export function filterCachedRoutesForConfig(
       case CONTENT_TYPES.DOCS:
       case CONTENT_TYPES.UNKNOWN:
       default:
-        shouldIncludeType = contentConfig.includeDocs;
+        shouldIncludeType = includeConfig.includeDocs;
         if (!shouldIncludeType) {
           excludedByType += 1;
         }
@@ -62,13 +62,13 @@ export function filterCachedRoutesForConfig(
     // Apply versioned docs filter
     // Only filter out non-latest versions (isLast=false) when
     // includeVersionedDocs=false
-    if (route.isVersioned && !contentConfig.includeVersionedDocs) {
+    if (route.isVersioned && !includeConfig.includeVersionedDocs) {
       excludedByVersion += 1;
       return false;
     }
 
     // Apply generated index filter
-    if (route.isGeneratedIndex && !contentConfig.includeGeneratedIndex) {
+    if (route.isGeneratedIndex && !includeConfig.includeGeneratedIndex) {
       excludedByGenerated += 1;
       return false;
     }

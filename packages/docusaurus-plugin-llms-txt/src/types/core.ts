@@ -6,12 +6,7 @@
  */
 
 import type { ContentType } from '../constants';
-import type {
-  ContentOptions,
-  PluginOptions,
-  Logger,
-  PluginInput,
-} from './public';
+import type { PluginOptions, Logger, PluginInput } from './public';
 import type { Root } from 'hast';
 import type { Options as RemarkGfmOptions } from 'remark-gfm';
 import type { Options as RemarkStringifyOptions } from 'remark-stringify';
@@ -77,6 +72,7 @@ export interface DocInfo {
  * Tree node structure for document hierarchy
  */
 export interface TreeNode {
+  readonly id: string;
   readonly name: string;
   readonly relPath: string;
   readonly docs: readonly DocInfo[];
@@ -92,10 +88,10 @@ export interface TreeNode {
 export interface EffectiveConfig extends PluginOptions {
   /** The matched path */
   readonly path: string;
-  /** Resolved content configuration with all defaults applied */
-  readonly content: Required<ContentOptions>;
-  /** Category name override from route rule */
-  readonly categoryName?: string;
+  /** Section assignment for this route */
+  readonly section: string;
+  /** Content selectors override from route rule */
+  readonly contentSelectors?: readonly string[];
 }
 
 // ============================================================================

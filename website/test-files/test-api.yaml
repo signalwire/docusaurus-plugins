@@ -1,0 +1,106 @@
+openapi: 3.0.3
+info:
+  title: Sample Payment API
+  description: A sample API for processing payments
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+servers:
+  - url: https://api.example.com/v1
+    description: Production server
+paths:
+  /payments:
+    post:
+      summary: Create a payment
+      description: Process a new payment transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+                - currency
+                - source
+              properties:
+                amount:
+                  type: integer
+                  description: Payment amount in cents
+                  example: 2000
+                currency:
+                  type: string
+                  description: Three-letter ISO currency code
+                  example: USD
+                source:
+                  type: string
+                  description: Payment source token
+                  example: tok_visa_4242
+                description:
+                  type: string
+                  description: Payment description
+                  example: "Order #1234"
+      responses:
+        '200':
+          description: Payment successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "py_1abc123"
+                  status:
+                    type: string
+                    example: "succeeded"
+                  amount:
+                    type: integer
+                    example: 2000
+        '400':
+          description: Invalid request
+        '402':
+          description: Payment failed
+        '500':
+          description: Server error
+  /payments/{id}:
+    get:
+      summary: Get payment details
+      description: Retrieve information about a specific payment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Payment ID
+      responses:
+        '200':
+          description: Payment details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+                  amount:
+                    type: integer
+                  currency:
+                    type: string
+                  created:
+                    type: string
+                    format: date-time
+        '404':
+          description: Payment not found
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+security:
+  - ApiKeyAuth: []

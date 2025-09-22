@@ -9,7 +9,7 @@ import path from 'path';
 import fs from 'fs-extra';
 
 import { CacheManager } from '../cache/cache';
-import { getConfig } from '../config';
+import { getConfig, getProcessingConfig, getGenerateConfig } from '../config';
 import {
   LLMS_TXT_FILENAME,
   LLMS_FULL_TXT_FILENAME,
@@ -17,7 +17,7 @@ import {
   EXIT_CODE_ERROR,
 } from '../constants';
 import { getErrorMessage } from '../errors';
-import { setupDirectories } from '../filesystem/paths';
+import { setupDirectories, PathManager } from '../filesystem/paths';
 import { createPluginLogger } from '../logging';
 import { orchestrateProcessing } from '../orchestrator';
 
@@ -35,6 +35,8 @@ async function runCliConversion(
   context: LoadContext
 ): Promise<void> {
   const config = getConfig(options);
+  const processingConfig = getProcessingConfig(config);
+  const generateConfig = getGenerateConfig(config);
   const log = createPluginLogger(config);
 
   try {
@@ -49,8 +51,8 @@ async function runCliConversion(
         siteConfig: context.siteConfig,
         outDir: context.outDir,
         logger: log,
-        contentSelectors: config.content?.contentSelectors ?? [],
-        relativePaths: config.content?.relativePaths !== false,
+        contentSelectors: processingConfig.contentSelectors,
+        relativePaths: generateConfig.relativePaths,
       }
     );
 
@@ -200,6 +202,13 @@ export function registerLlmsTxtClean(
           if (await fs.pathExists(llmsFullTxtPath)) {
             await fs.remove(llmsFullTxtPath);
             log.debug(`Removed ${LLMS_FULL_TXT_FILENAME}`);
+          }
+
+          // Clean up assets directory (attachments, copy content data, etc.)
+          const assetsDir = PathManager.getAssetsDir(directories.outDir);
+          if (await fs.pathExists(assetsDir)) {
+            await fs.remove(assetsDir);
+            log.debug(`Removed assets directory: ${assetsDir}`);
           }
 
           // Handle cache clearing if requested

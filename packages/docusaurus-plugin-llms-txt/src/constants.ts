@@ -57,8 +57,6 @@ export type ContentType = (typeof CONTENT_TYPES)[keyof typeof CONTENT_TYPES];
 export const TREE_ROOT_NAME = 'root' as const;
 /** Index document identifier */
 export const INDEX_IDENTIFIER = 'index' as const;
-/** Landing page description suffix */
-export const LANDING_PAGE_SUFFIX = ': landing page' as const;
 
 // ============================================================================
 // CACHE CONSTANTS
@@ -107,17 +105,10 @@ export const INDEX_MD = '/index.md' as const;
 export const VALIDATION_MESSAGES = {
   OBJECT_REQUIRED:
     'Plugin options must be an object. Example: { outputDir: "llms", includeRoutes: ["*"] }',
-  PARENT_DIR_FORBIDDEN:
-    'cannot contain parent directory references (..) for security reasons. Use paths relative to your project root.',
-  RELATIVE_PATH_REQUIRED:
-    'must be relative to project root. Remove leading "/" or use paths like "docs/" instead of "/docs/"',
   INVALID_CONFIG:
     'Invalid plugin configuration. Check your docusaurus.config.js plugin options against the documentation.',
   UNKNOWN_ERROR:
     'Unknown error during configuration validation. Please check your plugin options and try again. Consider enabling debug logging for more details.',
-  ROUTE_RULE_MULTIPLE_CATEGORIES: 'Multiple categories defined for route',
-  ROUTE_RULE_MULTIPLE_ORDERS: 'Multiple includeOrders defined for route',
-  USING_LAST_DEFINITION: 'Using last definition.',
 } as const;
 
 /** Cache error messages */
@@ -175,7 +166,6 @@ export const HTML_OR_MD_EXTENSION_REGEX = /\.(?:html|md)$/;
 
 // Default configuration values - these are public for user reference
 export const DEFAULT_SITE_TITLE = 'Documentation' as const;
-export const DEFAULT_DEPTH = 1 as const;
 
 // Route patterns
 /** @internal */

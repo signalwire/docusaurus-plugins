@@ -4,7 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 import { useLocation } from '@docusaurus/router';
 
@@ -44,9 +44,9 @@ export default function useDropdownState(): {
     return undefined;
   }, [isOpen]);
 
-  const toggleDropdown = () => {
+  const toggleDropdown = useCallback(() => {
     setIsOpen(!isOpen);
-  };
+  }, [isOpen]);
 
   return {
     isOpen,

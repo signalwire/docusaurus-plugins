@@ -12,7 +12,7 @@ import pMap from 'p-map';
 import { CacheManager } from '../cache/cache';
 import { validateCliContext } from '../cache/cache-strategy';
 import { hashFile } from '../cache/cache-validation';
-import { getEffectiveConfigForRoute, getContentConfig } from '../config';
+import { getEffectiveConfigForRoute, getGenerateConfig } from '../config';
 import { ERROR_MESSAGES } from '../constants';
 import { getErrorMessage } from '../errors';
 import { analyzeProcessingContext } from './processing-context';
@@ -72,7 +72,7 @@ async function processSingleRoute(
 
     if (doc) {
       const hash = await hashFile(fullHtmlPath);
-      const contentConfig = getContentConfig(config);
+      const generateConfig = getGenerateConfig(config);
 
       // Note: This is a temporary CacheManager just for the update method
       // We don't have siteConfig here, but it's not needed for
@@ -83,7 +83,7 @@ async function processSingleRoute(
         cachedRoute,
         doc,
         hash,
-        contentConfig.enableMarkdownFiles
+        generateConfig.enableMarkdownFiles
       );
 
       logger.debug(`Processed route: ${route.path}`);

@@ -4,62 +4,67 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 
 // JSON data structure
 interface CopyContentData {
   [routePath: string]: boolean;
 }
 
-// Module-level cache to persist data across component instances and page
-// navigations
-// This eliminates redundant network requests during SPA navigation
-let cachedCopyContentData: CopyContentData | null = null;
-let cachePromise: Promise<CopyContentData> | null = null;
-let cachedDataUrl: string | null = null;
+interface CacheEntry {
+  url: string;
+  data: CopyContentData;
+  promise?: Promise<CopyContentData>;
+}
 
 export default function useCopyContentData(dataUrl: string | undefined): {
   copyContentData: CopyContentData | null;
   isLoading: boolean;
 } {
-  const [copyContentData, setCopyContentData] =
-    useState<CopyContentData | null>(null);
+  // Component-managed cache using useRef for persistence across re-renders
+  // This cache resets when component unmounts or dataUrl changes
+  const cacheRef = useRef<CacheEntry | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  // Use useMemo to determine current data state without side effects
+  const _currentData = useMemo(() => {
     if (!dataUrl || typeof window === 'undefined') {
-      setIsLoading(false);
+      return { data: null, needsFetch: false, shouldLoad: false };
+    }
+
+    // Check if we have cached data for the exact same URL
+    if (cacheRef.current?.url === dataUrl) {
+      return {
+        data: cacheRef.current.data,
+        needsFetch: false,
+        shouldLoad: false,
+      };
+    }
+
+    // If we have a pending promise for the same URL, wait for it
+    if (cacheRef.current?.promise && cacheRef.current.url === dataUrl) {
+      return { data: null, needsFetch: false, shouldLoad: true };
+    }
+
+    // Clear old cache since URL has changed and need to fetch
+    return { data: null, needsFetch: true, shouldLoad: true };
+  }, [dataUrl]);
+
+  useEffect(() => {
+    // Update loading state based on current data state
+    setIsLoading(_currentData.shouldLoad);
+
+    // Early return if no fetch is needed or dataUrl is undefined
+    if (!_currentData.needsFetch || !dataUrl) {
       return undefined;
     }
+
+    // Clear old cache since URL has changed
+    cacheRef.current = null;
 
     let isCancelled = false;
 
-    // If we have cached data for the same URL, use it immediately
-    if (cachedCopyContentData && cachedDataUrl === dataUrl) {
-      setCopyContentData(cachedCopyContentData);
-      setIsLoading(false);
-      return undefined;
-    }
-
-    // If a fetch is already in progress for the same URL, wait for it
-    if (cachePromise && cachedDataUrl === dataUrl) {
-      void cachePromise
-        .then((data) => {
-          if (!isCancelled) {
-            setCopyContentData(data);
-            setIsLoading(false);
-          }
-        })
-        .catch(() => {
-          if (!isCancelled) {
-            setCopyContentData(null);
-            setIsLoading(false);
-          }
-        });
-      return undefined;
-    }
-
-    // New URL or first fetch - initiate the request
+    // Create fetch function
     const fetchData = async (): Promise<CopyContentData> => {
       const response = await fetch(dataUrl);
       if (!response.ok) {
@@ -70,28 +75,32 @@ export default function useCopyContentData(dataUrl: string | undefined): {
       return (await response.json()) as CopyContentData;
     };
 
-    // Store the URL and promise for cache validation
-    cachedDataUrl = dataUrl;
-    cachePromise = fetchData();
+    // Start the fetch and store promise in cache
+    const promise = fetchData();
+    cacheRef.current = {
+      url: dataUrl,
+      data: {} as CopyContentData, // Temporary, will be replaced
+      promise,
+    };
 
     // Handle the promise
-    void cachePromise
+    void promise
       .then((data) => {
-        // Cache the successful result
-        cachedCopyContentData = data;
-        if (!isCancelled) {
-          setCopyContentData(data);
+        if (!isCancelled && cacheRef.current?.url === dataUrl) {
+          // Update cache with successful result
+          cacheRef.current = {
+            url: dataUrl,
+            data,
+          };
           setIsLoading(false);
         }
         return undefined;
       })
       .catch((error) => {
         console.error('Failed to load copy content data:', error);
-        // Clear cache on error
-        cachePromise = null;
-        cachedCopyContentData = null;
         if (!isCancelled) {
-          setCopyContentData(null);
+          // Clear cache on error
+          cacheRef.current = null;
           setIsLoading(false);
         }
         return undefined;
@@ -100,7 +109,10 @@ export default function useCopyContentData(dataUrl: string | undefined): {
     return () => {
       isCancelled = true;
     };
-  }, [dataUrl]);
+  }, [dataUrl, _currentData]);
 
-  return { copyContentData, isLoading };
+  return {
+    copyContentData: _currentData.data || cacheRef.current?.data || null,
+    isLoading,
+  };
 }

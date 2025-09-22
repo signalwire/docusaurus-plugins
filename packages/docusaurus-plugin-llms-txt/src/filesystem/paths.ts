@@ -35,6 +35,24 @@ export class PathManager {
     const relativePath = path.relative(this.directories.mdOutDir, mdPath);
     return normalizeCrossPlatformPath(relativePath);
   }
+
+  /** Get the assets/llms-txt directory path */
+  static getAssetsDir(outDir: string): string {
+    return path.join(outDir, 'assets', 'llms-txt');
+  }
+
+  /** Get the attachments directory path */
+  static getAttachmentsDir(outDir: string): string {
+    return path.join(PathManager.getAssetsDir(outDir), 'attachments');
+  }
+
+  /** Get the copy content data file path */
+  static getCopyContentDataPath(outDir: string, timestamp: number): string {
+    return path.join(
+      PathManager.getAssetsDir(outDir),
+      `copy-content-data.${timestamp}.json`
+    );
+  }
 }
 
 /**

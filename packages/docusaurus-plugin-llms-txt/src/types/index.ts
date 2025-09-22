@@ -11,10 +11,15 @@
 
 export type {
   PluginOptions,
-  ContentOptions,
+  GenerateOptions,
+  IncludeOptions,
+  StructureOptions,
+  ProcessingOptions,
+  UiOptions,
   RouteRule,
+  SectionRoute,
   OptionalLink,
-  Depth,
+  SectionDefinition,
   Logger,
   PluginError,
   PluginConfigError,

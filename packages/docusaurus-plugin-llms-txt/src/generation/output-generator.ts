@@ -7,16 +7,17 @@
 
 import path from 'path';
 
-import { getContentConfig } from '../config';
+import { getGenerateConfig } from '../config';
 import {
   LLMS_TXT_FILENAME,
   LLMS_FULL_TXT_FILENAME,
   PROCESSING_MESSAGES,
 } from '../constants';
 import { buildLlmsFullTxtContent } from './full-index-builder';
-import { buildLlmsTxtContent } from './index-builder';
+import { buildLlmsTxtContent, buildUnifiedDocumentTree } from './index-builder';
 import { saveMarkdownFile } from './markdown-writer';
 
+import type { ProcessedAttachment } from '../processing/attachment-processor';
 import type { DocInfo, PluginOptions, Logger, DirectoryConfig } from '../types';
 
 /**
@@ -36,7 +37,8 @@ export async function generateOutputFiles(
   config: PluginOptions,
   siteConfig: { title?: string; url: string; baseUrl: string },
   directories: DirectoryConfig,
-  logger: Logger
+  logger: Logger,
+  attachments?: readonly ProcessedAttachment[]
 ): Promise<OutputResult> {
   if (docs.length === 0) {
     logger.info(PROCESSING_MESSAGES.NO_DOCUMENTS);
@@ -46,8 +48,16 @@ export async function generateOutputFiles(
     };
   }
 
-  // Build llms.txt content
-  const llmsTxtContent = buildLlmsTxtContent(docs, config, siteConfig);
+  // Build the unified tree first (used by llms.txt)
+  buildUnifiedDocumentTree(docs, config, attachments);
+
+  // Build llms.txt content using the tree
+  const llmsTxtContent = buildLlmsTxtContent(
+    docs,
+    config,
+    siteConfig,
+    attachments
+  );
   const llmsTxtPath = path.join(directories.outDir, LLMS_TXT_FILENAME);
 
   // Log generation details at debug level
@@ -58,19 +68,24 @@ export async function generateOutputFiles(
   await saveMarkdownFile(llmsTxtPath, llmsTxtContent);
 
   logger.debug(`Successfully saved llms.txt`);
-  logger.info(`Generated llms.txt with ${docs.length} documents`);
+  const totalItems = docs.length + (attachments?.length ?? 0);
+  logger.info(
+    `Generated llms.txt with ${docs.length} documents${attachments?.length ? ` and ${attachments.length} attachments` : ''}`
+  );
 
   let llmsFullTxtPath: string | undefined;
   let totalContentLength = llmsTxtContent.length;
 
   // Generate llms-full.txt if enabled
-  const contentConfig = getContentConfig(config);
-  if (contentConfig.enableLlmsFullTxt) {
+  const generateConfig = getGenerateConfig(config);
+  if (generateConfig.enableLlmsFullTxt) {
     const llmsFullTxtContent = await buildLlmsFullTxtContent(
-      llmsTxtContent,
       docs,
+      config,
+      siteConfig,
       directories,
-      logger
+      logger,
+      attachments
     );
     llmsFullTxtPath = path.join(directories.outDir, LLMS_FULL_TXT_FILENAME);
 
@@ -83,7 +98,7 @@ export async function generateOutputFiles(
 
     logger.debug(`Successfully saved llms-full.txt`);
     logger.info(
-      `Generated llms-full.txt with full content from ${docs.length} documents`
+      `Generated llms-full.txt with full content from ${totalItems} items`
     );
 
     totalContentLength += llmsFullTxtContent.length;

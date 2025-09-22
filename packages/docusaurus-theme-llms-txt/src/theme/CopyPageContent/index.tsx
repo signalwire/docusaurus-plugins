@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import clsx from 'clsx';
 
@@ -61,6 +61,16 @@ export default function CopyPageContent({
     setIsOpen
   );
 
+  // Memoize action handlers to prevent unnecessary re-renders
+  const handleMainAction = useCallback(
+    () => handleAction('copyRaw'),
+    [handleAction]
+  );
+  const handleDropdownToggle = useCallback(
+    () => toggleDropdown(),
+    [toggleDropdown]
+  );
+
   // CONDITIONAL RENDERING LOGIC - after all hooks are called
   // Don't render if disabled or still loading
   if (pluginConfig === false || isLoading) {
@@ -82,8 +92,8 @@ export default function CopyPageContent({
         copyStatus={copyStatus}
         finalConfig={finalConfig}
         isOpen={isOpen}
-        onMainAction={() => handleAction('copyRaw')}
-        onDropdownToggle={toggleDropdown}
+        onMainAction={handleMainAction}
+        onDropdownToggle={handleDropdownToggle}
       />
 
       <DropdownMenu

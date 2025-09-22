@@ -5,16 +5,26 @@
  * LICENSE file in the root directory of this source tree.
  */
 import { flattenRoutes } from '@docusaurus/utils';
+import * as fs from 'fs-extra';
 
 import { registerLlmsTxt, registerLlmsTxtClean } from './cli/command';
-import { getConfig, validateUserInputs } from './config';
+import {
+  getConfig,
+  getProcessingConfig,
+  getGenerateConfig,
+  getUiConfig,
+  validateUserInputs,
+} from './config';
 import { ERROR_MESSAGES, PLUGIN_NAME } from './constants';
 import { generateCopyContentJson } from './copy-button/json-generator';
 import { getErrorMessage, createConfigError, isPluginError } from './errors';
+import { PathManager } from './filesystem/paths';
 import { createPluginLogger } from './logging';
 import { orchestrateProcessing } from './orchestrator';
+import { AttachmentProcessor } from './processing/attachment-processor';
 import { pluginOptionsSchema } from './types';
 
+import type { ProcessedAttachment } from './processing/attachment-processor';
 import type { PluginOptions } from './types';
 import type {
   LoadContext,
@@ -192,8 +202,9 @@ export default function llmsTxtPlugin(
     contentLoaded({ actions }): void {
       const { setGlobalData } = actions;
 
+      const uiConfig = getUiConfig(config);
       const globalData: {
-        copyContentConfig: typeof config.copyPageContent;
+        copyContentConfig: typeof uiConfig.copyPageContent;
         siteConfig: {
           baseUrl: string;
           url: string;
@@ -201,7 +212,7 @@ export default function llmsTxtPlugin(
         };
         copyContentDataUrl?: string;
       } = {
-        copyContentConfig: config.copyPageContent,
+        copyContentConfig: uiConfig.copyPageContent,
         siteConfig: {
           baseUrl: context.siteConfig.baseUrl,
           url: context.siteConfig.url,
@@ -210,8 +221,8 @@ export default function llmsTxtPlugin(
       };
 
       // Only add URL if copy content is enabled
-      if (config.copyPageContent !== false) {
-        globalData.copyContentDataUrl = `/copy-content-data.${buildTimestamp}.json`;
+      if (uiConfig.copyPageContent !== false) {
+        globalData.copyContentDataUrl = `/assets/llms-txt/copy-content-data.${buildTimestamp}.json?v=${Date.now()}`;
       }
 
       setGlobalData(globalData);
@@ -271,7 +282,26 @@ export default function llmsTxtPlugin(
           `Created cached routes with enhanced metadata: ${enhancedCachedRoutes.length} routes`
         );
 
-        // Use unified processing orchestrator with Docusaurus-provided paths
+        // Get configuration groups
+        const processingConfig = getProcessingConfig(config);
+        const generateConfig = getGenerateConfig(config);
+
+        // Process attachments if configured before orchestrating processing
+        let processedAttachments: ProcessedAttachment[] | undefined;
+        if (
+          processingConfig.attachments &&
+          processingConfig.attachments.length > 0
+        ) {
+          const attachmentProcessor = new AttachmentProcessor(log);
+          processedAttachments = await attachmentProcessor.processAttachments(
+            processingConfig.attachments,
+            siteDir,
+            outDir
+          );
+          log.info(`Processed ${processedAttachments.length} attachment files`);
+        }
+
+        // Use unified processing orchestrator with attachments integrated
         const result = await orchestrateProcessing(
           enhancedRoutes,
           {
@@ -281,21 +311,30 @@ export default function llmsTxtPlugin(
             siteConfig,
             outDir,
             logger: log,
-            contentSelectors: config.content?.contentSelectors ?? [],
-            relativePaths: config.content?.relativePaths !== false,
+            contentSelectors: processingConfig.contentSelectors,
+            relativePaths: generateConfig.relativePaths,
           },
-          enhancedCachedRoutes
+          enhancedCachedRoutes,
+          processedAttachments // Pass attachments for integration
         );
 
         // Generate JSON file for copy content data if enabled
-        if (config.copyPageContent !== false) {
+        const uiConfig = getUiConfig(config);
+        if (uiConfig.copyPageContent !== false) {
+          // Ensure assets directory exists
+          const assetsDir = PathManager.getAssetsDir(outDir);
+          await fs.ensureDir(assetsDir);
+
           // Reload the cache to get the updated routes with markdownFile
           // populated after processing
           const updatedCache = await cacheManager.loadCache();
+          const copyDataPath = PathManager.getCopyContentDataPath(
+            outDir,
+            buildTimestamp
+          );
           await generateCopyContentJson(
             [...updatedCache.routes],
-            outDir,
-            buildTimestamp,
+            copyDataPath,
             log
           );
         }

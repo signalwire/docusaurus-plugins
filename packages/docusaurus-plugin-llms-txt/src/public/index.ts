@@ -20,11 +20,15 @@ export { default, validateOptions } from '../index';
 // Export public types
 export type {
   PluginOptions,
-  ContentOptions,
+  GenerateOptions,
+  IncludeOptions,
+  StructureOptions,
+  ProcessingOptions,
+  UiOptions,
+  SectionDefinition,
   RouteRule,
   OptionalLink,
   PluginInput,
-  Depth,
   PluginError,
   PluginConfigError,
   PluginValidationError,

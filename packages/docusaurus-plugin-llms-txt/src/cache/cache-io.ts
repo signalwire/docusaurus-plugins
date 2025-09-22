@@ -35,12 +35,12 @@ function validateCacheSchema(data: unknown): data is CacheSchema {
  * Cache file I/O handler
  */
 export class CacheIO {
-  // eslint-disable-next-line no-useless-constructor
-  constructor(
-    private readonly _cachePath: string,
-    private readonly _logger: { warn: (_msg: string) => void }
-  ) {
-    // Initialize cache I/O with path and logger
+  private readonly _cachePath: string;
+  private readonly _logger: { warn: (_msg: string) => void };
+
+  constructor(cachePath: string, logger: { warn: (_msg: string) => void }) {
+    this._cachePath = cachePath;
+    this._logger = logger;
   }
 
   /**
