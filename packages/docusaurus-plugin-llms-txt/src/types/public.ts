@@ -84,7 +84,7 @@ export type PluginInput =
 export interface GenerateOptions {
   /** Whether to generate individual markdown files (default: true) */
   readonly enableMarkdownFiles?: boolean;
-  /** Whether to generate llms-full.txt with complete content (default: false) */
+  /** Generate llms-full.txt with complete content (default: false) */
   readonly enableLlmsFullTxt?: boolean;
   /** Whether to use relative paths in links (default: true) */
   readonly relativePaths?: boolean;
@@ -217,9 +217,9 @@ export interface PluginOptions {
   // Runtime behavior (top-level for Docusaurus consistency)
   /** How to handle non-fatal section errors */
   readonly onSectionError?: 'ignore' | 'log' | 'warn' | 'throw';
-  /** How to handle route processing failures: 'ignore' | 'log' | 'warn' | 'throw' (default: 'warn') */
+  /** How to handle route processing failures (default: 'warn') */
   readonly onRouteError?: ReportingSeverity;
-  /** Operational logging level: 0=quiet, 1=normal, 2=verbose, 3=debug (default: 1) */
+  /** Operational logging level: 0-3 (default: 1) */
   readonly logLevel?: 0 | 1 | 2 | 3;
   /** Whether to run during postBuild phase (default: true) */
   readonly runOnPostBuild?: boolean;

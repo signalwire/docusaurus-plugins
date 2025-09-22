@@ -25,10 +25,15 @@ export function validateUserInputs(
   const config = options as Record<string, unknown>;
 
   // Validate section security
-  if (config.structure && (config.structure as any).sections) {
-    validateSectionSecurity(
-      (config.structure as any).sections as SectionDefinition[]
-    );
+  if (
+    config.structure &&
+    typeof config.structure === 'object' &&
+    config.structure !== null
+  ) {
+    const structure = config.structure as { sections?: SectionDefinition[] };
+    if (structure.sections) {
+      validateSectionSecurity(structure.sections);
+    }
   }
 }
 
