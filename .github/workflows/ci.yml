@@ -15,7 +15,10 @@ jobs:
     name: Build Packages & Security Audit
     runs-on: ubuntu-latest
     steps:
-      - name: Setup
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js and Dependencies
         uses: ./.github/actions/setup
 
       - name: Build packages
@@ -25,9 +28,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: |
-            packages/*/lib
-            packages/*/dist
+          path: packages/*/lib
           retention-days: 1
 
       - name: Run security audit
@@ -38,7 +39,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-security
     steps:
-      - name: Setup
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js and Dependencies
         uses: ./.github/actions/setup
 
       - name: Download build artifacts
@@ -60,7 +64,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-security
     steps:
-      - name: Setup
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js and Dependencies
         uses: ./.github/actions/setup
 
       - name: Download build artifacts

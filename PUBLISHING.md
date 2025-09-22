@@ -103,27 +103,35 @@ npm publish
 For testing or pre-release versions without Git commits:
 
 ##### Canary Releases
+
 ```bash
 yarn canary
 ```
+
 Creates versions like `1.0.0-canary-20241204123456` with the `canary` npm tag.
 
 ##### Alpha Releases
+
 ```bash
 yarn alpha
 ```
+
 Creates versions like `1.0.0-alpha-20241204123456` with the `alpha` npm tag.
 
 ##### Beta Releases
+
 ```bash
 yarn beta
 ```
+
 Creates versions like `1.0.0-beta-20241204123456` with the `beta` npm tag.
 
 ##### Dev Releases
+
 ```bash
 yarn dev:release
 ```
+
 Creates versions like `1.0.0-dev-20241204123456` with the `dev` npm tag.
 
 #### Full Prerelease Mode (Long-term Testing)
@@ -131,6 +139,7 @@ Creates versions like `1.0.0-dev-20241204123456` with the `dev` npm tag.
 For longer prerelease cycles with Git tracking:
 
 ##### Enter Prerelease Mode
+
 ```bash
 # Choose your tag: alpha, beta, rc, etc.
 yarn prerelease:enter alpha
@@ -147,6 +156,7 @@ yarn prerelease:publish
 ```
 
 ##### Continue Releasing Prereleases
+
 ```bash
 # Add changesets as normal
 yarn changeset
@@ -161,6 +171,7 @@ yarn prerelease:publish
 ```
 
 ##### Exit Prerelease Mode
+
 ```bash
 # Exit prerelease mode
 yarn prerelease:exit
@@ -364,6 +375,7 @@ done from your local machine, not through CI/CD.
 ## Manual Commands Reference
 
 ### Core Publishing Commands
+
 ```bash
 # Check what would be published
 yarn publish:check
@@ -391,6 +403,7 @@ yarn npm:login
 ```
 
 ### Snapshot Prerelease Commands
+
 ```bash
 # Canary release (snapshot with timestamp)
 yarn canary
@@ -406,6 +419,7 @@ yarn dev:release
 ```
 
 ### Full Prerelease Mode Commands
+
 ```bash
 # Enter prerelease mode (specify tag: alpha, beta, rc, etc.)
 yarn prerelease:enter <tag>
