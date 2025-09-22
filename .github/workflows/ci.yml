@@ -24,15 +24,6 @@ jobs:
       - name: Build packages
         run: yarn run build:packages
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: |
-            packages/*/lib
-            packages/*/*.tsbuildinfo
-          retention-days: 1
-
       - name: Run security audit
         run: yarn audit --groups dependencies
 
@@ -46,11 +37,6 @@ jobs:
 
       - name: Setup Node.js and Dependencies
         uses: ./.github/actions/setup
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
 
       - name: Check code formatting
         run: yarn run format:check
@@ -71,11 +57,6 @@ jobs:
 
       - name: Setup Node.js and Dependencies
         uses: ./.github/actions/setup
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
 
       - name: Test packages
         run: yarn run test
