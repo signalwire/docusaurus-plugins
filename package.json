@@ -35,7 +35,7 @@
     "clean": "lerna run clean --stream && rimraf lib .docusaurus",
     "format": "prettier --write . && lerna run format --stream",
     "format:check": "prettier --check . && lerna run format:check --stream",
-    "postinstall": "yarn build:packages",
+    "setup": "yarn install && yarn build:packages",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",

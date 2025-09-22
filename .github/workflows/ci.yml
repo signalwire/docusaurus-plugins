@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Build packages
+        run: yarn run build:packages
+
       - name: Check code formatting
         run: yarn run format:check
 
@@ -73,13 +76,10 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install --prefer-offline
+        run: yarn install --frozen-lockfile
 
-      - name: Build packages first
+      - name: Build packages
         run: yarn run build:packages
-
-      - name: Force workspace linking
-        run: yarn install --force
 
       - name: Build website
         run: yarn run build:website
