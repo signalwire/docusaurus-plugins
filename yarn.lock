@@ -3595,30 +3595,6 @@
   resolved "https://registry.yarnpkg.com/@sideway/pinpoint/-/pinpoint-2.0.0.tgz#cff8ffadc372ad29fd3f78277aeb29e632cc70df"
   integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
 
-"@signalwire/docusaurus-plugin-llms-txt@file:packages/docusaurus-plugin-llms-txt":
-  version "0.0.0-canary-20250918205207"
-  dependencies:
-    fs-extra "^11.0.0"
-    hast-util-select "^6.0.4"
-    hast-util-to-html "^9.0.5"
-    hast-util-to-string "^3.0.1"
-    p-map "^7.0.2"
-    rehype-parse "^9"
-    rehype-remark "^10"
-    remark-gfm "^4"
-    remark-stringify "^11"
-    string-width "^5.0.0"
-    unified "^11"
-    unist-util-visit "^5"
-
-"@signalwire/docusaurus-theme-llms-txt@file:packages/docusaurus-theme-llms-txt":
-  version "0.0.0"
-  dependencies:
-    "@docusaurus/core" "^3.0.0"
-    "@docusaurus/theme-common" "^3.0.0"
-    clsx "^2.0.0"
-    react-icons "5.5.0"
-
 "@sigstore/bundle@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@sigstore/bundle/-/bundle-1.1.0.tgz#17f8d813b09348b16eeed66a8cf1c3d6bd3d04f1"
