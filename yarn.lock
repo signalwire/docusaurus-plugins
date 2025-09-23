@@ -3595,7 +3595,7 @@
   resolved "https://registry.yarnpkg.com/@sideway/pinpoint/-/pinpoint-2.0.0.tgz#cff8ffadc372ad29fd3f78277aeb29e632cc70df"
   integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
 
-"@signalwire/docusaurus-plugin-llms-txt@file:./packages/docusaurus-plugin-llms-txt":
+"@signalwire/docusaurus-plugin-llms-txt@*", "@signalwire/docusaurus-plugin-llms-txt@file:./packages/docusaurus-plugin-llms-txt":
   version "0.0.0-dev-20250922221450"
   dependencies:
     fs-extra "^11.0.0"
@@ -3611,7 +3611,7 @@
     unified "^11"
     unist-util-visit "^5"
 
-"@signalwire/docusaurus-theme-llms-txt@file:./packages/docusaurus-theme-llms-txt":
+"@signalwire/docusaurus-theme-llms-txt@*", "@signalwire/docusaurus-theme-llms-txt@file:./packages/docusaurus-theme-llms-txt":
   version "0.0.0-dev-20250922221450"
   dependencies:
     "@docusaurus/core" "^3.0.0"
