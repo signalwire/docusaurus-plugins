@@ -14,10 +14,15 @@ import type { WrapperProps } from '@docusaurus/types';
 
 type Props = WrapperProps<typeof ContentType>;
 
-export default function DocContent(props: Props): ReactNode {
+/**
+ * Wrapper version with clear fix to test if wrapping can achieve
+ * the same result as ejecting for button positioning.
+ */
+export default function DocItemContentWrapper(props: Props): ReactNode {
   return (
     <>
       <CopyPageContent />
+      <div style={{ clear: 'both' }} />
       <Content {...props} />
     </>
   );

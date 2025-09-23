@@ -29,6 +29,7 @@
   transition: var(--llms-copy-transition);
   white-space: nowrap;
   flex: 1;
+  min-width: var(--llms-copy-button-min-width);
 }
 
 .mainButton:hover {

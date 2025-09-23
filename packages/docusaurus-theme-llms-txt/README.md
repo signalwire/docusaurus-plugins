@@ -83,6 +83,7 @@ without swizzling by overriding CSS variables in your custom stylesheet.
   --llms-copy-gap: 7px; /* Gap between elements */
   --llms-copy-font-size: 13px; /* Button text size */
   --llms-copy-font-size-dropdown: 14px; /* Dropdown text size */
+  --llms-copy-button-min-width: 110px; /* Minimum button width to prevent size changes */
   --llms-copy-button-margin-left: 16px; /* Button left margin */
   --llms-copy-button-margin-bottom: 8px; /* Button bottom margin */
 

@@ -17,6 +17,7 @@
   --llms-copy-gap: 7px;
   --llms-copy-font-size: 13px;
   --llms-copy-font-size-dropdown: 14px;
+  --llms-copy-button-min-width: 110px;
 
   /* Menu item specific */
   --llms-copy-menu-item-padding: 12px 16px;
@@ -84,12 +85,10 @@
   --llms-copy-arrow-transition: transform 0.2s ease;
   --llms-copy-menuitem-transition: background-color 0.15s ease;
 
-  /* Float positioning to prevent overlap */
-  position: relative;
+  /* Float positioning above content */
   float: right;
-  margin-left: var(--llms-copy-button-margin-left);
+  clear: both;
   margin-bottom: var(--llms-copy-button-margin-bottom);
-  clear: right;
   z-index: var(--llms-copy-z-index);
 }
 

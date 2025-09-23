@@ -224,7 +224,7 @@ export default function llmsTxtPlugin(
       if (uiConfig.copyPageContent !== false) {
         globalData.copyContentDataUrl = `/assets/llms-txt/copy-content-data.${buildTimestamp}.json?v=${Date.now()}`;
       }
-
+      
       setGlobalData(globalData);
     },
 
