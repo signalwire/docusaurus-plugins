@@ -1,17 +1,12 @@
 # @signalwire/docusaurus-plugin-llms-txt
 
-A powerful Docusaurus plugin that generates Markdown versions of your HTML pages and creates an
-`llms.txt` index file for AI/LLM consumption. Perfect for making your documentation easily
-accessible to Large Language Models while maintaining human-readable markdown files.
+A Docusaurus plugin that transforms your documentation into AI-friendly formats. It automatically converts your site's rendered HTML pages into clean markdown files and generates an `llms.txt` index file, making your documentation easily consumable by Large Language Models while preserving the human-readable experience.
 
-## What is this Plugin?
+**Perfect for**: API documentation, internal knowledge bases, developer resources, and any documentation that you want to make accessible to AI assistants, chatbots, or LLM-powered tools.
 
-This plugin bridges the gap between human-readable documentation and AI consumption. While your
-Docusaurus site provides a beautiful, interactive experience for human users, this plugin
-automatically generates clean, structured formats that AI systems can easily understand and process.
+## How It Works
 
-**Perfect for**: API documentation, internal knowledge bases, developer resources, and any
-documentation that you want to make accessible to AI assistants, chatbots, or LLM-powered tools.
+This plugin processes your **final HTML output** after Docusaurus builds your site, not your source MDX/MD files. This approach captures fully rendered components, resolved data, and processed content that only exists after build time. The HTML is then converted through a sophisticated pipeline that extracts clean content, processes it through rehype/remark transformations, and outputs pristine markdown optimized for AI consumption.
 
 ## Features
 
@@ -31,6 +26,26 @@ documentation that you want to make accessible to AI assistants, chatbots, or LL
 - 🎨 **Customizable Content Extraction**: Configurable CSS selectors for precise content extraction
 - 🔗 **Link Management**: Smart internal link processing with relative/absolute path options
 
+## Core Concepts
+
+### Output Files
+
+- **`llms.txt`** - Hierarchical index file with links to all your documentation, organized by sections
+- **Individual markdown files** - Clean .md versions of each page, mirroring your route structure
+- **`llms-full.txt`** - Optional single file containing all content, useful for complete exports
+
+### Section Organization
+
+Content is organized into logical sections that help AI systems understand documentation structure. Sections can have custom names, descriptions, and route patterns for precise content grouping.
+
+### Content Processing Pipeline
+
+HTML → Content Extraction (CSS selectors) → HTML Processing (rehype) → Markdown Conversion (remark) → Clean Output
+
+### Route Patterns
+
+Use glob patterns like `/docs/**` or `/api/*` to filter and organize content. Routes determine both what gets processed and how it's organized in sections.
+
 ## Installation
 
 ```bash
@@ -43,10 +58,13 @@ yarn add @signalwire/docusaurus-plugin-llms-txt
 
 ### Basic Setup
 
-Add the plugin to your `docusaurus.config.js`:
+Add the plugin to your `docusaurus.config.ts`:
 
-```javascript
-module.exports = {
+```typescript
+import type { Config } from '@docusaurus/types';
+import type { PluginOptions } from '@signalwire/docusaurus-plugin-llms-txt/public';
+
+const config: Config = {
   plugins: [
     [
       '@signalwire/docusaurus-plugin-llms-txt',
@@ -61,10 +79,12 @@ module.exports = {
           includePages: false,
           includeDocs: true,
         },
-      },
+      } satisfies PluginOptions,
     ],
   ],
 };
+
+export default config;
 ```
 
 Build your site and the plugin will automatically generate:
@@ -74,8 +94,11 @@ Build your site and the plugin will automatically generate:
 
 ### Advanced Configuration
 
-```javascript
-module.exports = {
+```typescript
+import type { Config } from '@docusaurus/types';
+import type { PluginOptions } from '@signalwire/docusaurus-plugin-llms-txt/public';
+
+const config: Config = {
   plugins: [
     [
       '@signalwire/docusaurus-plugin-llms-txt',
@@ -129,10 +152,12 @@ module.exports = {
         ui: {
           copyPageContent: true,
         },
-      },
+      } satisfies PluginOptions,
     ],
   ],
 };
+
+export default config;
 ```
 
 ## API Reference
@@ -286,55 +311,57 @@ Configuration for the copy page content button feature when using object configu
 | `actions.ai.claude`         | `boolean` \| `object` | ❌       | `true`                          | Claude integration. When `true`, uses default prompt. When an object, can specify custom `prompt` string. Opens Claude web interface with the documentation URL and prompt.                                              |
 | `actions.ai.claude.prompt`  | `string`              | ❌       | `'Analyze this documentation:'` | Custom prompt text to include when opening Claude. Only used when `claude` is configured as an object. The documentation URL is automatically appended after the prompt.                                                 |
 
-## Documentation
+## Troubleshooting
 
-### 🚀 Plugin Guide
+### Common Issues
 
-- **[Plugin Overview](./docs/plugin/overview.md)** - What is this plugin, why use it, and core
-  concepts
-- **[Real-World Use Cases](./docs/plugin/use-cases.md)** - Practical applications across different
-  industries and workflows
-- **[Plugin Architecture](./docs/plugin/architecture.md)** - How the plugin works internally and
-  integration points
-- **[Extension Guide](./docs/plugin/extending.md)** - Customize and extend the plugin for specific
-  needs
+**"No cached routes found"** - Run `npm run build` first; the plugin needs route cache from build
+**Empty or minimal content** - Check `contentSelectors` match your theme; use `logLevel: 3` for debugging
+**Sections not organizing correctly** - Verify route patterns don't overlap; first matching section wins
+**Missing pages** - Check `excludeRoutes` patterns and ensure correct `include` options are set
+**Build performance issues** - Use `excludeRoutes` to skip large sections; disable `enableLlmsFullTxt` if not needed
 
-### 📖 Configuration Guides
+## Advanced Usage
 
-- **[Section Organization](./docs/configuration/sections.md)** - Complete guide to organizing
-  content with sections, auto-assignment, and route precedence
-- **[Content Processing](./docs/configuration/content-processing.md)** - Content extraction,
-  selectors, route rules, and markdown processing options
-- **[File Generation](./docs/configuration/file-generation.md)** - Output files (llms.txt,
-  llms-full.txt, markdown), path configuration, and content inclusion
-- **[Attachments](./docs/configuration/attachments.md)** - Including external files, section
-  integration, and file type support
+### Custom Remark/Rehype Plugins
 
-### ✨ Features
+```typescript
+import remarkCustomPlugin from './my-remark-plugin';
 
-- **[Copy Page Content](./docs/features/copy-page-content.md)** - Complete setup guide for the copy
-  button feature with AI integration
-- **[Optional Links](./docs/features/optional-links.md)** - Adding external URLs and organizing them
-  within sections
+const pluginConfig: PluginOptions = {
+  processing: {
+    beforeDefaultRemarkPlugins: [
+      [remarkCustomPlugin, { option: 'value' }]
+    ]
+  }
+};
+```
 
-### 📚 Guides
+### Section Hierarchies
 
-- **[Migration to V2](./docs/guides/migration-v2.md)** - Complete migration guide from V1 to V2 with
-  examples and breaking changes
-- **[Troubleshooting](./docs/guides/troubleshooting.md)** - Common issues, debugging tips, and
-  performance optimization
-- **[Advanced Usage](./docs/guides/advanced-usage.md)** - Complex configurations, performance
-  optimization, and integration patterns
+```typescript
+import type { PluginOptions } from '@signalwire/docusaurus-plugin-llms-txt/public';
 
-### 🔧 CLI & Development
+const pluginConfig: PluginOptions = {
+  structure: {
+    sections: [{
+      id: 'api',
+      name: 'API Reference',
+      subsections: [
+        { id: 'rest', name: 'REST API', routes: [{ route: '/api/rest/**' }] },
+        { id: 'graphql', name: 'GraphQL', routes: [{ route: '/api/graphql/**' }] }
+      ]
+    }]
+  }
+};
+```
 
-- **[CLI Commands](./docs/cli/commands.md)** - Generate and clean commands for standalone operation
-- **[TypeScript Types](./docs/development/types.md)** - Complete TypeScript reference for all
-  configuration types
-- **[Utility Functions](./docs/development/utils.md)** - Logger, error handling, and development
-  utilities
-- **[Development Examples](./docs/development/examples.md)** - Custom plugins, TypeScript usage, and
-  integration examples
+### Performance Optimization
+
+- Use `excludeRoutes` to skip unnecessary pages
+- Set `includeVersionedDocs: false` to process only current version
+- Enable `logLevel: 0` for production builds to reduce console output
+- Use route-specific `contentSelectors` for pages with different structures
 
 ## CLI Commands
 
@@ -354,9 +381,10 @@ Generates `llms.txt` and markdown files using cached routes from a previous buil
 npx docusaurus llms-txt-clean [siteDir] [options]
 ```
 
-Removes all generated files. Use `--clear-cache` to also clear the plugin cache.
-
-**[→ Complete CLI Documentation](./docs/cli/commands.md)**
+Removes all generated files:
+- Deletes `build/llms.txt`, `build/llms-full.txt`, and all generated markdown files
+- Use `--clear-cache` to also clear the `.docusaurus/llms-txt-plugin` cache directory
+- Useful for forcing full regeneration or cleaning up after plugin removal
 
 ## Copy Page Content Feature
 
@@ -367,8 +395,11 @@ Add a copy button to your documentation pages with AI integration:
 npm install @signalwire/docusaurus-plugin-llms-txt @signalwire/docusaurus-theme-llms-txt
 ```
 
-```javascript
-module.exports = {
+```typescript
+import type { Config } from '@docusaurus/types';
+import type { PluginOptions } from '@signalwire/docusaurus-plugin-llms-txt/public';
+
+const config: Config = {
   themes: ['@signalwire/docusaurus-theme-llms-txt'],
   plugins: [
     [
@@ -377,18 +408,19 @@ module.exports = {
         ui: {
           copyPageContent: true, // Enable with defaults
         },
-      },
+      } satisfies PluginOptions,
     ],
   ],
 };
+
+export default config;
 ```
 
-**[→ Complete Copy Page Content Setup](./docs/features/copy-page-content.md)**
+**Important Notes:**
+- Currently only supports documentation pages (not blog or custom pages)
+- Requires both the plugin AND theme package to be installed
+- Button appears in the doc page header with dropdown for multiple actions
 
 ## License
 
 MIT © [SignalWire](https://github.com/signalwire)
-
----
-
-**[📖 Browse all documentation →](./docs/)**

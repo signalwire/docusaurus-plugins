@@ -163,10 +163,3 @@ The plugin is designed to work out-of-the-box with sensible defaults, but offers
 2. **Content Organization**: Define sections that match your documentation structure
 3. **Fine-Tuning**: Customize content extraction and processing rules as needed
 4. **Integration**: Use the generated files with AI tools, training pipelines, or alternative publishing workflows
-
-## Next Steps
-
-- **[Use Cases](./use-cases.md)**: Explore real-world applications and scenarios
-- **[Architecture](./architecture.md)**: Understand how the plugin works internally
-- **[Extension Guide](./extending.md)**: Learn how to customize and extend the plugin
-- **[Configuration](../configuration/sections.md)**: Dive into detailed configuration options
