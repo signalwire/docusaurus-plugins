@@ -124,8 +124,6 @@
     "yarn": "^1.22.0"
   },
   "resolutions": {
-    "@signalwire/docusaurus-theme-llms-txt": "file:./packages/docusaurus-theme-llms-txt",
-    "@signalwire/docusaurus-plugin-llms-txt": "file:./packages/docusaurus-plugin-llms-txt",
     "tar": ">=6.2.1",
     "semver": ">=7.5.2",
     "@octokit/request-error": ">=5.1.1",
