@@ -1,12 +1,20 @@
 # @signalwire/docusaurus-plugin-llms-txt
 
-A Docusaurus plugin that transforms your documentation into AI-friendly formats. It automatically converts your site's rendered HTML pages into clean markdown files and generates an `llms.txt` index file, making your documentation easily consumable by Large Language Models while preserving the human-readable experience.
+A Docusaurus plugin that transforms your documentation into AI-friendly formats. It automatically
+converts your site's rendered HTML pages into clean markdown files and generates an `llms.txt` index
+file, making your documentation easily consumable by Large Language Models while preserving the
+human-readable experience.
 
-**Perfect for**: API documentation, internal knowledge bases, developer resources, and any documentation that you want to make accessible to AI assistants, chatbots, or LLM-powered tools.
+**Perfect for**: API documentation, internal knowledge bases, developer resources, and any
+documentation that you want to make accessible to AI assistants, chatbots, or LLM-powered tools.
 
 ## How It Works
 
-This plugin processes your **final HTML output** after Docusaurus builds your site, not your source MDX/MD files. This approach captures fully rendered components, resolved data, and processed content that only exists after build time. The HTML is then converted through a sophisticated pipeline that extracts clean content, processes it through rehype/remark transformations, and outputs pristine markdown optimized for AI consumption.
+This plugin processes your **final HTML output** after Docusaurus builds your site, not your source
+MDX/MD files. This approach captures fully rendered components, resolved data, and processed content
+that only exists after build time. The HTML is then converted through a sophisticated pipeline that
+extracts clean content, processes it through rehype/remark transformations, and outputs pristine
+markdown optimized for AI consumption.
 
 ## Features
 
@@ -30,21 +38,25 @@ This plugin processes your **final HTML output** after Docusaurus builds your si
 
 ### Output Files
 
-- **`llms.txt`** - Hierarchical index file with links to all your documentation, organized by sections
+- **`llms.txt`** - Hierarchical index file with links to all your documentation, organized by
+  sections
 - **Individual markdown files** - Clean .md versions of each page, mirroring your route structure
 - **`llms-full.txt`** - Optional single file containing all content, useful for complete exports
 
 ### Section Organization
 
-Content is organized into logical sections that help AI systems understand documentation structure. Sections can have custom names, descriptions, and route patterns for precise content grouping.
+Content is organized into logical sections that help AI systems understand documentation structure.
+Sections can have custom names, descriptions, and route patterns for precise content grouping.
 
 ### Content Processing Pipeline
 
-HTML → Content Extraction (CSS selectors) → HTML Processing (rehype) → Markdown Conversion (remark) → Clean Output
+HTML → Content Extraction (CSS selectors) → HTML Processing (rehype) → Markdown Conversion (remark)
+→ Clean Output
 
 ### Route Patterns
 
-Use glob patterns like `/docs/**` or `/api/*` to filter and organize content. Routes determine both what gets processed and how it's organized in sections.
+Use glob patterns like `/docs/**` or `/api/*` to filter and organize content. Routes determine both
+what gets processed and how it's organized in sections.
 
 ## Installation
 
@@ -316,10 +328,11 @@ Configuration for the copy page content button feature when using object configu
 ### Common Issues
 
 **"No cached routes found"** - Run `npm run build` first; the plugin needs route cache from build
-**Empty or minimal content** - Check `contentSelectors` match your theme; use `logLevel: 3` for debugging
-**Sections not organizing correctly** - Verify route patterns don't overlap; first matching section wins
-**Missing pages** - Check `excludeRoutes` patterns and ensure correct `include` options are set
-**Build performance issues** - Use `excludeRoutes` to skip large sections; disable `enableLlmsFullTxt` if not needed
+**Empty or minimal content** - Check `contentSelectors` match your theme; use `logLevel: 3` for
+debugging **Sections not organizing correctly** - Verify route patterns don't overlap; first
+matching section wins **Missing pages** - Check `excludeRoutes` patterns and ensure correct
+`include` options are set **Build performance issues** - Use `excludeRoutes` to skip large sections;
+disable `enableLlmsFullTxt` if not needed
 
 ## Advanced Usage
 
@@ -330,10 +343,8 @@ import remarkCustomPlugin from './my-remark-plugin';
 
 const pluginConfig: PluginOptions = {
   processing: {
-    beforeDefaultRemarkPlugins: [
-      [remarkCustomPlugin, { option: 'value' }]
-    ]
-  }
+    beforeDefaultRemarkPlugins: [[remarkCustomPlugin, { option: 'value' }]],
+  },
 };
 ```
 
@@ -344,15 +355,17 @@ import type { PluginOptions } from '@signalwire/docusaurus-plugin-llms-txt/publi
 
 const pluginConfig: PluginOptions = {
   structure: {
-    sections: [{
-      id: 'api',
-      name: 'API Reference',
-      subsections: [
-        { id: 'rest', name: 'REST API', routes: [{ route: '/api/rest/**' }] },
-        { id: 'graphql', name: 'GraphQL', routes: [{ route: '/api/graphql/**' }] }
-      ]
-    }]
-  }
+    sections: [
+      {
+        id: 'api',
+        name: 'API Reference',
+        subsections: [
+          { id: 'rest', name: 'REST API', routes: [{ route: '/api/rest/**' }] },
+          { id: 'graphql', name: 'GraphQL', routes: [{ route: '/api/graphql/**' }] },
+        ],
+      },
+    ],
+  },
 };
 ```
 
@@ -382,6 +395,7 @@ npx docusaurus llms-txt-clean [siteDir] [options]
 ```
 
 Removes all generated files:
+
 - Deletes `build/llms.txt`, `build/llms-full.txt`, and all generated markdown files
 - Use `--clear-cache` to also clear the `.docusaurus/llms-txt-plugin` cache directory
 - Useful for forcing full regeneration or cleaning up after plugin removal
@@ -417,6 +431,7 @@ export default config;
 ```
 
 **Important Notes:**
+
 - Currently only supports documentation pages (not blog or custom pages)
 - Requires both the plugin AND theme package to be installed
 - Button appears in the doc page header with dropdown for multiple actions
