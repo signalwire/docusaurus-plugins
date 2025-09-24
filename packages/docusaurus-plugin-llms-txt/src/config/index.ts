@@ -1,15 +1,26 @@
+/**
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import { VALIDATION_MESSAGES } from '../constants';
 import { createConfigError } from '../errors';
-import type { PluginOptions, EffectiveConfig, ContentOptions } from '../types';
 import { pluginOptionsSchema } from '../types';
 import { ensureLeadingSlash } from '../utils';
-
 import { applyGfmConfiguration } from './gfm-resolver';
-import {
-  validateRouteRules,
-  findMostSpecificRule,
-  applyRouteRule,
-} from './route-rules';
+import { getEffectiveConfigForRoute as getEffectiveConfig } from './route-rules';
+import { validateSections } from './section-validator';
+
+import type {
+  PluginOptions,
+  EffectiveConfig,
+  GenerateOptions,
+  IncludeOptions,
+  StructureOptions,
+  ProcessingOptions,
+  UiOptions,
+} from '../types';
 
 /**
  * Processes and validates plugin options, applying defaults
@@ -28,10 +39,13 @@ export function getConfig(options: Partial<PluginOptions>): PluginOptions {
 
     const validated = validationResult.value;
 
-    // Validate route rules for conflicts
-    const contentConfig = getContentConfig(validated);
-    if (contentConfig.routeRules.length > 0) {
-      validateRouteRules(contentConfig.routeRules);
+    // Validate section configuration using new structure
+    if (validated.structure?.sections) {
+      validateSections(
+        validated.structure.sections,
+        validated.processing?.routeRules,
+        validated.processing?.attachments
+      );
     }
 
     // Apply GFM configuration
@@ -53,42 +67,91 @@ export function getConfig(options: Partial<PluginOptions>): PluginOptions {
 export { validateUserInputs } from './security-validator';
 
 /**
- * Get content options with defaults applied
+ * Get output generation configuration with defaults applied
  * @internal
  */
-export function getContentConfig(
+export function getGenerateConfig(
   config: PluginOptions
-): Required<ContentOptions> {
-  const content = config.content ?? {};
-
-  const enableMarkdownFiles = content.enableMarkdownFiles ?? true;
-  const enableLlmsFullTxt = content.enableLlmsFullTxt ?? false;
-
+): Required<GenerateOptions> {
+  const generate = config.generate ?? {};
   return {
-    enableMarkdownFiles,
-    enableLlmsFullTxt,
-    relativePaths: content.relativePaths ?? true,
-    includeBlog: content.includeBlog ?? false,
-    includePages: content.includePages ?? false,
-    includeDocs: content.includeDocs ?? true,
-    includeVersionedDocs: content.includeVersionedDocs ?? true,
-    includeGeneratedIndex: content.includeGeneratedIndex ?? true,
-    excludeRoutes: content.excludeRoutes ?? [],
-    contentSelectors: content.contentSelectors ?? [],
-    routeRules: content.routeRules ?? [],
-    remarkStringify: content.remarkStringify ?? {},
-    remarkGfm: content.remarkGfm ?? true,
-    rehypeProcessTables: content.rehypeProcessTables ?? true,
-    beforeDefaultRehypePlugins: content.beforeDefaultRehypePlugins ?? [],
-    rehypePlugins: content.rehypePlugins ?? [],
-    beforeDefaultRemarkPlugins: content.beforeDefaultRemarkPlugins ?? [],
-    remarkPlugins: content.remarkPlugins ?? [],
+    enableMarkdownFiles: generate.enableMarkdownFiles ?? true,
+    enableLlmsFullTxt: generate.enableLlmsFullTxt ?? false,
+    relativePaths: generate.relativePaths ?? true,
+  };
+}
+
+/**
+ * Get content inclusion configuration with defaults applied
+ * @internal
+ */
+export function getIncludeConfig(
+  config: PluginOptions
+): Required<IncludeOptions> {
+  const include = config.include ?? {};
+  return {
+    includeBlog: include.includeBlog ?? false,
+    includePages: include.includePages ?? false,
+    includeDocs: include.includeDocs ?? true,
+    includeVersionedDocs: include.includeVersionedDocs ?? true,
+    includeGeneratedIndex: include.includeGeneratedIndex ?? true,
+    excludeRoutes: include.excludeRoutes ?? [],
+  };
+}
+
+/**
+ * Get content structure configuration with defaults applied
+ * @internal
+ */
+export function getStructureConfig(
+  config: PluginOptions
+): Required<StructureOptions> {
+  const structure = config.structure ?? {};
+  return {
+    sections: structure.sections ?? [],
+    siteTitle: structure.siteTitle ?? '',
+    siteDescription: structure.siteDescription ?? '',
+    enableDescriptions: structure.enableDescriptions ?? true,
+    optionalLinks: structure.optionalLinks ?? [],
+  };
+}
+
+/**
+ * Get content processing configuration with defaults applied
+ * @internal
+ */
+export function getProcessingConfig(
+  config: PluginOptions
+): Required<ProcessingOptions> {
+  const processing = config.processing ?? {};
+  return {
+    contentSelectors: processing.contentSelectors ?? [],
+    routeRules: processing.routeRules ?? [],
+    attachments: processing.attachments ?? [],
+    remarkStringify: processing.remarkStringify ?? {},
+    remarkGfm: processing.remarkGfm ?? true,
+    rehypeProcessTables: processing.rehypeProcessTables ?? true,
+    beforeDefaultRehypePlugins: processing.beforeDefaultRehypePlugins ?? [],
+    rehypePlugins: processing.rehypePlugins ?? [],
+    beforeDefaultRemarkPlugins: processing.beforeDefaultRemarkPlugins ?? [],
+    remarkPlugins: processing.remarkPlugins ?? [],
+  };
+}
+
+/**
+ * Get UI configuration with defaults applied
+ * @internal
+ */
+export function getUiConfig(config: PluginOptions): Required<UiOptions> {
+  const ui = config.ui ?? {};
+  return {
+    copyPageContent: ui.copyPageContent ?? false,
   };
 }
 
 /**
  * Gets config effective for a specific route, applying any matching route rules
- * Consolidated entry point for all route rule effects (depth, categoryName, includeOrder)
+ * Uses new section-based route resolution with precedence logic
  * @internal
  */
 export function getEffectiveConfigForRoute(
@@ -97,9 +160,6 @@ export function getEffectiveConfigForRoute(
   routeSegment?: string
 ): EffectiveConfig {
   const matchPath = ensureLeadingSlash(relPath);
-  const contentConfig = getContentConfig(config);
-
-  // Use focused route rules engine - single source of truth for all rule effects
-  const rule = findMostSpecificRule(matchPath, contentConfig.routeRules);
-  return applyRouteRule(rule, config, contentConfig, matchPath, routeSegment);
+  // Use new route resolution logic
+  return getEffectiveConfig(matchPath, config, routeSegment);
 }

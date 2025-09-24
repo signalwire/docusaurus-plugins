@@ -1,18 +1,23 @@
 {
   "name": "@signalwire/docusaurus-plugin-llms-txt",
-  "version": "1.2.2",
+  "version": "2.0.0-alpha.0",
   "type": "module",
   "description": "Generate Markdown versions of Docusaurus HTML pages and an llms.txt index file",
-  "main": "./lib/index.js",
-  "types": "./lib/public/index.d.ts",
+  "main": "./lib/src/index.js",
+  "types": "src/plugin-llms-txt.d.ts",
   "exports": {
+    "./public": {
+      "types": "./lib/src/public/index.d.ts",
+      "default": "./lib/src/public/index.js"
+    },
     ".": {
-      "types": "./lib/public/index.d.ts",
-      "default": "./lib/public/index.js"
+      "types": "./src/plugin-llms-txt.d.ts",
+      "default": "./lib/src/index.js"
     }
   },
   "files": [
     "lib",
+    "src/plugin-llms-txt.d.ts",
     "README.md",
     "CHANGELOG.md"
   ],
@@ -20,8 +25,8 @@
     "build": "tsc --build",
     "build:watch": "tsc --build --watch",
     "clean": "rimraf lib",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
+    "lint": "echo 'Linting handled at root level'",
+    "lint:fix": "echo 'Linting handled at root level'",
     "type-check": "tsc --noEmit",
     "format": "prettier --write src/**/*.{ts,tsx}",
     "format:check": "prettier --check src/**/*.{ts,tsx}",
@@ -60,19 +65,24 @@
   },
   "devDependencies": {
     "@docusaurus/logger": "^3",
+    "@docusaurus/module-type-aliases": "^3",
+    "@docusaurus/theme-common": "^3",
+    "@docusaurus/tsconfig": "^3",
     "@docusaurus/types": "^3",
     "@docusaurus/utils": "^3",
     "@docusaurus/utils-validation": "^3",
     "@types/fs-extra": "^11.0.4",
     "@types/hast": "^3.0.4",
     "@types/node": "^22.15.19",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1"
   },
   "engines": {
     "node": ">=18.0.0"
   },
-  "author": "Your Name <your.email@example.com>",
+  "author": "SignalWire <devon.white@signalwire.com>",
   "license": "MIT",
   "repository": {
     "type": "git",

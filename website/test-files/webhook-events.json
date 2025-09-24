@@ -1,0 +1,195 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Webhook Events Schema",
+  "description": "Schema definitions for all webhook events in our system",
+  "definitions": {
+    "baseEvent": {
+      "type": "object",
+      "required": ["id", "type", "created", "data"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the event"
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of event"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the event was created"
+        },
+        "data": {
+          "type": "object",
+          "description": "Event-specific data payload"
+        }
+      }
+    },
+    "paymentSucceeded": {
+      "allOf": [
+        {"$ref": "#/definitions/baseEvent"},
+        {
+          "properties": {
+            "type": {
+              "const": "payment.succeeded"
+            },
+            "data": {
+              "type": "object",
+              "required": ["payment"],
+              "properties": {
+                "payment": {
+                  "type": "object",
+                  "required": ["id", "amount", "currency", "status"],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Payment ID"
+                    },
+                    "amount": {
+                      "type": "integer",
+                      "description": "Payment amount in cents"
+                    },
+                    "currency": {
+                      "type": "string",
+                      "description": "Currency code"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["succeeded"]
+                    },
+                    "customer": {
+                      "type": "object",
+                      "properties": {
+                        "id": {"type": "string"},
+                        "email": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "paymentFailed": {
+      "allOf": [
+        {"$ref": "#/definitions/baseEvent"},
+        {
+          "properties": {
+            "type": {
+              "const": "payment.failed"
+            },
+            "data": {
+              "type": "object",
+              "required": ["payment", "error"],
+              "properties": {
+                "payment": {
+                  "type": "object",
+                  "required": ["id", "amount", "currency", "status"],
+                  "properties": {
+                    "id": {"type": "string"},
+                    "amount": {"type": "integer"},
+                    "currency": {"type": "string"},
+                    "status": {
+                      "type": "string",
+                      "enum": ["failed"]
+                    }
+                  }
+                },
+                "error": {
+                  "type": "object",
+                  "required": ["code", "message"],
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "description": "Error code"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Human-readable error message"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "customerCreated": {
+      "allOf": [
+        {"$ref": "#/definitions/baseEvent"},
+        {
+          "properties": {
+            "type": {
+              "const": "customer.created"
+            },
+            "data": {
+              "type": "object",
+              "required": ["customer"],
+              "properties": {
+                "customer": {
+                  "type": "object",
+                  "required": ["id", "email", "created"],
+                  "properties": {
+                    "id": {"type": "string"},
+                    "email": {"type": "string", "format": "email"},
+                    "name": {"type": "string"},
+                    "created": {"type": "string", "format": "date-time"},
+                    "metadata": {
+                      "type": "object",
+                      "additionalProperties": {"type": "string"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "oneOf": [
+    {"$ref": "#/definitions/paymentSucceeded"},
+    {"$ref": "#/definitions/paymentFailed"},
+    {"$ref": "#/definitions/customerCreated"}
+  ],
+  "examples": [
+    {
+      "id": "evt_1abc123",
+      "type": "payment.succeeded",
+      "created": "2024-01-15T10:30:00Z",
+      "data": {
+        "payment": {
+          "id": "py_1abc123",
+          "amount": 2000,
+          "currency": "USD",
+          "status": "succeeded",
+          "customer": {
+            "id": "cus_abc123",
+            "email": "customer@example.com"
+          }
+        }
+      }
+    },
+    {
+      "id": "evt_2def456",
+      "type": "payment.failed",
+      "created": "2024-01-15T10:35:00Z",
+      "data": {
+        "payment": {
+          "id": "py_2def456",
+          "amount": 1500,
+          "currency": "USD",
+          "status": "failed"
+        },
+        "error": {
+          "code": "card_declined",
+          "message": "Your card was declined."
+        }
+      }
+    }
+  ]
+}

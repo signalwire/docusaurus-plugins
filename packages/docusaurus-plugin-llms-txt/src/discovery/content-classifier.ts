@@ -1,21 +1,24 @@
 /**
- * Content classification logic
- * Classify routes as docs/blog/pages and apply include/exclude rules
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-import type { PluginRouteConfig } from '@docusaurus/types';
-
-import { getContentConfig } from '../config';
+import { getIncludeConfig } from '../config';
 import {
   DOCUSAURUS_BLOG_PLUGIN,
   DOCUSAURUS_PAGES_PLUGIN,
   CONTENT_TYPES,
   type ContentType,
 } from '../constants';
+
 import type { PluginOptions } from '../types';
+import type { PluginRouteConfig } from '@docusaurus/types';
 
 /**
- * Classify a route by its plugin type, with fallback heuristics for routes without plugin info
+ * Classify a route by its plugin type, with fallback heuristics for routes
+ * without plugin info
  * @internal
  */
 export function classifyRoute(route: PluginRouteConfig): ContentType {
@@ -38,7 +41,8 @@ export function classifyRoute(route: PluginRouteConfig): ContentType {
 }
 
 /**
- * Classify routes using reliable component indicators when plugin info is not available
+ * Classify routes using reliable component indicators when plugin info is
+ * not available
  * Only uses reliable indicators, avoiding fragile path/filename matching
  * @internal
  */
@@ -73,22 +77,22 @@ export function shouldProcessRoute(
   route: PluginRouteConfig,
   options: PluginOptions
 ): boolean {
-  const contentConfig = getContentConfig(options);
+  const includeConfig = getIncludeConfig(options);
   const routeType = classifyRoute(route);
 
   // First check if this content type should be included
   let shouldIncludeType = false;
   switch (routeType) {
     case CONTENT_TYPES.BLOG:
-      shouldIncludeType = contentConfig.includeBlog;
+      shouldIncludeType = includeConfig.includeBlog;
       break;
     case CONTENT_TYPES.PAGES:
-      shouldIncludeType = contentConfig.includePages;
+      shouldIncludeType = includeConfig.includePages;
       break;
     case CONTENT_TYPES.DOCS:
     case CONTENT_TYPES.UNKNOWN:
     default:
-      shouldIncludeType = contentConfig.includeDocs;
+      shouldIncludeType = includeConfig.includeDocs;
       break;
   }
 
@@ -99,7 +103,7 @@ export function shouldProcessRoute(
   // For docs routes, check versioned docs filtering
   if (
     (routeType === CONTENT_TYPES.DOCS || routeType === CONTENT_TYPES.UNKNOWN) &&
-    contentConfig.includeVersionedDocs === false
+    includeConfig.includeVersionedDocs === false
   ) {
     // Check if this is a versioned docs route (not current version)
     const isVersionedRoute =
@@ -116,7 +120,7 @@ export function shouldProcessRoute(
   }
 
   // Check if this is a generated category index page
-  if (contentConfig.includeGeneratedIndex === false) {
+  if (includeConfig.includeGeneratedIndex === false) {
     // Generated index pages have a categoryGeneratedIndex prop
     if (route.props?.categoryGeneratedIndex !== undefined) {
       return false; // Skip generated index pages when includeGeneratedIndex is false

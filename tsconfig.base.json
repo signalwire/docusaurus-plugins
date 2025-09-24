@@ -14,9 +14,9 @@
     "importHelpers": true,
     "noEmitHelpers": true,
 
-    /* Module System - ESNext for module compatibility */
-    "module": "ESNext",
-    "moduleResolution": "node",
+    /* Module System - NodeNext for official compatibility */
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
@@ -24,8 +24,8 @@
     "allowJs": true,
 
     /* Paths and Output */
-    "rootDir": "./src",
-    "outDir": "./lib",
+    "rootDir": "${configDir}/src",
+    "outDir": "${configDir}/lib",
     "noEmit": false,
 
     /* Strict Type-Checking Options */
@@ -57,7 +57,7 @@
     "skipLibCheck": true,
 
     /* Type settings */
-    "types": ["node", "jest"]
+    "types": ["node"]
   },
   "include": ["src/**/*", ".eslintrc.js"],
   "exclude": [

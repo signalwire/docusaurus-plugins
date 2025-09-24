@@ -1,11 +1,13 @@
 /**
- * Cache strategy management
- * Handles cache validation, strategy determination, and related logging
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 import { HASH_DISPLAY_LENGTH, CACHE_MESSAGES } from '../constants';
-import type { PluginOptions, Logger, CacheSchema } from '../types';
 
+import type { PluginOptions, Logger, CacheSchema } from '../types';
 import type { CacheManager } from './cache';
 
 /**
@@ -55,7 +57,8 @@ export function analyzeCacheStrategy(
     );
   }
 
-  // Use cache only when available, config matches, AND route count hasn't changed significantly
+  // Use cache only when available, config matches, AND route count hasn't
+  // changed significantly
   const useCache = cacheHasRoutes && configMatches && routeCountMatches;
 
   // Generate reason for cache decision

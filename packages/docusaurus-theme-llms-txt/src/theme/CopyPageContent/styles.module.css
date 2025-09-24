@@ -1,0 +1,112 @@
+/**
+ * CopyPageContent main container styles
+ * Contains CSS variables, positioning, and global theming
+ */
+
+.copyButton {
+  /* Theme colors - refined transparent design */
+  --llms-copy-bg: transparent;
+  --llms-copy-bg-hover: rgba(0, 0, 0, 0.03);
+  --llms-copy-bg-active: rgba(0, 0, 0, 0.06);
+  --llms-copy-text: var(--ifm-font-color-base);
+  --llms-copy-text-secondary: var(--ifm-color-emphasis-600);
+  --llms-copy-border: rgba(0, 0, 0, 0.08);
+
+  /* Layout */
+  --llms-copy-padding: 9px 12px;
+  --llms-copy-gap: 7px;
+  --llms-copy-font-size: 13px;
+  --llms-copy-font-size-dropdown: 14px;
+  --llms-copy-button-min-width: 110px;
+
+  /* Menu item specific */
+  --llms-copy-menu-item-padding: 12px 16px;
+  --llms-copy-menu-item-gap: 12px;
+  --llms-copy-menu-item-border-radius: 8px;
+
+  /* Icons */
+  --llms-copy-icon-size: 16px;
+  --llms-copy-arrow-icon-size: 12px;
+
+  /* Icon containers */
+  --llms-copy-icon-container-size: 32px;
+  --llms-copy-icon-container-bg: rgba(0, 0, 0, 0.06);
+  --llms-copy-icon-container-border-radius: 6px;
+
+  /* Style - refined approach */
+  --llms-copy-radius: 8px;
+  --llms-copy-shadow: none;
+  --llms-copy-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --llms-copy-transition: all 0.15s ease;
+
+  /* Animation */
+  --llms-copy-animation-duration: 0.3s;
+  --llms-copy-animation-timing: ease;
+
+  /* Z-index */
+  --llms-copy-z-index: 10;
+  --llms-copy-dropdown-z-index: 1000;
+
+  /* Dropdown */
+  --llms-copy-dropdown-bg: var(--ifm-background-surface-color);
+  --llms-copy-dropdown-text: var(--ifm-font-color-base);
+  --llms-copy-dropdown-hover: var(--ifm-hover-overlay);
+  --llms-copy-dropdown-border: var(--ifm-color-emphasis-300);
+  --llms-copy-dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --llms-copy-dropdown-width: 280px;
+  --llms-copy-dropdown-offset: 8px;
+  --llms-copy-dropdown-initial-transform: -10px;
+
+  /* Border */
+  --llms-copy-border-width: 1px;
+
+  /* Typography */
+  --llms-copy-font-weight: 400;
+  --llms-copy-label-weight: 500;
+  --llms-copy-font-size-description: 0.88em;
+  --llms-copy-description-color: var(--ifm-color-emphasis-600);
+  --llms-copy-description-line-height: 1.3;
+  --llms-copy-description-gap: 3px;
+
+  /* States */
+  --llms-copy-disabled-opacity: 0.6;
+  --llms-copy-active-scale: 0.98;
+
+  /* Spacing */
+  --llms-copy-button-margin-left: 16px;
+  --llms-copy-button-margin-bottom: 8px;
+
+  /* Loading spinner */
+  --llms-copy-spinner-size: 16px;
+  --llms-copy-spinner-border-width: 2px;
+  --llms-copy-spinner-animation-duration: 0.6s;
+
+  /* Transitions (specific) */
+  --llms-copy-arrow-transition: transform 0.2s ease;
+  --llms-copy-menuitem-transition: background-color 0.15s ease;
+
+  /* Float positioning above content */
+  position: relative;
+  float: right;
+  clear: both;
+  margin-bottom: var(--llms-copy-button-margin-bottom);
+  z-index: var(--llms-copy-z-index);
+}
+
+/* Dark theme support */
+[data-theme='dark'] .copyButton {
+  --llms-copy-bg: transparent;
+  --llms-copy-bg-hover: rgba(255, 255, 255, 0.03);
+  --llms-copy-bg-active: rgba(255, 255, 255, 0.06);
+  --llms-copy-border: rgba(255, 255, 255, 0.08);
+  --llms-copy-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.15);
+  --llms-copy-description-color: var(--ifm-color-emphasis-400);
+  --llms-copy-icon-container-bg: rgba(255, 255, 255, 0.08);
+}
+
+/* Print styles */
+@media print {
+  .copyButton {
+    display: none;
+  }
+}

@@ -1,6 +1,8 @@
 /**
- * Unified type exports
- * Simplified type system using consolidated core types
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 // ============================================================================
@@ -9,10 +11,15 @@
 
 export type {
   PluginOptions,
-  ContentOptions,
+  GenerateOptions,
+  IncludeOptions,
+  StructureOptions,
+  ProcessingOptions,
+  UiOptions,
   RouteRule,
+  SectionRoute,
   OptionalLink,
-  Depth,
+  SectionDefinition,
   Logger,
   PluginError,
   PluginConfigError,

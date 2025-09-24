@@ -1,9 +1,9 @@
 /**
- * Simplified orchestrator using focused modules
- * Coordinates between all domains to process documents
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
-
-import type { RouteConfig } from '@docusaurus/types';
 
 import { CacheManager } from './cache/cache';
 import {
@@ -13,20 +13,25 @@ import {
 import { setupDirectories, buildSiteUrl } from './filesystem/paths';
 import { generateOutputFiles } from './generation/output-generator';
 import { coordinateProcessing } from './processing/processing-coordinator';
+
+import type { ProcessedAttachment } from './processing/attachment-processor';
 import type {
   ProcessingConfig,
   ProcessingResult,
   CachedRouteInfo,
 } from './types';
+import type { RouteConfig } from '@docusaurus/types';
 
 /**
- * Unified processing orchestrator that handles both build-time and CLI scenarios
+ * Unified processing orchestrator that handles both build-time and CLI
+ * scenarios
  * @internal
  */
 export async function orchestrateProcessing(
   routes: RouteConfig[],
   processingConfig: ProcessingConfig,
-  enhancedCachedRoutes?: CachedRouteInfo[]
+  enhancedCachedRoutes?: CachedRouteInfo[],
+  processedAttachments?: readonly ProcessedAttachment[]
 ): Promise<ProcessingResult> {
   const { siteDir, generatedFilesDir, config, siteConfig, outDir, logger } =
     processingConfig;
@@ -67,7 +72,11 @@ export async function orchestrateProcessing(
     isCliContext ? undefined : routes.length // Only pass route count for build context
   );
 
-  // Validate CLI context if needed
+  logger.info(
+    `Cache strategy: ${cacheStrategy.useCache ? 'use cache' : 'rebuild'} (${cacheStrategy.reason})`
+  );
+
+  // Validate CLI context early if needed
   if (isCliContext) {
     validateCliContext(
       cacheStrategy.cacheHasRoutes,
@@ -76,7 +85,7 @@ export async function orchestrateProcessing(
     );
   }
 
-  // Process documents
+  // Process documents using shared coordination logic
   const processingResult = await coordinateProcessing(
     routes,
     finalCache,
@@ -90,13 +99,14 @@ export async function orchestrateProcessing(
     siteConfig
   );
 
-  // Generate output files
+  // Generate output files with integrated attachments
   const outputResult = await generateOutputFiles(
     processingResult.docs,
     config,
     siteConfig,
     directories,
-    logger
+    logger,
+    processedAttachments // Pass attachments for integration into tree
   );
 
   return {
@@ -104,6 +114,6 @@ export async function orchestrateProcessing(
     processedCount: processingResult.processedCount,
     cacheUpdated: processingResult.cacheUpdated,
     llmsTxtPath: outputResult.llmsTxtPath,
-    errors: [],
+    errors: [], // No errors in this implementation
   };
 }

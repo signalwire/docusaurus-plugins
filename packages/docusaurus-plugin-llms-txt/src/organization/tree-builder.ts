@@ -1,183 +1,304 @@
 /**
- * Document hierarchy creation
- * Build hierarchical tree structure from documents
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-import { createMatcher } from '@docusaurus/utils';
-
-import { getEffectiveConfigForRoute } from '../config';
+import { getEffectiveConfigForRoute, getStructureConfig } from '../config';
+import { findQualityIssues } from '../config/section-validator';
 import { TREE_ROOT_NAME, INDEX_IDENTIFIER } from '../constants';
-import type { DocInfo, PluginOptions, TreeNode } from '../types';
+import { handleSectionError } from '../errors/section-errors';
 import { ensureLeadingSlash } from '../utils';
 
-/**
- * Apply ordering to subcategories based on path rules using glob patterns
- * @internal
- */
-function applyOrdering(node: TreeNode, globalConfig: PluginOptions): void {
-  // Get effective config for this node's path
-  const nodePath = node.relPath ? `/${node.relPath}` : '/';
-  const effectiveConfig = getEffectiveConfigForRoute(nodePath, globalConfig);
-
-  // Apply ordering if specified and we have subcategories
-  const hasIncludeOrder =
-    effectiveConfig.includeOrder && effectiveConfig.includeOrder.length > 0;
-  const hasSubCategories = node.subCategories.length > 0;
-
-  if (hasIncludeOrder && hasSubCategories) {
-    // Cast to mutable for sorting
-    const mutableNode = node as TreeNode & { subCategories: TreeNode[] };
-    mutableNode.subCategories.sort((a: TreeNode, b: TreeNode) => {
-      // Create full paths for matching - subcategories need to be treated as potential matches
-      const aPath = `/${a.relPath}`;
-      const bPath = `/${b.relPath}`;
-
-      let aIndex = -1;
-      let bIndex = -1;
-
-      // Find the first matching pattern for each subcategory
-      const includeOrder = effectiveConfig.includeOrder;
-      if (includeOrder && includeOrder.length > 0) {
-        for (let i = 0; i < includeOrder.length; i++) {
-          const pattern = includeOrder[i];
-          if (!pattern) continue; // Skip undefined patterns
-
-          // Create matcher for the pattern
-          const matcher = createMatcher([pattern]);
-
-          // Check if subcategory path matches the pattern
-          if (
-            aIndex === -1 &&
-            (matcher(aPath) ||
-              (pattern.endsWith('/**') && aPath === pattern.slice(0, -3)))
-          ) {
-            aIndex = i;
-          }
-
-          if (
-            bIndex === -1 &&
-            (matcher(bPath) ||
-              (pattern.endsWith('/**') && bPath === pattern.slice(0, -3)))
-          ) {
-            bIndex = i;
-          }
-
-          // Break early if both found
-          if (aIndex !== -1 && bIndex !== -1) break;
-        }
-      }
-
-      // Items matching includeOrder patterns come first, in pattern order
-      if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
-      if (aIndex !== -1) return -1;
-      if (bIndex !== -1) return 1;
-
-      // Items not matching any pattern come after, alphabetically
-      return a.name.localeCompare(b.name);
-    });
-  }
-
-  // Recursively apply ordering to child categories
-  for (const subCategory of node.subCategories) {
-    applyOrdering(subCategory, globalConfig);
-  }
-}
+import type {
+  DocInfo,
+  PluginOptions,
+  TreeNode,
+  SectionDefinition,
+  Logger,
+} from '../types';
 
 /**
- * Build hierarchical tree from docs
- * @internal
+ * Build hierarchical tree from docs using section-based organization
  */
 export function buildDocumentTree(
   docs: readonly DocInfo[],
-  globalConfig: PluginOptions
+  globalConfig: PluginOptions,
+  logger?: Logger
 ): TreeNode {
-  // Create root as mutable during construction
-  type MutableTreeNode = TreeNode & {
-    subCategories: TreeNode[];
-    docs: DocInfo[];
-  };
+  // Get configuration groups
+  const structureConfig = getStructureConfig(globalConfig);
 
-  const root: Partial<TreeNode> & {
-    subCategories: TreeNode[];
-    docs: DocInfo[];
-  } = {
-    name: TREE_ROOT_NAME,
-    relPath: '',
-    docs: [],
-    subCategories: [],
-    title: globalConfig.siteTitle ?? '',
-    description: globalConfig.siteDescription ?? '',
-  };
+  // 1. Create section definitions map for quick lookup
+  const sectionsMap = buildSectionsMap(structureConfig.sections);
 
-  const categoryMap = new Map<string, MutableTreeNode>();
-  categoryMap.set('', root as MutableTreeNode);
+  // 2. Group documents by section (auto-assign if not specified)
+  const sectionGroups = new Map<string, DocInfo[]>();
 
   for (const doc of docs) {
     const route = doc.routePath.replace(/\.md$/, '');
     const routePath = ensureLeadingSlash(route);
 
-    // Single route rule lookup for all effects (depth, categoryName, ordering)
-    const effectiveConfig = getEffectiveConfigForRoute(routePath, globalConfig);
-    const depth = effectiveConfig.depth ?? 1;
-
+    // Handle root index document - exclude from section grouping
     const segments = routePath.split('/').filter(Boolean);
-    if (segments.length === 1 && segments[0] === INDEX_IDENTIFIER) {
-      (root as MutableTreeNode & { indexDoc?: DocInfo }).indexDoc = doc;
+    if (
+      routePath === '/' ||
+      (segments.length === 1 && segments[0] === INDEX_IDENTIFIER)
+    ) {
+      // Root index will be handled separately in buildLlmsTxtContent
       continue;
     }
 
-    // Create category hierarchy up to the depth specified
-    let categoryPath = '';
-    let currentNode = root as MutableTreeNode;
+    const effectiveConfig = getEffectiveConfigForRoute(routePath, globalConfig);
+    const sectionId = effectiveConfig.section;
 
-    // Build the hierarchy up to depth levels (or segments length if shorter)
-    for (let i = 0; i < Math.min(depth, segments.length); i++) {
-      const segment = segments[i];
-      if (!segment) continue; // Skip undefined segments
-
-      const nextPath = categoryPath ? `${categoryPath}/${segment}` : segment;
-      if (!categoryMap.has(nextPath)) {
-        // Get category name from single route rule lookup
-        const categoryPathRoute = `/${nextPath}`;
-        const categoryEffectiveConfig = getEffectiveConfigForRoute(
-          categoryPathRoute,
-          globalConfig,
-          segment
-        );
-        const categoryName = categoryEffectiveConfig.categoryName ?? segment;
-
-        const newNode: MutableTreeNode = {
-          name: categoryName,
-          relPath: nextPath,
-          docs: [],
-          subCategories: [],
-        };
-        currentNode.subCategories.push(newNode);
-        categoryMap.set(nextPath, newNode);
-      }
-      const nextNode = categoryMap.get(nextPath);
-      if (nextNode) {
-        currentNode = nextNode;
-        categoryPath = nextPath;
-      }
+    if (!sectionGroups.has(sectionId)) {
+      sectionGroups.set(sectionId, []);
     }
+    sectionGroups.get(sectionId)!.push(doc);
+  }
 
-    // Determine if this is an index document or regular document
-    const hierarchyDepth = Math.min(depth, segments.length);
+  // 3. Create processed sections with hierarchy
+  const processedSections = new Map<string, ProcessedSection>();
 
-    // For standalone pages at root level (like /markdown-page), treat as regular docs
-    // For pages that match their category depth exactly, treat as index docs
-    const isStandalonePage = segments.length === 1 && depth === 1;
+  for (const [sectionId, sectionDocs] of sectionGroups) {
+    const sectionDef =
+      sectionsMap.get(sectionId) || createAutoSection(sectionId);
+    const processedSection = createProcessedSection(sectionDef, sectionDocs);
+    processedSections.set(sectionId, processedSection);
+  }
 
-    if (segments.length === hierarchyDepth && !isStandalonePage) {
-      // This document represents the category itself (e.g., /docs/intro.md for docs category)
-      (currentNode as MutableTreeNode & { indexDoc?: DocInfo }).indexDoc = doc;
-    } else {
-      // This is a regular document that goes in the deepest category created
-      currentNode.docs.push(doc);
+  // 4. Handle quality issues (empty sections, etc.)
+  if (logger) {
+    const qualityIssues = findQualityIssues(
+      structureConfig.sections,
+      processedSections,
+      globalConfig.onSectionError || 'warn'
+    );
+
+    qualityIssues.forEach((issue) => {
+      handleSectionError(issue, globalConfig.onSectionError || 'warn', logger);
+    });
+  }
+
+  // 5. Filter out empty sections based on error handling setting
+  const validSections = filterValidSections(
+    processedSections,
+    globalConfig.onSectionError || 'warn'
+  );
+
+  // 6. Build hierarchical tree structure
+  const rootNode = buildHierarchicalTree(
+    validSections,
+    sectionsMap,
+    globalConfig
+  );
+
+  // 7. Handle root index document
+  const rootIndexDoc = docs.find((doc) => {
+    const route = doc.routePath.replace(/\.md$/, '');
+    const routePath = ensureLeadingSlash(route);
+    const segments = routePath.split('/').filter(Boolean);
+    return (
+      routePath === '/' ||
+      (segments.length === 1 && segments[0] === INDEX_IDENTIFIER)
+    );
+  });
+
+  if (rootIndexDoc) {
+    (rootNode as TreeNode & { indexDoc?: DocInfo }).indexDoc = rootIndexDoc;
+  }
+
+  return rootNode;
+}
+
+/**
+ * Interface for processed section data
+ */
+interface ProcessedSection {
+  id: string;
+  name: string;
+  description?: string;
+  position?: number;
+  docs: DocInfo[];
+  parentId?: string;
+}
+
+/**
+ * Build section definitions map with parent relationships
+ */
+function buildSectionsMap(
+  sections: readonly SectionDefinition[]
+): Map<string, SectionDefinition & { parentId?: string }> {
+  const map = new Map<string, SectionDefinition & { parentId?: string }>();
+
+  function addToMap(
+    sectionList: readonly SectionDefinition[],
+    parentId?: string
+  ): void {
+    for (const section of sectionList) {
+      map.set(section.id, { ...section, parentId });
+
+      if (section.subsections) {
+        addToMap(section.subsections, section.id);
+      }
     }
   }
 
-  applyOrdering(root as TreeNode, globalConfig);
-  return root as TreeNode;
+  addToMap(sections);
+  return map;
+}
+
+/**
+ * Create auto-generated section definition
+ */
+function createAutoSection(sectionId: string): SectionDefinition {
+  // Auto-create section with ID as name (title-cased)
+  const name = sectionId
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
+  return {
+    id: sectionId,
+    name,
+  };
+}
+
+/**
+ * Create processed section from definition and docs
+ */
+function createProcessedSection(
+  sectionDef: SectionDefinition & { parentId?: string },
+  docs: DocInfo[]
+): ProcessedSection {
+  return {
+    id: sectionDef.id,
+    name: sectionDef.name,
+    description: sectionDef.description,
+    position: sectionDef.position,
+    docs: sortDocsByTitle(docs),
+    parentId: sectionDef.parentId,
+  };
+}
+
+/**
+ * Filter out empty sections based on error handling setting
+ */
+function filterValidSections(
+  processedSections: Map<string, ProcessedSection>,
+  onSectionError: 'ignore' | 'log' | 'warn' | 'throw'
+): Map<string, ProcessedSection> {
+  if (onSectionError === 'ignore') {
+    return processedSections; // Include all sections, even empty ones
+  }
+
+  const validSections = new Map<string, ProcessedSection>();
+
+  for (const [sectionId, section] of processedSections) {
+    if (section.docs.length > 0) {
+      validSections.set(sectionId, section);
+    }
+    // Empty sections are excluded unless ignoring errors
+  }
+
+  return validSections;
+}
+
+/**
+ * Build hierarchical tree from processed sections
+ */
+function buildHierarchicalTree(
+  processedSections: Map<string, ProcessedSection>,
+  sectionsMap: Map<string, SectionDefinition & { parentId?: string }>,
+  globalConfig: PluginOptions
+): TreeNode {
+  // Get structure configuration
+  const structureConfig = getStructureConfig(globalConfig);
+
+  // Create root node
+  const root: TreeNode = {
+    id: 'root',
+    name: structureConfig.siteTitle || TREE_ROOT_NAME,
+    description: structureConfig.siteDescription || '',
+    relPath: '',
+    docs: [],
+    subCategories: [],
+  };
+
+  // Group sections by parent
+  const topLevelSections: ProcessedSection[] = [];
+  const subsectionsByParent = new Map<string, ProcessedSection[]>();
+
+  for (const section of processedSections.values()) {
+    if (section.parentId) {
+      if (!subsectionsByParent.has(section.parentId)) {
+        subsectionsByParent.set(section.parentId, []);
+      }
+      subsectionsByParent.get(section.parentId)!.push(section);
+    } else {
+      topLevelSections.push(section);
+    }
+  }
+
+  // Build tree nodes
+  function createTreeNode(section: ProcessedSection): TreeNode {
+    const subsections = subsectionsByParent.get(section.id) || [];
+
+    return {
+      id: section.id,
+      name: section.name,
+      description: section.description,
+      relPath: section.id,
+      docs: section.docs,
+      subCategories: sortByPosition(subsections.map(createTreeNode)),
+    };
+  }
+
+  // Add top-level sections to root
+  const mutableRoot = root as TreeNode & { subCategories: TreeNode[] };
+  mutableRoot.subCategories = sortByPosition(
+    topLevelSections.map(createTreeNode)
+  );
+
+  return root;
+}
+
+/**
+ * Sort items by position + alphabetical (Docusaurus-style)
+ */
+function sortByPosition<T extends { position?: number; name: string }>(
+  items: T[]
+): T[] {
+  return items.sort((a, b) => {
+    // 1. Items with position come before items without position
+    const aHasPosition = a.position !== undefined;
+    const bHasPosition = b.position !== undefined;
+
+    if (aHasPosition && !bHasPosition) {
+      return -1;
+    }
+    if (!aHasPosition && bHasPosition) {
+      return 1;
+    }
+
+    // 2. If both have positions, sort by position numerically
+    if (aHasPosition && bHasPosition) {
+      const positionDiff = a.position! - b.position!;
+      if (positionDiff !== 0) {
+        return positionDiff;
+      }
+    }
+
+    // 3. If same position (or both undefined), sort alphabetically
+    return a.name.localeCompare(b.name);
+  });
+}
+
+/**
+ * Sort docs alphabetically by title
+ */
+function sortDocsByTitle(docs: DocInfo[]): DocInfo[] {
+  return docs.sort((a, b) => a.title.localeCompare(b.title));
 }

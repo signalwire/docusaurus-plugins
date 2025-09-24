@@ -1,0 +1,62 @@
+/**
+ * MenuItem component styles
+ * Individual dropdown menu item styling and interactions
+ */
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--llms-copy-menu-item-gap);
+  width: 100%;
+  padding: var(--llms-copy-menu-item-padding);
+  background: transparent;
+  color: var(--llms-copy-dropdown-text);
+  border: none;
+  border-radius: var(--llms-copy-menu-item-border-radius);
+  cursor: pointer;
+  font-size: var(--llms-copy-font-size-dropdown);
+  text-align: left;
+  transition: var(--llms-copy-menuitem-transition);
+}
+
+.menuItemContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--llms-copy-description-gap);
+  flex: 1;
+}
+
+.menuItemLabel {
+  font-size: var(--llms-copy-font-size-dropdown);
+  font-weight: var(--llms-copy-label-weight);
+}
+
+.menuItemDescription {
+  font-size: var(--llms-copy-font-size-description);
+  color: var(--llms-copy-description-color);
+  line-height: var(--llms-copy-description-line-height);
+}
+
+.menuItem:hover {
+  background: var(--llms-copy-dropdown-hover);
+}
+
+.menuItem:active {
+  transform: scale(var(--llms-copy-active-scale));
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--llms-copy-icon-container-size);
+  height: var(--llms-copy-icon-container-size);
+  background: var(--llms-copy-icon-container-bg);
+  border-radius: var(--llms-copy-icon-container-border-radius);
+  flex-shrink: 0;
+}
+
+.iconContainer svg {
+  width: var(--llms-copy-icon-size);
+  height: var(--llms-copy-icon-size);
+}

@@ -1,0 +1,304 @@
+---
+title: Advanced Payment Processing
+description: Learn advanced patterns and best practices for payment processing
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+# Advanced Payment Processing Guide
+
+This guide covers advanced topics and patterns for robust payment processing.
+
+## Multi-Step Payments
+
+For complex payment flows, you might need to handle multi-step processes:
+
+<Tabs>
+<TabItem value="authorize" label="Authorize">
+
+```javascript
+// Step 1: Authorize the payment
+const authorization = await payments.authorize({
+  amount: 5000,
+  currency: 'USD',
+  source: paymentMethod.id,
+  description: 'Pre-authorization for service'
+});
+
+console.log('Authorization ID:', authorization.id);
+```
+
+</TabItem>
+<TabItem value="capture" label="Capture">
+
+```javascript
+// Step 2: Capture the authorized amount
+const capture = await payments.capture(authorization.id, {
+  amount: 3500, // Can be less than authorized amount
+  description: 'Final charge for delivered service'
+});
+
+console.log('Captured:', capture.amount, 'cents');
+```
+
+</TabItem>
+<TabItem value="void" label="Void">
+
+```javascript
+// Alternative: Void the authorization if not needed
+const voided = await payments.void(authorization.id);
+console.log('Authorization voided:', voided.status);
+```
+
+</TabItem>
+</Tabs>
+
+## Subscription Billing
+
+### Setting Up Recurring Payments
+
+```typescript
+interface SubscriptionConfig {
+  customerId: string;
+  priceId: string;
+  interval: 'month' | 'year';
+  trialPeriodDays?: number;
+}
+
+const createSubscription = async (config: SubscriptionConfig) => {
+  try {
+    const subscription = await api.subscriptions.create({
+      customer: config.customerId,
+      items: [{ price: config.priceId }],
+      trial_period_days: config.trialPeriodDays,
+      expand: ['latest_invoice.payment_intent']
+    });
+
+    return subscription;
+  } catch (error) {
+    console.error('Subscription creation failed:', error);
+    throw error;
+  }
+};
+```
+
+### Handling Subscription Events
+
+```javascript
+// Webhook handler for subscription events
+const handleSubscriptionEvent = (event) => {
+  switch (event.type) {
+    case 'invoice.payment_succeeded':
+      // Provision service, send receipt
+      provisionService(event.data.object.customer);
+      break;
+
+    case 'invoice.payment_failed':
+      // Notify customer, potentially suspend service
+      handleFailedPayment(event.data.object);
+      break;
+
+    case 'customer.subscription.deleted':
+      // Cancel service access
+      cancelService(event.data.object.customer);
+      break;
+  }
+};
+```
+
+## Error Recovery Patterns
+
+### Retry Logic with Exponential Backoff
+
+```typescript
+class PaymentRetryService {
+  private async retryWithBackoff<T>(
+    operation: () => Promise<T>,
+    maxAttempts: number = 3,
+    baseDelay: number = 1000
+  ): Promise<T> {
+    let lastError: Error;
+
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error as Error;
+
+        if (attempt === maxAttempts) {
+          throw lastError;
+        }
+
+        // Exponential backoff: 1s, 2s, 4s, etc.
+        const delay = baseDelay * Math.pow(2, attempt - 1);
+        await this.sleep(delay);
+      }
+    }
+
+    throw lastError!;
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+```
+
+### Idempotency Keys
+
+```javascript
+import { v4 as uuidv4 } from 'uuid';
+
+const processPaymentSafely = async (paymentData) => {
+  const idempotencyKey = uuidv4();
+
+  try {
+    const payment = await api.payments.create({
+      ...paymentData,
+      idempotency_key: idempotencyKey
+    });
+
+    return payment;
+  } catch (error) {
+    if (error.type === 'idempotency_error') {
+      // Payment already processed with this key
+      return error.payment;
+    }
+    throw error;
+  }
+};
+```
+
+## Security Best Practices
+
+:::warning Important Security Notes
+
+Never store sensitive payment information on your servers. Always use tokenization.
+
+:::
+
+### PCI DSS Compliance
+
+1. **Use HTTPS everywhere** - All API calls must use TLS 1.2+
+2. **Tokenize card data** - Never store raw card numbers
+3. **Implement proper access controls** - Restrict API key access
+4. **Log security events** - Monitor for suspicious activity
+
+### Secure Webhook Verification
+
+```javascript
+const crypto = require('crypto');
+
+const verifyWebhookSignature = (payload, signature, secret) => {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+
+  const signatureMatch = crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(expectedSignature)
+  );
+
+  if (!signatureMatch) {
+    throw new Error('Invalid webhook signature');
+  }
+};
+```
+
+## Performance Optimization
+
+### Batch Processing
+
+```typescript
+interface BatchPaymentRequest {
+  payments: PaymentRequest[];
+  batchSize?: number;
+}
+
+const processBatchPayments = async ({
+  payments,
+  batchSize = 10
+}: BatchPaymentRequest) => {
+  const results = [];
+
+  for (let i = 0; i < payments.length; i += batchSize) {
+    const batch = payments.slice(i, i + batchSize);
+
+    const batchPromises = batch.map(payment =>
+      processPaymentSafely(payment)
+        .catch(error => ({ error, payment }))
+    );
+
+    const batchResults = await Promise.allSettled(batchPromises);
+    results.push(...batchResults);
+
+    // Rate limiting: wait between batches
+    if (i + batchSize < payments.length) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }
+
+  return results;
+};
+```
+
+## Monitoring and Analytics
+
+### Key Metrics to Track
+
+- **Success Rate**: Percentage of successful payments
+- **Decline Rate**: Percentage of declined transactions
+- **Average Processing Time**: Time from initiation to completion
+- **Revenue Impact**: Financial impact of failed payments
+
+```javascript
+const trackPaymentMetrics = (payment) => {
+  const metrics = {
+    payment_id: payment.id,
+    amount: payment.amount,
+    currency: payment.currency,
+    status: payment.status,
+    processing_time_ms: payment.processing_time,
+    timestamp: new Date().toISOString()
+  };
+
+  // Send to your analytics service
+  analytics.track('payment_processed', metrics);
+};
+```
+
+## Testing Strategies
+
+### Unit Testing Payment Logic
+
+```javascript
+describe('Payment Processing', () => {
+  test('should handle successful payment', async () => {
+    const mockPayment = {
+      id: 'py_test_123',
+      status: 'succeeded',
+      amount: 2000
+    };
+
+    jest.spyOn(api.payments, 'create').mockResolvedValue(mockPayment);
+
+    const result = await processPayment({
+      amount: 2000,
+      currency: 'USD',
+      source: 'tok_visa'
+    });
+
+    expect(result.status).toBe('succeeded');
+    expect(result.amount).toBe(2000);
+  });
+});
+```
+
+## Related Resources
+
+- [Getting Started Guide](../getting-started.md) - Basic setup and first payment
+- [API Reference](../test-api.yaml) - Complete API documentation
+- [Webhook Events](../webhook-events.json) - Event schemas and examples

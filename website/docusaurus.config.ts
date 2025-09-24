@@ -1,7 +1,7 @@
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
-import type { PluginOptions } from '../packages/docusaurus-plugin-llms-txt/lib/public';
+import type { PluginOptions } from '@signalwire/docusaurus-plugin-llms-txt/public';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
@@ -39,31 +39,113 @@ const config: Config = {
   },
 
   plugins: [
+    'docusaurus-plugin-sass',
     [
-      require.resolve('../packages/docusaurus-plugin-llms-txt/lib'),
+      '@signalwire/docusaurus-plugin-llms-txt',
       {
-        siteTitle: 'My Docusaurus Plugins Collection',
-        siteDescription: 'Documentation for Docusaurus plugins',
+        // Runtime behavior (top-level)
         logLevel: 3,
         onRouteError: 'throw',
-        depth: 1,
-        content: {
+        onSectionError: 'warn',
+
+        // Output generation configuration
+        generate: {
+          enableMarkdownFiles: true,
+          enableLlmsFullTxt: true,
+          relativePaths: true,
+        },
+
+        // Content inclusion/filtering configuration
+        include: {
           includeBlog: true,
           includePages: true,
           includeDocs: true,
-          includeVersionedDocs: true,
+          includeVersionedDocs: false,
           includeGeneratedIndex: false,
-          enableMarkdownFiles: false,
-          relativePaths: true,
-          enableLlmsFullTxt: true,
           excludeRoutes: ['/docs/tutorial-extras/**'],
-          routeRules: [
+        },
+
+        // Content structure and organization configuration
+        structure: {
+          siteTitle: 'My Docusaurus Plugins Collection',
+          siteDescription: 'Documentation for Docusaurus plugins',
+          sections: [
             {
-              route: '/api/**',
-              depth: 1,
-              categoryName: 'API Documentation'
+              id: 'api-docs',
+              name: 'API Documentation',
+              description: 'Complete API reference and specifications',
+              position: 1,
+              routes: [
+                { route: '/api/**' }
+              ]
+            },
+            {
+              id: 'dev-guides',
+              name: 'Developer Guides',
+              description: 'Tutorials and best practices for developers',
+              position: 2
             }
-          ]
+          ],
+          optionalLinks: [
+            {
+              title: 'API Status Page',
+              url: 'https://status.example.com',
+              description: 'Real-time API status and uptime monitoring'
+            },
+            {
+              title: 'Interactive API Explorer',
+              url: 'https://api-explorer.example.com',
+              description: 'Test our APIs in an interactive environment'
+            },
+            {
+              title: 'Community Forum',
+              url: 'https://forum.example.com',
+              description: 'Get help and share knowledge with the community',
+            },
+            {
+              title: 'GitHub Repository',
+              url: 'https://github.com/example/repo',
+              description: 'Source code and issue tracking',
+            }
+          ],
+        },
+
+        // Content processing and transformation configuration
+        processing: {
+          routeRules: [
+            // Global route rules for cross-cutting concerns only
+          ],
+          attachments: [
+            {
+              source: './test-files/test-api.yaml',
+              title: 'Payment API OpenAPI Specification',
+              description: 'Complete OpenAPI 3.0 specification for our payment processing API',
+              sectionId: 'api-docs'
+            },
+            {
+              source: './test-files/webhook-events.json',
+              title: 'Webhook Event Schemas',
+              description: 'JSON schemas for all webhook events including payment and customer events',
+              sectionId: 'api-docs'
+            },
+            {
+              source: './test-files/getting-started.md',
+              title: 'Getting Started Guide',
+              description: 'Quick start guide for new developers',
+              sectionId: 'dev-guides'
+            },
+            {
+              source: './test-files/advanced-guide.mdx',
+              title: 'Advanced Payment Processing',
+              description: 'Advanced patterns, security best practices, and optimization techniques',
+              sectionId: 'dev-guides'
+            }
+          ],
+        },
+
+        // User interface features configuration
+        ui: {
+          copyPageContent: true,
         },
       } satisfies PluginOptions,
     ],
@@ -110,6 +192,10 @@ const config: Config = {
         },
       },
     ],
+  ],
+
+  themes: [
+    '@signalwire/docusaurus-theme-llms-txt'
   ],
 
   presets: [

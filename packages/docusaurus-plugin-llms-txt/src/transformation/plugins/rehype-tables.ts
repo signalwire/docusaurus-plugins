@@ -1,16 +1,27 @@
+/**
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+import { visit } from 'unist-util-visit';
+
 import type { Root, Element, ElementContent, Text } from 'hast';
 import type { Plugin } from 'unified';
-import { visit } from 'unist-util-visit';
 
 /**
  * Rehype plugin that flattens <ul>/<ol> lists that appear *inside* table cells.
- * Each list item becomes text prefixed with a dash or index and separated by <br />.
- * This keeps tables valid in Markdown while preserving line-breaks and inline markup.
+ * Each list item becomes text prefixed with a dash or index and
+ * separated by <br />.
+ * This keeps tables valid in Markdown while preserving line-breaks and
+ * inline markup.
  */
-const rehypeTables: Plugin<[], Root, Root> = function () {
+const rehypeTables: Plugin<[], Root, Root> = function rehypeTablesPlugin() {
   return function transformer(tree: Root): Root {
     visit(tree, 'element', (node: Element) => {
-      if (node.tagName !== 'td' && node.tagName !== 'th') return;
+      if (node.tagName !== 'td' && node.tagName !== 'th') {
+        return;
+      }
 
       visit(node, 'element', (listNode: Element, listIndex, listParent) => {
         if (
@@ -26,7 +37,9 @@ const rehypeTables: Plugin<[], Root, Root> = function () {
           (c) =>
             (c as Element).type === 'element' && (c as Element).tagName === 'li'
         ) as Element[];
-        if (listItems.length === 0) return undefined;
+        if (listItems.length === 0) {
+          return undefined;
+        }
 
         const replacement: ElementContent[] = [];
         listItems.forEach((li, idx) => {

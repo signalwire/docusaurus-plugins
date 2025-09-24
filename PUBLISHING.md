@@ -96,16 +96,121 @@ cd packages/docusaurus-plugin-llms-txt
 npm publish
 ```
 
-### Option 3: Canary Releases
+### Option 3: Prerelease Versions
 
-For testing or pre-release versions:
+#### Snapshot Releases (Quick Testing)
+
+For testing or pre-release versions without Git commits:
+
+##### Canary Releases
 
 ```bash
 yarn canary
 ```
 
-This creates snapshot versions like `1.0.0-canary-20241204123456` and publishes them with the
-`canary` tag.
+Creates versions like `1.0.0-canary-20241204123456` with the `canary` npm tag.
+
+##### Alpha Releases
+
+```bash
+yarn alpha
+```
+
+Creates versions like `1.0.0-alpha-20241204123456` with the `alpha` npm tag.
+
+##### Beta Releases
+
+```bash
+yarn beta
+```
+
+Creates versions like `1.0.0-beta-20241204123456` with the `beta` npm tag.
+
+##### Dev Releases
+
+```bash
+yarn dev:release
+```
+
+Creates versions like `1.0.0-dev-20241204123456` with the `dev` npm tag.
+
+#### Full Prerelease Mode (Long-term Testing)
+
+For longer prerelease cycles with Git tracking:
+
+##### Enter Prerelease Mode
+
+```bash
+# Choose your tag: alpha, beta, rc, etc.
+yarn prerelease:enter alpha
+
+# Version packages (creates 1.0.0-alpha.0, 1.0.0-alpha.1, etc.)
+yarn prerelease:version
+
+# Commit changes
+git add .
+git commit -m "Enter alpha prerelease"
+
+# Publish with the specified tag
+yarn prerelease:publish
+```
+
+##### Continue Releasing Prereleases
+
+```bash
+# Add changesets as normal
+yarn changeset
+
+# Version packages (increments prerelease number)
+yarn prerelease:version
+
+# Commit and publish
+git add .
+git commit -m "Version alpha packages"
+yarn prerelease:publish
+```
+
+##### Exit Prerelease Mode
+
+```bash
+# Exit prerelease mode
+yarn prerelease:exit
+
+# Version packages (removes prerelease suffix)
+yarn prerelease:version
+
+# Commit and publish to latest
+git add .
+git commit -m "Exit prerelease and release stable version"
+yarn prerelease:publish
+```
+
+#### Installing Prerelease Versions
+
+Users can install specific prerelease versions:
+
+```bash
+# Install specific tag
+npm install @your-org/package@alpha
+npm install @your-org/package@beta
+npm install @your-org/package@dev
+npm install @your-org/package@canary
+
+# Install specific version
+npm install @your-org/package@1.0.0-alpha.0
+```
+
+#### Best Practices for Prereleases
+
+1. **Use branches**: Run prereleases from a separate branch, not main
+2. **Choose appropriate tags**:
+   - `alpha`: Early testing, potentially unstable
+   - `beta`: Feature complete, testing for bugs
+   - `canary`: Nightly/continuous releases
+   - `dev`: Development builds
+   - `rc`: Release candidate, nearly ready for production
+3. **Communicate clearly**: Document which prerelease channel users should use
+4. **Clean up**: Remember to exit prerelease mode when done
 
 ## Publishing Workflow
 
@@ -269,6 +374,8 @@ done from your local machine, not through CI/CD.
 
 ## Manual Commands Reference
 
+### Core Publishing Commands
+
 ```bash
 # Check what would be published
 yarn publish:check
@@ -288,14 +395,43 @@ yarn changeset:version
 # Publish to npm
 yarn changeset:publish
 
-# Canary release
-yarn canary
-
 # Check npm login status
 yarn npm:check
 
 # Login to npm
 yarn npm:login
+```
+
+### Snapshot Prerelease Commands
+
+```bash
+# Canary release (snapshot with timestamp)
+yarn canary
+
+# Alpha release (snapshot with timestamp)
+yarn alpha
+
+# Beta release (snapshot with timestamp)
+yarn beta
+
+# Dev release (snapshot with timestamp)
+yarn dev:release
+```
+
+### Full Prerelease Mode Commands
+
+```bash
+# Enter prerelease mode (specify tag: alpha, beta, rc, etc.)
+yarn prerelease:enter <tag>
+
+# Exit prerelease mode
+yarn prerelease:exit
+
+# Version packages in prerelease mode
+yarn prerelease:version
+
+# Publish prerelease packages
+yarn prerelease:publish
 ```
 
 ## Troubleshooting

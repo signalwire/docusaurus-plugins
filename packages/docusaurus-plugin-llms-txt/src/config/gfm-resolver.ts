@@ -1,58 +1,64 @@
 /**
- * GFM configuration resolution
- * Handles remark-gfm configuration setup and defaults
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 import { DEFAULT_GFM } from '../constants';
-import type { PluginOptions, ContentOptions } from '../types';
+
+import type { PluginOptions, ProcessingOptions } from '../types';
 
 /**
  * Resolve GFM configuration with defaults
  */
-export function resolveGfmConfig(content: ContentOptions): ContentOptions {
-  if (!content.remarkGfm) {
-    return content;
+export function resolveGfmConfig(
+  processing: ProcessingOptions
+): ProcessingOptions {
+  if (!processing.remarkGfm) {
+    return processing;
   }
 
-  if (content.remarkGfm === true) {
+  if (processing.remarkGfm === true) {
     return {
-      ...content,
+      ...processing,
       remarkGfm: DEFAULT_GFM,
     };
   }
 
-  if (typeof content.remarkGfm === 'object') {
+  if (typeof processing.remarkGfm === 'object') {
     return {
-      ...content,
+      ...processing,
       remarkGfm: {
         ...DEFAULT_GFM,
-        ...content.remarkGfm,
+        ...processing.remarkGfm,
       },
     };
   }
 
-  return content;
+  return processing;
 }
 
 /**
  * Apply GFM configuration to plugin options
  */
 export function applyGfmConfiguration(options: PluginOptions): PluginOptions {
-  const content = options.content ?? {};
+  const processing = options.processing ?? {};
 
   if (
     !(
-      content.remarkGfm === true ||
-      (typeof content.remarkGfm === 'object' && content.remarkGfm !== null)
+      processing.remarkGfm === true ||
+      (typeof processing.remarkGfm === 'object' &&
+        processing.remarkGfm !== null)
     )
   ) {
     return options;
   }
 
-  const resolvedContent = resolveGfmConfig(content);
+  const resolvedProcessing = resolveGfmConfig(processing);
 
   return {
     ...options,
-    content: resolvedContent,
+    processing: resolvedProcessing,
   };
 }

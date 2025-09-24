@@ -1,20 +1,24 @@
 /**
- * Simplified route processing coordination
- * Uses focused modules for validation, context management, and processing
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 import path from 'path';
 
-import type { RouteConfig } from '@docusaurus/types';
 import pMap from 'p-map';
 
 import { CacheManager } from '../cache/cache';
 import { validateCliContext } from '../cache/cache-strategy';
 import { hashFile } from '../cache/cache-validation';
-import { getEffectiveConfigForRoute, getContentConfig } from '../config';
+import { getEffectiveConfigForRoute, getGenerateConfig } from '../config';
 import { ERROR_MESSAGES } from '../constants';
 import { getErrorMessage } from '../errors';
+import { analyzeProcessingContext } from './processing-context';
+import { validateRoutesForProcessing } from './route-validator';
 import { processHtmlFileWithContext } from '../transformation/html-file-processor';
+
 import type {
   DocInfo,
   PluginOptions,
@@ -22,9 +26,7 @@ import type {
   CachedRouteInfo,
   CacheSchema,
 } from '../types';
-
-import { analyzeProcessingContext } from './processing-context';
-import { validateRoutesForProcessing } from './route-validator';
+import type { RouteConfig } from '@docusaurus/types';
 
 /**
  * Type guard to check if a route is a complete RouteConfig
@@ -70,17 +72,18 @@ async function processSingleRoute(
 
     if (doc) {
       const hash = await hashFile(fullHtmlPath);
-      const contentConfig = getContentConfig(config);
+      const generateConfig = getGenerateConfig(config);
 
       // Note: This is a temporary CacheManager just for the update method
-      // We don't have siteConfig here, but it's not needed for updateCachedRouteWithDoc
+      // We don't have siteConfig here, but it's not needed for
+      // updateCachedRouteWithDoc
       const cacheManager = new CacheManager('', '', config, logger, outDir);
 
       const updatedCachedRoute = cacheManager.updateCachedRouteWithDoc(
         cachedRoute,
         doc,
         hash,
-        contentConfig.enableMarkdownFiles
+        generateConfig.enableMarkdownFiles
       );
 
       logger.debug(`Processed route: ${route.path}`);
@@ -109,10 +112,10 @@ async function processRoutesStream(
   options: PluginOptions,
   logger: Logger,
   siteUrl: string,
-  useCache: boolean = true,
   existingCachedRoutes?: CachedRouteInfo[],
   outDir?: string,
-  siteConfig?: { baseUrl: string; trailingSlash?: boolean }
+  siteConfig?: { baseUrl: string; trailingSlash?: boolean },
+  useCache = true
 ): Promise<{ docs: DocInfo[]; cachedRoutes: CachedRouteInfo[] }> {
   // Setup cache and directories
   const cacheManager = new CacheManager(
@@ -153,7 +156,8 @@ async function processRoutesStream(
         return { originalIndex: index };
       }
 
-      // Only process routes that have a complete RouteConfig (not Partial<RouteConfig>)
+      // Only process routes that have a complete RouteConfig (not
+      // Partial<RouteConfig>)
       if (!isCompleteRouteConfig(route)) {
         logger.debug(`Skipping incomplete route: ${route.path}`);
         return { originalIndex: index };
@@ -181,7 +185,8 @@ async function processRoutesStream(
         }
       }
 
-      // Process the route - TypeScript now knows route is a complete RouteConfig
+      // Process the route - TypeScript now knows route is a complete
+      // RouteConfig
       const result = await processSingleRoute(
         route,
         cachedRoute,
@@ -229,10 +234,10 @@ export async function processDocuments(
   config: PluginOptions,
   logger: Logger,
   siteUrl: string,
-  useCache: boolean = true,
   outDir?: string,
   generatedFilesDir?: string,
-  siteConfig?: { baseUrl: string; trailingSlash?: boolean }
+  siteConfig?: { baseUrl: string; trailingSlash?: boolean },
+  useCache = true
 ): Promise<{ docs: DocInfo[]; cachedRoutes?: CachedRouteInfo[] }> {
   logger.debug(`Processing: useCache=${useCache}, routes=${routes.length}`);
 
@@ -257,10 +262,10 @@ export async function processDocuments(
     config,
     logger,
     siteUrl,
-    useCache,
     context.mode === 'cli' || useCache ? [...cache.routes] : undefined,
     outDir,
-    siteConfig
+    siteConfig,
+    useCache
   );
 
   logger.debug(`Processed ${result.docs.length} documents`);

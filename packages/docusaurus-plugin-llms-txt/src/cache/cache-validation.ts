@@ -1,6 +1,8 @@
 /**
- * Cache validation utilities
- * Focused module for validating cache entries and configurations
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 import path from 'path';
@@ -8,7 +10,8 @@ import path from 'path';
 import { md5Hash } from '@docusaurus/utils';
 import fs from 'fs-extra';
 
-import { getContentConfig } from '../config';
+import { getGenerateConfig } from '../config';
+
 import type {
   CachedRouteInfo,
   PluginOptions,
@@ -90,9 +93,9 @@ export async function markdownFileStateMatches(
   currentConfig: PluginOptions,
   directories: DirectoryConfig
 ): Promise<ValidationResult> {
-  const contentConfig = getContentConfig(currentConfig);
+  const generateConfig = getGenerateConfig(currentConfig);
 
-  if (!contentConfig.enableMarkdownFiles) {
+  if (!generateConfig.enableMarkdownFiles) {
     // If markdown files are disabled, we don't care about their state
     return { isValid: true };
   }
@@ -162,33 +165,37 @@ export async function hashFile(filePath: string): Promise<string> {
 }
 
 /**
- * Calculate hash of options that affect individual file generation and require cache invalidation
+ * Calculate hash of options that affect individual file generation and require
+ * cache invalidation
  * Excludes filtering options since they are applied at runtime
  */
 export function calcConfigHash(options: Partial<PluginOptions>): string {
-  const contentOptions = options.content ?? {};
+  // Collect all options that affect output generation (not just filtering)
+  const hashableOptions = {
+    // Output generation options (affect file creation)
+    generate: options.generate,
 
-  // Only include options that affect file content, not filtering
-  // Create a copy of contentOptions excluding filtering-related fields
-  const fileGenerationOptions = Object.fromEntries(
-    Object.entries(contentOptions).filter(
-      ([key]) =>
-        ![
-          'includeBlog',
-          'includePages',
-          'includeDocs',
-          'includeVersionedDocs',
-          'includeGeneratedIndex',
-          'excludeRoutes',
-        ].includes(key)
-    )
-  );
+    // Structure options (affect content organization and headers)
+    structure: options.structure,
 
+    // Processing options (affect content transformation)
+    processing: options.processing,
+
+    // UI options (affect output features)
+    ui: options.ui,
+
+    // Top-level runtime options that affect generation
+    onSectionError: options.onSectionError,
+
+    // Note: Filtering options (include.*) are excluded since they only affect
+    // which routes are processed, not how individual files are generated
+  };
+
+  // Remove undefined values for stable hashing
   const stableOptions = Object.fromEntries(
-    Object.entries(fileGenerationOptions).filter(
-      ([, value]) => value !== undefined
-    )
+    Object.entries(hashableOptions).filter(([, value]) => value !== undefined)
   );
+
   const sortedKeys = Object.keys(stableOptions).sort();
   const stable = JSON.stringify(stableOptions, sortedKeys);
   return md5Hash(stable);

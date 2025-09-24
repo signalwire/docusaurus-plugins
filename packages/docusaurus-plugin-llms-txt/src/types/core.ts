@@ -1,20 +1,15 @@
 /**
- * Core types organized by usage rather than domain
- * Eliminates mutable/immutable duplication using TypeScript utility types
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
+import type { ContentType } from '../constants';
+import type { PluginOptions, Logger, PluginInput } from './public';
 import type { Root } from 'hast';
 import type { Options as RemarkGfmOptions } from 'remark-gfm';
 import type { Options as RemarkStringifyOptions } from 'remark-stringify';
-
-import type { ContentType } from '../constants';
-
-import type {
-  ContentOptions,
-  PluginOptions,
-  Logger,
-  PluginInput,
-} from './public';
 
 // ============================================================================
 // CACHE AND FILE SYSTEM TYPES
@@ -77,6 +72,7 @@ export interface DocInfo {
  * Tree node structure for document hierarchy
  */
 export interface TreeNode {
+  readonly id: string;
   readonly name: string;
   readonly relPath: string;
   readonly docs: readonly DocInfo[];
@@ -92,10 +88,10 @@ export interface TreeNode {
 export interface EffectiveConfig extends PluginOptions {
   /** The matched path */
   readonly path: string;
-  /** Resolved content configuration with all defaults applied */
-  readonly content: Required<ContentOptions>;
-  /** Category name override from route rule */
-  readonly categoryName?: string;
+  /** Section assignment for this route */
+  readonly section: string;
+  /** Content selectors override from route rule */
+  readonly contentSelectors?: readonly string[];
 }
 
 // ============================================================================

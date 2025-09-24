@@ -1,12 +1,19 @@
+/**
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import baseLogger from '@docusaurus/logger';
-import type { ReportingSeverity } from '@docusaurus/types';
 
 import type { Logger } from '../types';
+import type { ReportingSeverity } from '@docusaurus/types';
 
 /**
  * Logger implementation with separated concerns:
  * - onRouteError: Controls how route processing failures are handled
- * - logLevel: Controls operational logging verbosity (0=quiet, 1=normal, 2=verbose, 3=debug)
+ * - logLevel: Controls operational logging verbosity (0=quiet, 1=normal,
+ *   2=verbose, 3=debug)
  */
 class PluginLogger implements Logger {
   private name: string;

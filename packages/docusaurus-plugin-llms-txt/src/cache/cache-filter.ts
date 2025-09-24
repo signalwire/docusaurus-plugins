@@ -1,11 +1,14 @@
 /**
- * Cache-based route filtering
- * Unified filtering logic for both build and CLI contexts
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
-import { getContentConfig } from '../config';
+import { getIncludeConfig } from '../config';
 import { CONTENT_TYPES } from '../constants';
 import { createExclusionMatcher } from '../discovery/exclusion-matcher';
+
 import type { CachedRouteInfo, PluginOptions, Logger } from '../types';
 
 /**
@@ -17,9 +20,9 @@ export function filterCachedRoutesForConfig(
   config: PluginOptions,
   logger?: Logger
 ): CachedRouteInfo[] {
-  const contentConfig = getContentConfig(config);
+  const includeConfig = getIncludeConfig(config);
   const isExcludedByPattern = createExclusionMatcher(
-    contentConfig.excludeRoutes
+    includeConfig.excludeRoutes
   );
   let excludedByType = 0;
   let excludedByVersion = 0;
@@ -31,18 +34,24 @@ export function filterCachedRoutesForConfig(
     let shouldIncludeType = false;
     switch (route.contentType) {
       case CONTENT_TYPES.BLOG:
-        shouldIncludeType = contentConfig.includeBlog;
-        if (!shouldIncludeType) excludedByType++;
+        shouldIncludeType = includeConfig.includeBlog;
+        if (!shouldIncludeType) {
+          excludedByType += 1;
+        }
         break;
       case CONTENT_TYPES.PAGES:
-        shouldIncludeType = contentConfig.includePages;
-        if (!shouldIncludeType) excludedByType++;
+        shouldIncludeType = includeConfig.includePages;
+        if (!shouldIncludeType) {
+          excludedByType += 1;
+        }
         break;
       case CONTENT_TYPES.DOCS:
       case CONTENT_TYPES.UNKNOWN:
       default:
-        shouldIncludeType = contentConfig.includeDocs;
-        if (!shouldIncludeType) excludedByType++;
+        shouldIncludeType = includeConfig.includeDocs;
+        if (!shouldIncludeType) {
+          excludedByType += 1;
+        }
         break;
     }
 
@@ -51,21 +60,22 @@ export function filterCachedRoutesForConfig(
     }
 
     // Apply versioned docs filter
-    // Only filter out non-latest versions (isLast=false) when includeVersionedDocs=false
-    if (route.isVersioned && !contentConfig.includeVersionedDocs) {
-      excludedByVersion++;
+    // Only filter out non-latest versions (isLast=false) when
+    // includeVersionedDocs=false
+    if (route.isVersioned && !includeConfig.includeVersionedDocs) {
+      excludedByVersion += 1;
       return false;
     }
 
     // Apply generated index filter
-    if (route.isGeneratedIndex && !contentConfig.includeGeneratedIndex) {
-      excludedByGenerated++;
+    if (route.isGeneratedIndex && !includeConfig.includeGeneratedIndex) {
+      excludedByGenerated += 1;
       return false;
     }
 
     // Apply route exclusion patterns
     if (isExcludedByPattern(route.path)) {
-      excludedByPattern++;
+      excludedByPattern += 1;
       return false;
     }
 
@@ -92,7 +102,8 @@ export function filterCachedRoutesForConfig(
 }
 
 /**
- * Check if cache-based filtering would produce different results than current cache
+ * Check if cache-based filtering would produce different results than
+ * current cache
  * This helps determine if the CLI needs to warn about config changes
  */
 export function wouldFilteringChangeCachedRoutes(

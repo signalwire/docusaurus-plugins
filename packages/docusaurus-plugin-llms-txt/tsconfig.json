@@ -1,14 +1,18 @@
-// tsconfig.json  (plugin root)
-
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "./src",
+    "baseUrl": ".",
+    "rootDir": "./",
     "outDir": "./lib",
     "composite": true,
     "incremental": true,
-    "tsBuildInfoFile": "./lib/.tsbuildinfo"
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "jsx": "react-jsx",
+    "noEmit": false,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "types": ["@docusaurus/module-type-aliases"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["lib", "node_modules", "**/*.test.ts", "**/*.test.tsx"]
+  "include": ["src/**/*", "package.json"],
+  "exclude": ["lib", "node_modules", "**/*.test.ts", "**/*.test.tsx", "src/theme/", "**/__tests__/**"]
 }

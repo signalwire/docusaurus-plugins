@@ -1,6 +1,8 @@
 /**
- * Constants used throughout the plugin
- * All magic numbers, strings, and repeated values should be defined here
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 // ============================================================================
@@ -8,6 +10,11 @@
 // ============================================================================
 
 /** Plugin name used throughout the system */
+// Plugin configuration defaults
+import stringWidth from 'string-width';
+
+import type { Options as GfmOptions } from 'remark-gfm';
+
 export const PLUGIN_NAME = 'docusaurus-plugin-llms-txt' as const;
 
 // ============================================================================
@@ -50,8 +57,6 @@ export type ContentType = (typeof CONTENT_TYPES)[keyof typeof CONTENT_TYPES];
 export const TREE_ROOT_NAME = 'root' as const;
 /** Index document identifier */
 export const INDEX_IDENTIFIER = 'index' as const;
-/** Landing page description suffix */
-export const LANDING_PAGE_SUFFIX = ': landing page' as const;
 
 // ============================================================================
 // CACHE CONSTANTS
@@ -100,17 +105,10 @@ export const INDEX_MD = '/index.md' as const;
 export const VALIDATION_MESSAGES = {
   OBJECT_REQUIRED:
     'Plugin options must be an object. Example: { outputDir: "llms", includeRoutes: ["*"] }',
-  PARENT_DIR_FORBIDDEN:
-    'cannot contain parent directory references (..) for security reasons. Use paths relative to your project root.',
-  RELATIVE_PATH_REQUIRED:
-    'must be relative to project root. Remove leading "/" or use paths like "docs/" instead of "/docs/"',
   INVALID_CONFIG:
     'Invalid plugin configuration. Check your docusaurus.config.js plugin options against the documentation.',
   UNKNOWN_ERROR:
     'Unknown error during configuration validation. Please check your plugin options and try again. Consider enabling debug logging for more details.',
-  ROUTE_RULE_MULTIPLE_CATEGORIES: 'Multiple categories defined for route',
-  ROUTE_RULE_MULTIPLE_ORDERS: 'Multiple includeOrders defined for route',
-  USING_LAST_DEFINITION: 'Using last definition.',
 } as const;
 
 /** Cache error messages */
@@ -164,11 +162,10 @@ export const MD_EXTENSION = '.md' as const;
 
 // File extension regex pattern
 /** @internal */
-export const HTML_OR_MD_EXTENSION_REGEX = /\.(html|md)$/;
+export const HTML_OR_MD_EXTENSION_REGEX = /\.(?:html|md)$/;
 
 // Default configuration values - these are public for user reference
 export const DEFAULT_SITE_TITLE = 'Documentation' as const;
-export const DEFAULT_DEPTH = 1 as const;
 
 // Route patterns
 /** @internal */
@@ -191,10 +188,6 @@ export const DEFAULT_CONTENT_SELECTORS = [
 export const LLMS_TXT_FILENAME = 'llms.txt' as const;
 /** @internal */
 export const LLMS_FULL_TXT_FILENAME = 'llms-full.txt' as const;
-
-// Plugin configuration defaults
-import type { Options as GfmOptions } from 'remark-gfm';
-import stringWidth from 'string-width';
 
 /**
  * Default options for remark-gfm plugin

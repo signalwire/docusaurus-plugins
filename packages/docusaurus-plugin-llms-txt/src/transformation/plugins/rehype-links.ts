@@ -1,11 +1,18 @@
+/**
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 import { parseLocalURLPath, createMatcher } from '@docusaurus/utils';
-import type { Root, Element } from 'hast';
-import type { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
 
 import { HTML_OR_MD_EXTENSION_REGEX } from '../../constants';
-import type { RehypeLinksOptions, CachedRouteInfo } from '../../types';
 import { formatUrl, ensureLeadingSlash } from '../../utils/url';
+
+import type { RehypeLinksOptions, CachedRouteInfo } from '../../types';
+import type { Root, Element } from 'hast';
+import type { Plugin } from 'unified';
 
 /**
  * Check if a URL is an internal relative link using Docusaurus utilities
@@ -38,7 +45,7 @@ function resolvePathname(
   }
 
   // Try with trailing slash
-  const withTrailingSlash = pathname.endsWith('/') ? pathname : pathname + '/';
+  const withTrailingSlash = pathname.endsWith('/') ? pathname : `${pathname}/`;
   if (routeLookup.has(withTrailingSlash)) {
     return withTrailingSlash;
   }
@@ -53,8 +60,8 @@ function resolvePathname(
 
   // Try with index suffix
   const withIndex = pathname.endsWith('/')
-    ? pathname + 'index'
-    : pathname + '/index';
+    ? `${pathname}index`
+    : `${pathname}/index`;
   if (routeLookup.has(withIndex)) {
     return withIndex;
   }
@@ -64,7 +71,8 @@ function resolvePathname(
 }
 
 /**
- * Check if a URL should be excluded from transformation based on all configuration options
+ * Check if a URL should be excluded from transformation based on all
+ * configuration options
  */
 function isExcludedLink(href: string, options: RehypeLinksOptions): boolean {
   // Parse the URL to get the pathname
@@ -119,8 +127,10 @@ function getExcludedLinkOptions(
 ): RehypeLinksOptions | null {
   const { relativePaths = true } = options;
 
-  // For excluded links, still apply base URL transformation if using absolute paths
-  // but don't add .md extension since we're not generating files for excluded paths
+  // For excluded links, still apply base URL transformation if using
+  // absolute paths
+  // but don't add .md extension since we're not generating files for
+  // excluded paths
   if (!relativePaths) {
     return {
       ...options,
@@ -161,7 +171,8 @@ function transformInternalLink(
   // Ensure it starts with / for absolute path from site root
   pathname = ensureLeadingSlash(pathname);
 
-  // Remove any existing file extensions and trailing slashes for consistent processing
+  // Remove any existing file extensions and trailing slashes for consistent
+  // processing
   pathname = pathname.replace(HTML_OR_MD_EXTENSION_REGEX, '');
 
   // Remove trailing slashes (except for root path)
@@ -235,21 +246,20 @@ function processAnchorElement(
  * - If relativePaths=false → excluded links get baseUrl but NO .md extension
  * - If relativePaths=true → excluded links are left unchanged
  */
-const rehypeLinks: Plugin<[RehypeLinksOptions], Root, Root> = function (
-  options: RehypeLinksOptions = {}
-) {
-  return function transformer(tree: Root): Root {
-    // Check if we should skip transformation entirely
-    if (shouldSkipLinkTransformation(options)) {
+const rehypeLinks: Plugin<[RehypeLinksOptions], Root, Root> =
+  function rehypeLinksPlugin(options: RehypeLinksOptions = {}) {
+    return function transformer(tree: Root): Root {
+      // Check if we should skip transformation entirely
+      if (shouldSkipLinkTransformation(options)) {
+        return tree;
+      }
+
+      visit(tree, 'element', (node: Element) => {
+        processAnchorElement(node, options);
+      });
+
       return tree;
-    }
-
-    visit(tree, 'element', (node: Element) => {
-      processAnchorElement(node, options);
-    });
-
-    return tree;
+    };
   };
-};
 
 export default rehypeLinks;

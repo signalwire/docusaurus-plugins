@@ -1,21 +1,29 @@
 /**
- * HTML file processing
- * Process individual HTML files to extract content and convert to markdown
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 import path from 'path';
 
 import fs from 'fs-extra';
 
-import { getContentConfig } from '../config';
+import {
+  getProcessingConfig,
+  getGenerateConfig,
+  getIncludeConfig,
+} from '../config';
 import { ERROR_MESSAGES } from '../constants';
 import {
   getErrorMessage,
   getErrorCause,
   createProcessingError,
 } from '../errors';
+import { extractHtmlMetadata, convertHtmlToMarkdown } from './html-parser';
 import { PathManager, htmlPathToMdPath } from '../filesystem/paths';
 import { saveMarkdownFile } from '../generation/markdown-writer';
+
 import type {
   DocInfo,
   PluginOptions,
@@ -23,8 +31,6 @@ import type {
   MarkdownConversionOptions,
   CachedRouteInfo,
 } from '../types';
-
-import { extractHtmlMetadata, convertHtmlToMarkdown } from './html-parser';
 
 /**
  * Process a single HTML file → Markdown + metadata
@@ -48,33 +54,38 @@ export async function processHtmlFileWithContext(
 
   try {
     const html = await fs.readFile(fullHtmlPath, 'utf8');
-    const contentConfig = getContentConfig(config);
-    const contentSelectors = contentConfig.contentSelectors;
+    const processingConfig = getProcessingConfig(config);
+    const generateConfig = getGenerateConfig(config);
+    const contentSelectors = processingConfig.contentSelectors;
 
     let title: string;
     let description: string;
     let markdown = '';
 
-    // Process content if markdown files are enabled OR if llms-full.txt is enabled
-    if (contentConfig.enableMarkdownFiles || contentConfig.enableLlmsFullTxt) {
+    // Process content if markdown files are enabled OR if llms-full.txt is
+    // enabled
+    if (
+      generateConfig.enableMarkdownFiles ||
+      generateConfig.enableLlmsFullTxt
+    ) {
       // Full processing for individual markdown files
       const conversionOptions: MarkdownConversionOptions = {
-        remarkStringify: contentConfig.remarkStringify,
-        remarkGfm: contentConfig.remarkGfm,
-        rehypeProcessTables: contentConfig.rehypeProcessTables,
+        remarkStringify: processingConfig.remarkStringify,
+        remarkGfm: processingConfig.remarkGfm,
+        rehypeProcessTables: processingConfig.rehypeProcessTables,
         rehypeProcessLinks: true,
         baseUrl: siteUrl,
-        relativePaths: contentConfig.relativePaths,
-        enableMarkdownFiles: contentConfig.enableMarkdownFiles,
-        excludeRoutes: contentConfig.excludeRoutes,
+        relativePaths: generateConfig.relativePaths,
+        enableMarkdownFiles: generateConfig.enableMarkdownFiles,
+        excludeRoutes: getIncludeConfig(config).excludeRoutes,
         fullConfig: config,
-        logger: logger,
-        routeLookup: routeLookup,
+        logger,
+        routeLookup,
         // Pass simplified plugin arrays to the conversion pipeline
-        beforeDefaultRehypePlugins: contentConfig.beforeDefaultRehypePlugins,
-        rehypePlugins: contentConfig.rehypePlugins,
-        beforeDefaultRemarkPlugins: contentConfig.beforeDefaultRemarkPlugins,
-        remarkPlugins: contentConfig.remarkPlugins,
+        beforeDefaultRehypePlugins: processingConfig.beforeDefaultRehypePlugins,
+        rehypePlugins: processingConfig.rehypePlugins,
+        beforeDefaultRemarkPlugins: processingConfig.beforeDefaultRemarkPlugins,
+        remarkPlugins: processingConfig.remarkPlugins,
       };
 
       const result = convertHtmlToMarkdown(
@@ -86,7 +97,7 @@ export async function processHtmlFileWithContext(
       description = result.description;
       markdown = result.content;
 
-      if (!markdown)
+      if (!markdown) {
         throw createProcessingError(
           `HTML to Markdown conversion resulted in empty content for "${relHtmlPath}". This usually means your contentSelectors didn't match any elements in the HTML. Try using different CSS selectors or check if the HTML file contains the expected content structure.`,
           {
@@ -94,9 +105,10 @@ export async function processHtmlFileWithContext(
             contentSelectors,
           }
         );
+      }
 
       // Save markdown files if enableMarkdownFiles is true
-      if (contentConfig.enableMarkdownFiles) {
+      if (generateConfig.enableMarkdownFiles) {
         logger.debug(`Saving markdown: ${routePath}`);
         const mdPath = htmlPathToMdPath(relHtmlPath, mdOutDir);
         await saveMarkdownFile(mdPath, markdown);
