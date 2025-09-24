@@ -86,6 +86,7 @@
   --llms-copy-menuitem-transition: background-color 0.15s ease;
 
   /* Float positioning above content */
+  position: relative;
   float: right;
   clear: both;
   margin-bottom: var(--llms-copy-button-margin-bottom);
