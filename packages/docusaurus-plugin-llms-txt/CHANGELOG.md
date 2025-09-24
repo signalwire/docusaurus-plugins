@@ -1,7 +1,9 @@
 # @signalwire/docusaurus-plugin-llms-txt
 
-## 0.0.0-dev-20250922221450
+## 2.0.0-alpha.0
 
 ### Major Changes
 
-- test dev release
+- Alpha Release
+
+

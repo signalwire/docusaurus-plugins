@@ -1,6 +1,6 @@
 {
   "name": "@signalwire/docusaurus-theme-llms-txt",
-  "version": "0.0.0-dev-20250922221450",
+  "version": "1.0.0-alpha.0",
   "description": "Docusaurus theme components for llms-txt plugin including CopyPageButton",
   "main": "./lib/index.js",
   "types": "src/theme-llms-txt.d.ts",
