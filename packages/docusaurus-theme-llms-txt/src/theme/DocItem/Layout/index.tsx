@@ -68,7 +68,7 @@ export default function DocItemLayout({ children }: Props): ReactNode {
             </div>
             {isMobile && (
               <div className={styles.docItemMobileCopyButton}>
-                <CopyPageContent isMobile={true} />
+                <CopyPageContent isMobile />
               </div>
             )}
             <DocVersionBadge />

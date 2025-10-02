@@ -11,15 +11,10 @@ interface CopyContentData {
   [routePath: string]: boolean;
 }
 
-interface CacheEntry {
-  url: string;
-  data: CopyContentData | null;
-  promise?: Promise<CopyContentData>;
-}
-
-// Global module-level cache shared across all component instances
-// This prevents multiple instances from fetching the same data simultaneously
-const globalCache = new Map<string, CacheEntry>();
+// Simple in-memory cache: URL → data
+// Prevents re-fetching when component remounts
+// (e.g., on window resize mobile ↔ desktop)
+const dataCache = new Map<string, CopyContentData>();
 
 export default function useCopyContentData(dataUrl: string | undefined): {
   copyContentData: CopyContentData | null;
@@ -35,64 +30,36 @@ export default function useCopyContentData(dataUrl: string | undefined): {
       return undefined;
     }
 
-    const cached = globalCache.get(dataUrl);
-
-    // If we already have data in cache, use it immediately
-    if (cached?.data) {
-      setData(cached.data);
+    // Check cache first - instant return if available
+    const cached = dataCache.get(dataUrl);
+    if (cached) {
+      setData(cached);
       setIsLoading(false);
       return undefined;
     }
 
-    // If there's a pending fetch, wait for it
-    if (cached?.promise) {
-      setIsLoading(true);
-      void cached.promise.then((fetchedData) => {
-        setData(fetchedData);
-        setIsLoading(false);
-        return undefined;
-      });
-      return undefined;
-    }
-
-    // Need to start a new fetch
+    // Not in cache, fetch from network
     setIsLoading(true);
 
-    const fetchData = async (): Promise<CopyContentData> => {
-      const response = await fetch(dataUrl);
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch copy content data: ${response.status}`
-        );
-      }
-      return (await response.json()) as CopyContentData;
-    };
-
-    const promise = fetchData();
-    globalCache.set(dataUrl, {
-      url: dataUrl,
-      data: null,
-      promise,
-    });
-
-    void promise
+    fetch(dataUrl)
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch copy content data: ${response.status}`
+          );
+        }
+        return (await response.json()) as CopyContentData;
+      })
       .then((fetchedData) => {
-        // Update global cache
-        globalCache.set(dataUrl, {
-          url: dataUrl,
-          data: fetchedData,
-        });
-        // Update local state
+        // Store in cache for future component mounts
+        dataCache.set(dataUrl, fetchedData);
         setData(fetchedData);
         setIsLoading(false);
-        return undefined;
       })
       .catch((error) => {
         console.error('Failed to load copy content data:', error);
-        globalCache.delete(dataUrl);
         setData(null);
         setIsLoading(false);
-        return undefined;
       });
 
     return undefined;

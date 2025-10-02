@@ -30,7 +30,6 @@ import styles from './styles.module.css';
  * Main Copy Page Button component
  */
 export default function CopyPageContent({
-  className,
   isMobile = false,
 }: CopyPageContentProps): React.JSX.Element | null {
   // Get current pathname from Docusaurus router
@@ -82,11 +81,7 @@ export default function CopyPageContent({
   // Render the button with dropdown menu
   return (
     <div
-      className={clsx(
-        styles.copyButton,
-        isMobile && styles.copyButtonMobile,
-        className
-      )}
+      className={clsx(styles.copyButton, isMobile && styles.copyButtonMobile)}
       ref={dropdownRef}
       data-copy-page-button
     >
