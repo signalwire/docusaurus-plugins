@@ -8,23 +8,26 @@ structure.
 | Package                                                                           | Version                                                                     | Description                                                               |
 | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | [`@signalwire/docusaurus-plugin-llms-txt`](./packages/docusaurus-plugin-llms-txt) | ![npm](https://img.shields.io/npm/v/@signalwire/docusaurus-plugin-llms-txt) | Generate Markdown versions of Docusaurus pages and an llms.txt index file |
+| [`@signalwire/docusaurus-theme-llms-txt`](./packages/docusaurus-theme-llms-txt)   | ![npm](https://img.shields.io/npm/v/@signalwire/docusaurus-theme-llms-txt)  | Theme components for llms.txt plugin with copy-to-clipboard functionality |
 
 ## 🚀 Quick Start
 
 ### Installation
 
 ```bash
-npm install @signalwire/docusaurus-plugin-llms-txt
+npm install @signalwire/docusaurus-plugin-llms-txt @signalwire/docusaurus-theme-llms-txt
 # or
-yarn add @signalwire/docusaurus-plugin-llms-txt
+yarn add @signalwire/docusaurus-plugin-llms-txt @signalwire/docusaurus-theme-llms-txt
 ```
 
 ### Usage
 
-Add to your `docusaurus.config.js`:
+Add to your `docusaurus.config.ts`:
 
-```javascript
-module.exports = {
+```typescript
+import type { Config } from '@docusaurus/types';
+
+const config: Config = {
   plugins: [
     [
       '@signalwire/docusaurus-plugin-llms-txt',
@@ -33,7 +36,10 @@ module.exports = {
       },
     ],
   ],
+  themes: ['@signalwire/docusaurus-theme-llms-txt'],
 };
+
+export default config;
 ```
 
 ## 🏗 Development
@@ -121,7 +127,8 @@ For detailed publishing instructions, see [PUBLISHING.md](./PUBLISHING.md).
 ```
 docusaurus-plugins/
 ├── packages/                    # Published packages
-│   └── docusaurus-plugin-llms-txt/
+│   ├── docusaurus-plugin-llms-txt/
+│   └── docusaurus-theme-llms-txt/
 ├── website/                     # Demo/documentation site
 ├── .changeset/                  # Changeset configuration
 ├── lerna.json                   # Lerna configuration
@@ -194,3 +201,24 @@ consumption.
 - 🎯 Content filtering
 
 [View Package →](./packages/docusaurus-plugin-llms-txt)
+
+### [@signalwire/docusaurus-theme-llms-txt](./packages/docusaurus-theme-llms-txt)
+
+Theme package providing UI components for the llms.txt plugin, including a copy-to-clipboard button
+for page content.
+
+**Key Features:**
+
+- 📋 Copy page content as Markdown
+- 🤖 Format for ChatGPT and Claude
+- 🎯 Smart detection of page title
+- 📱 Responsive mobile/desktop layouts
+- 🔧 Fully swizzlable components
+
+**Architecture:**
+
+- Uses DOM-based detection to identify page titles (H1 in `<header>` tags)
+- Global data fetching with shared cache for performance
+- Integrates seamlessly with Docusaurus theme system
+
+[View Package →](./packages/docusaurus-theme-llms-txt)

@@ -15,6 +15,14 @@ import type { SwizzleConfig } from '@docusaurus/types';
 export default function getSwizzleConfig(): SwizzleConfig {
   return {
     components: {
+      'DocItem/Layout': {
+        actions: {
+          eject: 'safe',
+          wrap: 'safe',
+        },
+        description:
+          'Doc item layout wrapper that positions the CopyPageContent button. Safe to customize for different button placements or layout modifications.',
+      },
       CopyPageContent: {
         actions: {
           eject: 'unsafe',
@@ -86,14 +94,6 @@ export default function getSwizzleConfig(): SwizzleConfig {
         },
         description:
           'Markdown file icon component. Safe to replace with custom icon.',
-      },
-      'DocItem/Content': {
-        actions: {
-          eject: 'safe',
-          wrap: 'safe',
-        },
-        description:
-          'Documentation content wrapper that integrates the copy page button with Docusaurus content. Safe to customize for layout modifications and additional content integration.',
       },
     },
   };

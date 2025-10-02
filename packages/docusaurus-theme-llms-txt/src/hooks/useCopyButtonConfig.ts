@@ -36,10 +36,6 @@ const DEFAULT_CONFIG: ResolvedCopyPageContentOptions = {
 export default function useCopyButtonConfig(
   pluginConfig: boolean | CopyPageContentOptions | undefined
 ): ResolvedCopyPageContentOptions {
-  if (pluginConfig === false) {
-    throw new Error('Component should not render when disabled');
-  }
-
   // Memoize configuration merging to prevent unnecessary recalculations
   return useMemo(() => {
     let baseConfig = { ...DEFAULT_CONFIG };

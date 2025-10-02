@@ -43,7 +43,7 @@ export default function CopyButton({
         className={styles.mainButton}
         onClick={onMainAction}
         aria-label={
-          copyStatus === 'success' ? 'Copied!' : 'Copy page as Markdown'
+          copyStatus === 'success' ? 'Copied' : 'Copy page as Markdown'
         }
       >
         {copyStatus === 'success' ? (
@@ -52,7 +52,7 @@ export default function CopyButton({
           <MdFileCopy className={styles.icon} />
         )}
         <span>
-          {copyStatus === 'success' ? 'Copied!' : finalConfig.buttonLabel}
+          {copyStatus === 'success' ? 'Copied' : finalConfig.buttonLabel}
         </span>
       </button>
       <button

@@ -22,4 +22,5 @@ export interface PluginGlobalData {
 // Component props
 export interface CopyPageContentProps {
   className?: string;
+  isMobile?: boolean;
 }
