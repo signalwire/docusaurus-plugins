@@ -1,5 +1,9 @@
 # @signalwire/docusaurus-plugin-llms-txt
 
+> **📣 Version 2.0 Documentation** This documentation is for version 2.0, which includes breaking
+> API changes. If you're using version 1.x, please refer to the
+> [v1.2.2 documentation on npm](https://www.npmjs.com/package/@signalwire/docusaurus-plugin-llms-txt/v/1.2.2).
+
 A Docusaurus plugin that transforms your documentation into AI-friendly formats. It automatically
 converts your site's rendered HTML pages into clean markdown files and generates an `llms.txt` index
 file, making your documentation easily consumable by Large Language Models while preserving the

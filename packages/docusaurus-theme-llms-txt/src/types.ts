@@ -7,11 +7,6 @@
 import type { CopyPageContentOptions } from './types/copyButton';
 import type { SiteConfig } from './utils/copyButton';
 
-// JSON data structure
-export interface CopyContentData {
-  [routePath: string]: boolean;
-}
-
 // Plugin global data structure
 export interface PluginGlobalData {
   copyContentConfig?: boolean | CopyPageContentOptions;
@@ -21,5 +16,5 @@ export interface PluginGlobalData {
 
 // Component props
 export interface CopyPageContentProps {
-  className?: string;
+  isMobile?: boolean;
 }

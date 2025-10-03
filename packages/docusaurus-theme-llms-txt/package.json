@@ -1,6 +1,6 @@
 {
   "name": "@signalwire/docusaurus-theme-llms-txt",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.3",
   "description": "Docusaurus theme components for llms-txt plugin including CopyPageButton",
   "main": "./lib/index.js",
   "types": "src/theme-llms-txt.d.ts",
@@ -12,6 +12,7 @@
   },
   "files": [
     "lib",
+    "src/theme",
     "src/theme-llms-txt.d.ts",
     "README.md",
     "CHANGELOG.md"
@@ -46,10 +47,13 @@
     "@docusaurus/core": "^3.0.0",
     "@docusaurus/theme-common": "^3.0.0",
     "clsx": "^2.0.0",
-    "react-icons": "5.5.0"
+    "react-icons": "^5.5.0"
   },
   "devDependencies": {
+    "@docusaurus/module-type-aliases": "^3.0.0",
+    "@docusaurus/plugin-content-docs": "^3.0.0",
     "@docusaurus/types": "^3.0.0",
+    "@signalwire/docusaurus-plugin-llms-txt": "2.0.0-alpha.2",
     "@types/node": "^22.15.19",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",

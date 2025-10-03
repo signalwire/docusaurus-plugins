@@ -85,12 +85,17 @@
   --llms-copy-arrow-transition: transform 0.2s ease;
   --llms-copy-menuitem-transition: background-color 0.15s ease;
 
-  /* Float positioning above content */
+  /* Positioned in flex container with breadcrumbs, stays right-aligned */
   position: relative;
-  float: right;
-  clear: both;
-  margin-bottom: var(--llms-copy-button-margin-bottom);
+  flex-shrink: 0;
+  margin-left: auto; /* Ensures button is always pushed to the right */
   z-index: var(--llms-copy-z-index);
+}
+
+/* Mobile-specific styling - full width for easier tapping */
+.copyButtonMobile {
+  display: block;
+  width: 100%;
 }
 
 /* Dark theme support */

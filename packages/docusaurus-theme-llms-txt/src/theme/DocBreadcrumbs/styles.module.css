@@ -1,0 +1,26 @@
+/**
+ * Copyright (c) SignalWire, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * Breadcrumbs wrapper styles
+ * Creates a flex container to position breadcrumbs and copy button side-by-side
+ */
+.breadcrumbsWrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: var(--ifm-leading);
+}
+
+/**
+ * Mobile copy button container
+ * Displays below breadcrumbs on mobile devices
+ */
+.mobileCopyButton {
+  margin-bottom: var(--ifm-leading);
+}

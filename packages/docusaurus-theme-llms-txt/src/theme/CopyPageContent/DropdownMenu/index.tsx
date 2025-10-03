@@ -23,12 +23,14 @@ interface DropdownMenuProps {
   isOpen: boolean;
   finalConfig: ResolvedCopyPageContentOptions;
   onAction: (action: string) => void;
+  isMobile?: boolean;
 }
 
 export default function DropdownMenu({
   isOpen,
   finalConfig,
   onAction,
+  isMobile = false,
 }: DropdownMenuProps): React.JSX.Element {
   // Memoize action handlers to prevent unnecessary re-renders of MenuItem
   const handleCopyRaw = useCallback(() => onAction('copyRaw'), [onAction]);
@@ -36,7 +38,13 @@ export default function DropdownMenu({
   const handleClaude = useCallback(() => onAction('openClaude'), [onAction]);
 
   return (
-    <div className={clsx(styles.dropdown, isOpen && styles.dropdownVisible)}>
+    <div
+      className={clsx(
+        styles.dropdown,
+        isOpen && styles.dropdownVisible,
+        isMobile && styles.dropdownMobile
+      )}
+    >
       {finalConfig.markdown && (
         <MenuItem
           icon={<MarkdownIcon />}

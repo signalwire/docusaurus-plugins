@@ -25,10 +25,20 @@ declare module '@theme/CopyPageContent' {
   import type { ReactNode } from 'react';
 
   export interface Props {
-    readonly className?: string;
+    readonly isMobile?: boolean;
   }
 
   export default function CopyPageContent(props: Props): ReactNode;
+}
+
+// DocBreadcrumbs - wrapper that adds CopyPageContent button next to breadcrumbs
+// This is a wrapped component that extends the default Docusaurus breadcrumbs
+declare module '@theme/DocBreadcrumbs' {
+  import type { ReactNode } from 'react';
+
+  export type Props = Record<string, never>;
+
+  export default function DocBreadcrumbs(props: Props): ReactNode;
 }
 
 // CopyButton subcomponent
@@ -54,6 +64,7 @@ declare module '@theme/CopyPageContent/DropdownMenu' {
     readonly isOpen: boolean;
     readonly finalConfig: any;
     readonly onAction: (action: string) => void;
+    readonly isMobile?: boolean;
   }
 
   export default function DropdownMenu(props: Props): ReactNode;
@@ -101,15 +112,4 @@ declare module '@theme/CopyPageContent/Icons/ChatGPTIcon' {
 declare module '@theme/CopyPageContent/Icons/ClaudeIcon' {
   import type { ReactNode } from 'react';
   export default function ClaudeIcon(): ReactNode;
-}
-
-// DocItem Content component (existing)
-declare module '@theme/DocItem/Content' {
-  import type { ReactNode } from 'react';
-  import type { WrapperProps } from '@docusaurus/types';
-  import type ContentType from '@theme-init/DocItem/Content';
-
-  export type Props = WrapperProps<typeof ContentType>;
-
-  export default function DocItemContent(props: Props): ReactNode;
 }

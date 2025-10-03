@@ -9,12 +9,18 @@ import type { SwizzleConfig } from '@docusaurus/types';
 
 /**
  * Swizzle config for theme components
- * Based on Docusaurus patterns from:
- * https://github.com/facebook/docusaurus/blob/main/packages/docusaurus-theme-classic/src/getSwizzleConfig.ts
  */
 export default function getSwizzleConfig(): SwizzleConfig {
   return {
     components: {
+      DocBreadcrumbs: {
+        actions: {
+          eject: 'unsafe',
+          wrap: 'safe',
+        },
+        description:
+          'Breadcrumbs wrapper that positions the CopyPageContent button next to breadcrumbs. Wrapping is safe and recommended. Ejecting is unsafe as it may conflict with other plugins.',
+      },
       CopyPageContent: {
         actions: {
           eject: 'unsafe',
@@ -86,14 +92,6 @@ export default function getSwizzleConfig(): SwizzleConfig {
         },
         description:
           'Markdown file icon component. Safe to replace with custom icon.',
-      },
-      'DocItem/Content': {
-        actions: {
-          eject: 'safe',
-          wrap: 'safe',
-        },
-        description:
-          'Documentation content wrapper that integrates the copy page button with Docusaurus content. Safe to customize for layout modifications and additional content integration.',
       },
     },
   };

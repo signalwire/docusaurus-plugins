@@ -30,9 +30,8 @@ import styles from './styles.module.css';
  * Main Copy Page Button component
  */
 export default function CopyPageContent({
-  className,
+  isMobile = false,
 }: CopyPageContentProps): React.JSX.Element | null {
-  // ALL HOOKS MUST BE CALLED FIRST - Rules of Hooks compliance
   // Get current pathname from Docusaurus router
   const location = useLocation();
   const pathname = location.pathname;
@@ -45,19 +44,17 @@ export default function CopyPageContent({
   const dataUrl = pluginData?.copyContentDataUrl;
   const siteConfig = pluginData?.siteConfig;
 
-  // Custom hooks for modular functionality - ALWAYS call these hooks
+  // Custom hooks for modular functionality
   const { copyContentData, isLoading } = useCopyContentData(dataUrl);
   const { isOpen, toggleDropdown, dropdownRef, setIsOpen } = useDropdownState();
 
-  // Resolve final configuration - call hook unconditionally with safe fallback
-  const finalConfig = useCopyButtonConfig(
-    pluginConfig === false ? undefined : pluginConfig
-  );
+  // Resolve final configuration
+  const finalConfig = useCopyButtonConfig(pluginConfig);
 
-  // Action handlers - call hook unconditionally with safe fallbacks
+  // Action handlers
   const { copyStatus, handleAction } = useCopyActions(
     finalConfig,
-    siteConfig || { baseUrl: '/', url: '', trailingSlash: false },
+    siteConfig!,
     setIsOpen
   );
 
@@ -71,23 +68,23 @@ export default function CopyPageContent({
     [toggleDropdown]
   );
 
-  // CONDITIONAL RENDERING LOGIC - after all hooks are called
-  // Don't render if disabled or still loading
-  if (pluginConfig === false || isLoading) {
+  // Don't render if disabled, loading, or no markdown available
+  if (
+    pluginConfig === false ||
+    isLoading ||
+    !copyContentData?.[pathname] ||
+    !siteConfig
+  ) {
     return null;
   }
 
-  // Check if current page has markdown available
-  const hasMarkdown = copyContentData?.[pathname];
-
-  // Don't render if no markdown available for current route
-  if (!hasMarkdown || !siteConfig) {
-    return null;
-  }
-
-  // Clean CSS-positioned rendering
+  // Render the button with dropdown menu
   return (
-    <div className={clsx(styles.copyButton, className)} ref={dropdownRef}>
+    <div
+      className={clsx(styles.copyButton, isMobile && styles.copyButtonMobile)}
+      ref={dropdownRef}
+      data-copy-page-button
+    >
       <CopyButton
         copyStatus={copyStatus}
         finalConfig={finalConfig}
@@ -100,6 +97,7 @@ export default function CopyPageContent({
         isOpen={isOpen}
         finalConfig={finalConfig}
         onAction={handleAction}
+        isMobile={isMobile}
       />
     </div>
   );

@@ -25,3 +25,9 @@
   visibility: visible;
   transform: translateY(0);
 }
+
+/* Mobile dropdown positioning - anchor to left edge of button to prevent off-screen */
+.dropdownMobile {
+  right: auto;
+  left: 0;
+}

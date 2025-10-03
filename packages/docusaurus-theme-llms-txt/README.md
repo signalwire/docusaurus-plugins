@@ -202,49 +202,48 @@ customize components:
 #### Safe Swizzling (Recommended)
 
 ```bash
-# Swizzle the main copy button (safe)
-npx docusaurus swizzle @signalwire/docusaurus-theme-llms-txt CopyPageButton
+# Wrap the breadcrumbs to customize button placement (safe)
+npx docusaurus swizzle @signalwire/docusaurus-theme-llms-txt DocBreadcrumbs --wrap
 
-# Wrap the copy button for additional functionality (safe)
+# Wrap the copy button for additional functionality (safe - not commonly needed)
 npx docusaurus swizzle @signalwire/docusaurus-theme-llms-txt CopyPageButton --wrap
 ```
 
-#### Content Wrapper Swizzling
-
-```bash
-# Wrap DocItem/Content to modify layout (safe)
-npx docusaurus swizzle @signalwire/docusaurus-theme-llms-txt DocItem/Content --wrap
-
-# Note: Ejecting DocItem/Content is unsafe and may break plugin integration
-```
+**Note:** This plugin uses a WRAP pattern on `DocBreadcrumbs` instead of ejecting layout components.
+This prevents conflicts with other plugins that might also modify the documentation layout.
 
 ### Custom Component Implementation
 
 After swizzling, you can customize the components:
 
 ```tsx
-// src/theme/CopyPageButton/index.tsx
+// src/theme/DocBreadcrumbs/index.tsx
 import React from 'react';
-import OriginalCopyPageButton from '@theme-original/CopyPageButton';
+// Use @theme-original to wrap our enhanced breadcrumbs
+import DocBreadcrumbsEnhanced from '@theme-original/DocBreadcrumbs';
 
-export default function CopyPageButton(props) {
+export default function DocBreadcrumbs(props) {
   return (
-    <div className='my-custom-wrapper'>
-      <OriginalCopyPageButton {...props} />
-      <span className='my-custom-badge'>AI Ready</span>
+    <div className='my-custom-breadcrumbs-wrapper'>
+      <DocBreadcrumbsEnhanced {...props} />
+      <span className='my-custom-badge'>Custom Enhancement</span>
     </div>
   );
 }
 ```
+
+**Note:** This plugin uses `@theme-init/DocBreadcrumbs` internally to wrap the base Docusaurus
+breadcrumbs. As a user, you should use `@theme-original/DocBreadcrumbs` to wrap our enhanced
+version.
 
 ### TypeScript Support
 
 Full TypeScript definitions are included:
 
 ```tsx
-import type { Props as CopyPageButtonProps } from '@theme/CopyPageButton';
+import type { Props as DocBreadcrumbsProps } from '@theme/DocBreadcrumbs';
 
-const CustomButton: React.FC<CopyPageButtonProps> = ({ className }) => {
+const CustomBreadcrumbs: React.FC<DocBreadcrumbsProps> = (props) => {
   // Your implementation
 };
 ```

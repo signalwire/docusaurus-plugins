@@ -1,5 +1,8 @@
 {
   "extends": "../../tsconfig.base.client.json",
+  "compilerOptions": {
+    "types": ["node", "@docusaurus/module-type-aliases", "@signalwire/docusaurus-plugin-llms-txt"]
+  },
   "include": ["src"],
   "exclude": ["**/__tests__/**", "**/backup/**"]
 }

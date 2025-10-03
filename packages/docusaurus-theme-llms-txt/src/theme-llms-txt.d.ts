@@ -14,13 +14,6 @@
  * to provide copy page button functionality and other llms-txt related UI components.
  */
 
-/* eslint-disable @typescript-eslint/triple-slash-reference */
-
-/// <reference types="@docusaurus/module-type-aliases" />
-/// <reference types="@docusaurus/theme-classic" />
-/// <reference types="@docusaurus/plugin-content-docs" />
-/// <reference types="@signalwire/docusaurus-plugin-llms-txt" />
-
 // This file, like all the other ambient declaration files for theme packages, is
 // needed for TS to understand our `@theme` aliases. The @theme/* module declarations
 // are provided by the @signalwire/docusaurus-plugin-llms-txt package, following

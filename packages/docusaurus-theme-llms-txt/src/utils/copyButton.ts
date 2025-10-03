@@ -18,7 +18,7 @@ export interface SiteConfig {
 /**
  * Normalize pathname by removing trailing slash (except root)
  */
-export function normalizePathname(pathname: string): string {
+function normalizePathname(pathname: string): string {
   // Handle root path
   if (pathname === '' || pathname === '/') {
     return '/index';
