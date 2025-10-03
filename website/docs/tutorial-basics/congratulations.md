@@ -26,3 +26,7 @@ Anything **unclear** or **buggy** in this tutorial?
 - Add a [search bar](https://docusaurus.io/docs/search)
 - Find inspirations in the [Docusaurus showcase](https://docusaurus.io/showcase)
 - Get involved in the [Docusaurus Community](https://docusaurus.io/community/support)
+
+{/* Homepage-specific style customization */}
+<style>{`.pagination-nav{display:none}`}</style>
+<style>{`.theme-doc-breadcrumbs{display:none};`}</style>

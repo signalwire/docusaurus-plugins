@@ -25,21 +25,20 @@ declare module '@theme/CopyPageContent' {
   import type { ReactNode } from 'react';
 
   export interface Props {
-    readonly className?: string;
     readonly isMobile?: boolean;
   }
 
   export default function CopyPageContent(props: Props): ReactNode;
 }
 
-// DocItem/Layout - wrapper that positions CopyPageContent button
-declare module '@theme/DocItem/Layout' {
+// DocBreadcrumbs - wrapper that adds CopyPageContent button next to breadcrumbs
+// This is a wrapped component that extends the default Docusaurus breadcrumbs
+declare module '@theme/DocBreadcrumbs' {
   import type { ReactNode } from 'react';
-  import type { Props as LayoutProps } from '@theme-original/DocItem/Layout';
 
-  export type Props = LayoutProps;
+  export type Props = Record<string, never>;
 
-  export default function DocItemLayout(props: Props): ReactNode;
+  export default function DocBreadcrumbs(props: Props): ReactNode;
 }
 
 // CopyButton subcomponent

@@ -5,7 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-.docItemHeader {
+/**
+ * Breadcrumbs wrapper styles
+ * Creates a flex container to position breadcrumbs and copy button side-by-side
+ */
+.breadcrumbsWrapper {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -13,6 +17,10 @@
   margin-bottom: var(--ifm-leading);
 }
 
-.docItemMobileCopyButton {
+/**
+ * Mobile copy button container
+ * Displays below breadcrumbs on mobile devices
+ */
+.mobileCopyButton {
   margin-bottom: var(--ifm-leading);
 }

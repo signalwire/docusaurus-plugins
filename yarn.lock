@@ -1931,7 +1931,7 @@
     webpack-dev-server "^4.15.2"
     webpack-merge "^6.0.1"
 
-"@docusaurus/core@^3.0.0":
+"@docusaurus/core@3.9.1", "@docusaurus/core@^3.0.0":
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/@docusaurus/core/-/core-3.9.1.tgz#be4d859464fee8889794d8527f884e931d591f2e"
   integrity sha512-FWDk1LIGD5UR5Zmm9rCrXRoxZUgbwuP6FBA7rc50DVfzqDOMkeMe3NyJhOsA2dF0zBE3VbHEIMmTjKwTZJwbaA==
@@ -2111,7 +2111,7 @@
     react-helmet-async "npm:@slorber/react-helmet-async@1.3.0"
     react-loadable "npm:@docusaurus/react-loadable@6.0.0"
 
-"@docusaurus/module-type-aliases@3.9.1", "@docusaurus/module-type-aliases@^3":
+"@docusaurus/module-type-aliases@3.9.1", "@docusaurus/module-type-aliases@^3", "@docusaurus/module-type-aliases@^3.0.0":
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/@docusaurus/module-type-aliases/-/module-type-aliases-3.9.1.tgz#201959a22e7b30881cf879a21d2ae5b26415b705"
   integrity sha512-YBce3GbJGGcMbJTyHcnEOMvdXqg41pa5HsrMCGA5Rm4z0h0tHS6YtEldj0mlfQRhCG7Y0VD66t2tb87Aom+11g==
@@ -2162,6 +2162,30 @@
     "@docusaurus/utils" "3.8.1"
     "@docusaurus/utils-common" "3.8.1"
     "@docusaurus/utils-validation" "3.8.1"
+    "@types/react-router-config" "^5.0.7"
+    combine-promises "^1.1.0"
+    fs-extra "^11.1.1"
+    js-yaml "^4.1.0"
+    lodash "^4.17.21"
+    schema-dts "^1.1.2"
+    tslib "^2.6.0"
+    utility-types "^3.10.0"
+    webpack "^5.88.1"
+
+"@docusaurus/plugin-content-docs@^3.0.0":
+  version "3.9.1"
+  resolved "https://registry.yarnpkg.com/@docusaurus/plugin-content-docs/-/plugin-content-docs-3.9.1.tgz#e3e75d4aa310689c262c18e10010788e53f101ec"
+  integrity sha512-DyLk9BIA6I9gPIuia8XIL+XIEbNnExam6AHzRsfrEq4zJr7k/DsWW7oi4aJMepDnL7jMRhpVcdsCxdjb0/A9xg==
+  dependencies:
+    "@docusaurus/core" "3.9.1"
+    "@docusaurus/logger" "3.9.1"
+    "@docusaurus/mdx-loader" "3.9.1"
+    "@docusaurus/module-type-aliases" "3.9.1"
+    "@docusaurus/theme-common" "3.9.1"
+    "@docusaurus/types" "3.9.1"
+    "@docusaurus/utils" "3.9.1"
+    "@docusaurus/utils-common" "3.9.1"
+    "@docusaurus/utils-validation" "3.9.1"
     "@types/react-router-config" "^5.0.7"
     combine-promises "^1.1.0"
     fs-extra "^11.1.1"
@@ -2340,7 +2364,7 @@
     tslib "^2.6.0"
     utility-types "^3.10.0"
 
-"@docusaurus/theme-common@^3", "@docusaurus/theme-common@^3.0.0":
+"@docusaurus/theme-common@3.9.1", "@docusaurus/theme-common@^3", "@docusaurus/theme-common@^3.0.0":
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/@docusaurus/theme-common/-/theme-common-3.9.1.tgz#095cbeab489d51380143951508571888f4d2928d"
   integrity sha512-j9adi961F+6Ps9d0jcb5BokMcbjXAAJqKkV43eo8nh4YgmDj7KUNDX4EnOh/MjTQeO06oPY5cxp3yUXdW/8Ggw==
@@ -3842,6 +3866,30 @@
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@sideway/pinpoint/-/pinpoint-2.0.0.tgz#cff8ffadc372ad29fd3f78277aeb29e632cc70df"
   integrity sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==
+
+"@signalwire/docusaurus-plugin-llms-txt@file:packages/docusaurus-plugin-llms-txt":
+  version "2.0.0-alpha.1"
+  dependencies:
+    fs-extra "^11.0.0"
+    hast-util-select "^6.0.4"
+    hast-util-to-html "^9.0.5"
+    hast-util-to-string "^3.0.1"
+    p-map "^7.0.2"
+    rehype-parse "^9"
+    rehype-remark "^10"
+    remark-gfm "^4"
+    remark-stringify "^11"
+    string-width "^5.0.0"
+    unified "^11"
+    unist-util-visit "^5"
+
+"@signalwire/docusaurus-theme-llms-txt@file:packages/docusaurus-theme-llms-txt":
+  version "1.0.0-alpha.2"
+  dependencies:
+    "@docusaurus/core" "^3.0.0"
+    "@docusaurus/theme-common" "^3.0.0"
+    clsx "^2.0.0"
+    react-icons "^5.5.0"
 
 "@sigstore/bundle@^1.1.0":
   version "1.1.0"
@@ -13897,7 +13945,7 @@ react-fast-compare@^3.2.0:
     react-fast-compare "^3.2.0"
     shallowequal "^1.1.0"
 
-react-icons@5.5.0:
+react-icons@^5.5.0:
   version "5.5.0"
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-5.5.0.tgz#8aa25d3543ff84231685d3331164c00299cdfaf2"
   integrity sha512-MEFcXdkP3dLo8uumGI5xN3lDFNsRtrjbOEKDLD7yv76v4wpnEq2Lt2qeHaQOr34I/wPN3s3+N08WkQ+CW37Xiw==

@@ -9,19 +9,17 @@ import type { SwizzleConfig } from '@docusaurus/types';
 
 /**
  * Swizzle config for theme components
- * Based on Docusaurus patterns from:
- * https://github.com/facebook/docusaurus/blob/main/packages/docusaurus-theme-classic/src/getSwizzleConfig.ts
  */
 export default function getSwizzleConfig(): SwizzleConfig {
   return {
     components: {
-      'DocItem/Layout': {
+      DocBreadcrumbs: {
         actions: {
-          eject: 'safe',
+          eject: 'unsafe',
           wrap: 'safe',
         },
         description:
-          'Doc item layout wrapper that positions the CopyPageContent button. Safe to customize for different button placements or layout modifications.',
+          'Breadcrumbs wrapper that positions the CopyPageContent button next to breadcrumbs. Wrapping is safe and recommended. Ejecting is unsafe as it may conflict with other plugins.',
       },
       CopyPageContent: {
         actions: {

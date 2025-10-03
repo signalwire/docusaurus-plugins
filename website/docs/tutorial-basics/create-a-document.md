@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+hide_table_of_contents: true
 ---
 
 # Create a Document
@@ -60,3 +61,8 @@ export default {
   ],
 };
 ```
+
+
+{/* Homepage-specific style customization */}
+<style>{`.pagination-nav{display:none}`}</style>
+<style>{`.theme-doc-breadcrumbs{display:none};`}</style>
