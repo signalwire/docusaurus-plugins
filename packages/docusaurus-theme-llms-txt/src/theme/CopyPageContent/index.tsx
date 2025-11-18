@@ -27,6 +27,10 @@ import type { CopyPageContentProps, PluginGlobalData } from '../../types';
 
 import styles from './styles.module.css';
 
+type RouteData = NonNullable<
+  ReturnType<typeof useCopyContentData>['copyContentData']
+>[string];
+
 /**
  * Main Copy Page Button component
  */
@@ -37,6 +41,23 @@ export default function CopyPageContent({
   const pathname = location.pathname;
   // JSON keys include baseUrl, so we need to use pathnameWithBase for lookup
   const pathnameWithBase = useBaseUrl(pathname);
+
+  // copy-content JSON may store either `/docs` or `/docs/`, so probe both forms
+  const lookupKeys = React.useMemo<string[]>(() => {
+    if (!pathnameWithBase) {
+      return [];
+    }
+
+    if (pathnameWithBase.endsWith('/') && pathnameWithBase.length > 1) {
+      return [pathnameWithBase, pathnameWithBase.slice(0, -1)];
+    }
+
+    if (!pathnameWithBase.endsWith('/')) {
+      return [pathnameWithBase, `${pathnameWithBase}/`];
+    }
+
+    return [pathnameWithBase];
+  }, [pathnameWithBase]);
 
   // Get plugin configuration from global data
   const pluginData = usePluginData('docusaurus-plugin-llms-txt', undefined) as
@@ -53,9 +74,18 @@ export default function CopyPageContent({
   // Resolve final configuration
   const finalConfig = useCopyButtonConfig(pluginConfig);
 
-  // Get route data for current path
-  // Use pathnameWithBase because JSON keys include baseUrl
-  const routeData = copyContentData?.[pathnameWithBase];
+  // Resolve route data for the current path by checking both trailing-slash and non-slash keys in `lookupKeys`.
+  let routeData: RouteData | undefined;
+  if (copyContentData) {
+    for (const key of lookupKeys) {
+      const data = copyContentData[key];
+      if (data) {
+        routeData = data;
+        break;
+      }
+    }
+  }
+
   const shouldDisplay =
     typeof routeData === 'object' ? routeData.shouldDisplay : false;
   const hasMarkdown =
