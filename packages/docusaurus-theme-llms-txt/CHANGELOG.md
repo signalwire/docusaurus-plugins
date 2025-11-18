@@ -1,5 +1,11 @@
 # @signalwire/docusaurus-theme-llms-txt
 
+## 1.0.0-alpha.9
+
+### Patch Changes
+
+- Fix for copy button not showing up on pages with trailing slash
+
 ## 1.0.0-alpha.6
 
 ### Patch Changes

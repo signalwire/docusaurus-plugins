@@ -74,7 +74,8 @@ export default function CopyPageContent({
   // Resolve final configuration
   const finalConfig = useCopyButtonConfig(pluginConfig);
 
-  // Resolve route data for the current path by checking both trailing-slash and non-slash keys in `lookupKeys`.
+  // Resolve route data for the current path by checking both
+  // trailing-slash and non-slash keys in `lookupKeys`.
   let routeData: RouteData | undefined;
   if (copyContentData) {
     for (const key of lookupKeys) {
