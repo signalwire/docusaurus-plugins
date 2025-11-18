@@ -1,5 +1,12 @@
 # website
 
+## 0.0.2-alpha.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @signalwire/docusaurus-theme-llms-txt@1.0.0-alpha.9
+
 ## 0.0.1
 
 ### Patch Changes
