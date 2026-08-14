@@ -6,7 +6,12 @@
  */
 
 import type { ContentType } from '../constants';
-import type { PluginOptions, Logger, PluginInput } from './public';
+import type {
+  PluginOptions,
+  Logger,
+  PluginInput,
+  OptionalLink,
+} from './public';
 import type { Root } from 'hast';
 import type { Options as RemarkGfmOptions } from 'remark-gfm';
 import type { Options as RemarkStringifyOptions } from 'remark-stringify';
@@ -82,6 +87,7 @@ export interface TreeNode {
   readonly description?: string;
   readonly position?: number;
   readonly indexDoc?: DocInfo;
+  readonly optionalLinks?: readonly OptionalLink[];
 }
 
 /**
