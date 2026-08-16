@@ -26,8 +26,8 @@
     "lint": "echo 'Linting handled at root level'",
     "lint:fix": "echo 'Linting handled at root level'",
     "type-check": "tsc --noEmit",
-    "format": "prettier --write src/**/*.{ts,tsx}",
-    "format:check": "prettier --check src/**/*.{ts,tsx}",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "yarn run clean && yarn run build && yarn run lint && yarn run type-check"
   },
   "keywords": [

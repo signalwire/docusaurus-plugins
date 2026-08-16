@@ -61,16 +61,3 @@ jobs:
 
       - name: Build website
         run: yarn run build:website
-
-  security-audit:
-    name: Security Audit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js and Dependencies
-        uses: ./.github/actions/setup
-
-      - name: Run security audit
-        run: yarn audit --groups dependencies

@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React, { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+import type React from 'react';
 
 import clsx from 'clsx';
 
@@ -43,7 +44,7 @@ export default function CopyPageContent({
   const pathnameWithBase = useBaseUrl(pathname);
 
   // copy-content JSON may store either `/docs` or `/docs/`, so probe both forms
-  const lookupKeys = React.useMemo<string[]>(() => {
+  const lookupKeys = useMemo<string[]>(() => {
     if (!pathnameWithBase) {
       return [];
     }
@@ -61,8 +62,7 @@ export default function CopyPageContent({
 
   // Get plugin configuration from global data
   const pluginData = usePluginData('docusaurus-plugin-llms-txt', undefined) as
-    | PluginGlobalData
-    | undefined;
+    PluginGlobalData | undefined;
   const pluginConfig = pluginData?.copyContentConfig;
   const dataUrl = pluginData?.copyContentDataUrl;
   const siteConfig = pluginData?.siteConfig;

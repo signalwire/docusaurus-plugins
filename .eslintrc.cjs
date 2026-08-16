@@ -25,9 +25,6 @@ module.exports = {
       jsx: true,
     },
   },
-  globals: {
-    JSX: true,
-  },
   extends: [
     'eslint:recommended',
     'plugin:react-hooks/recommended',
@@ -439,11 +436,24 @@ module.exports = {
         'scripts/**/*',
         'website/**/*',
         '__tests__/**/*',
+        'test/**/*',
       ],
       rules: {
         'header/header': OFF,
         '@docusaurus/no-untranslated-text': OFF,
         'import/no-extraneous-dependencies': OFF,
+      },
+    },
+    // Jest setup and module stand-ins under test/ are harness code, not specs:
+    // top-level hooks are the point, and the stand-ins deliberately mirror
+    // module shapes rather than being real React components.
+    {
+      files: ['test/**/*'],
+      rules: {
+        'jest/require-top-level-describe': OFF,
+        'react/no-unused-prop-types': OFF,
+        'import/no-default-export': OFF,
+        'import/no-named-export': OFF,
       },
     },
   ],

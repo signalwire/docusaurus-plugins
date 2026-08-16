@@ -1,12 +1,12 @@
 /**
- * Root-level tests for monorepo-wide functionality
- * These tests cover integration between packages, shared utilities, and overall system behavior
- * Similar to Docusaurus monorepo validation tests
+ * Root-level tests for monorepo-wide functionality.
+ * These cover integration between packages, shared utilities, and overall
+ * system behavior, mirroring Docusaurus's own monorepo validation tests.
  */
 
-import * as fs from 'fs-extra';
 import { Globby } from '@docusaurus/utils';
 import { Joi } from '@docusaurus/utils-validation';
+import * as fs from 'fs-extra';
 
 type PackageJsonFile = {
   file: string;
@@ -24,6 +24,7 @@ type PackageJsonFile = {
     publishConfig?: {
       access?: string;
     };
+    dependencies?: Record<string, string>;
     peerDependencies?: Record<string, string>;
   };
 };
@@ -95,12 +96,12 @@ const packageJsonSchema = Joi.object({
 }).unknown();
 
 describe('Monorepo Structure', () => {
-  it('should have packages', async () => {
+  it('has packages', async () => {
     const packageJsonFiles = await getPackageJsonFiles();
     expect(packageJsonFiles.length).toBeGreaterThan(0);
   });
 
-  it('should have proper TypeScript project references', async () => {
+  it('has TypeScript project references', async () => {
     const rootTsconfig = await fs.readJSON('tsconfig.json');
     expect(rootTsconfig.references).toBeDefined();
     expect(Array.isArray(rootTsconfig.references)).toBe(true);
@@ -124,7 +125,7 @@ describe('TypeScript Configuration Validation', () => {
 });
 
 describe('Package Structure Validation', () => {
-  it('should have consistent package.json structure', async () => {
+  it('has a consistent package.json structure', async () => {
     const packageJsonFiles = await getPackageJsonFiles();
 
     packageJsonFiles
@@ -140,25 +141,39 @@ describe('Package Structure Validation', () => {
       });
   });
 
-  it('should have proper peer dependencies for Docusaurus plugins', async () => {
+  it('declares @docusaurus/core as a peer dependency, never a runtime one', async () => {
     const packageJsonFiles = await getPackageJsonFiles();
 
-    const pluginPackages = packageJsonFiles.filter(
-      (pkg) =>
-        pkg.content.name?.startsWith('docusaurus-plugin-') ||
-        pkg.content.name?.includes('/docusaurus-plugin-')
+    const publishable = packageJsonFiles.filter(
+      (pkg) => !pkg.content.private && pkg.content.name?.includes('docusaurus-')
     );
+    expect(publishable.length).toBeGreaterThan(0);
 
-    if (pluginPackages.length > 0) {
-      pluginPackages.forEach((pkg) => {
-        expect(pkg.content.peerDependencies).toBeDefined();
-        expect(
-          pkg.content.peerDependencies?.['@docusaurus/core']
-        ).toBeDefined();
-      });
-    } else {
-      // Skip this test if no actual plugin packages exist yet
-      expect(true).toBe(true);
-    }
+    publishable.forEach((pkg) => {
+      // Docusaurus is a build tool. Shipping it as a `dependency` would make
+      // consumers install a second copy of @docusaurus/core and would drag
+      // webpack-dev-server, image-size and friends into their production
+      // audit scope. See facebook/docusaurus#5501.
+      expect(pkg.content.dependencies?.['@docusaurus/core']).toBeUndefined();
+      expect(pkg.content.peerDependencies?.['@docusaurus/core']).toBeDefined();
+    });
+  });
+
+  it('accepts both React 18 and React 19 wherever React is a peer', async () => {
+    const packageJsonFiles = await getPackageJsonFiles();
+
+    const reactPeers = packageJsonFiles.filter(
+      (pkg) => !pkg.content.private && pkg.content.peerDependencies?.react
+    );
+    expect(reactPeers.length).toBeGreaterThan(0);
+
+    reactPeers.forEach((pkg) => {
+      // Matches what @docusaurus/theme-classic itself declares. Docusaurus v4
+      // will require React 19, but v3 sites are still on 18.
+      expect(pkg.content.peerDependencies?.react).toBe('^18.0.0 || ^19.0.0');
+      expect(pkg.content.peerDependencies?.['react-dom']).toBe(
+        '^18.0.0 || ^19.0.0'
+      );
+    });
   });
 });

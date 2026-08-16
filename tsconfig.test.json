@@ -1,12 +1,27 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node", "jest"],
+    "types": ["node", "jest", "@testing-library/jest-dom"],
     "module": "CommonJS",
     "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM"],
     "noEmit": true,
-    "skipLibCheck": true
+    "composite": false,
+    "incremental": false,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@test/*": ["./test/*"],
+      "@theme/*": ["./packages/docusaurus-theme-llms-txt/src/theme/*"],
+      "@docusaurus/router": ["./test/mocks/docusaurus/router"],
+      "@docusaurus/ExecutionEnvironment": ["./test/mocks/docusaurus/ExecutionEnvironment"],
+      "@docusaurus/useBaseUrl": ["./test/mocks/docusaurus/useBaseUrl"],
+      "@docusaurus/useGlobalData": ["./test/mocks/docusaurus/useGlobalData"],
+      "@docusaurus/Translate": ["./test/mocks/docusaurus/Translate"],
+      "@docusaurus/theme-common": ["./test/mocks/docusaurus/theme-common"]
+    }
   },
-  "include": ["__tests__/**/*"],
-  "exclude": []
+  "include": ["__tests__/**/*", "test/**/*", "packages/*/**/__tests__/**/*"],
+  "exclude": ["node_modules", "**/lib/**"]
 }

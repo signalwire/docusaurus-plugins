@@ -43,12 +43,10 @@ export function resolveGfmConfig(markdown: MarkdownOptions): MarkdownOptions {
 export function applyGfmConfiguration(options: PluginOptions): PluginOptions {
   const markdown = options.markdown ?? {};
 
-  if (
-    !(
-      markdown.remarkGfm === true ||
-      (typeof markdown.remarkGfm === 'object' && markdown.remarkGfm !== null)
-    )
-  ) {
+  if (!(
+    markdown.remarkGfm === true ||
+    (typeof markdown.remarkGfm === 'object' && markdown.remarkGfm !== null)
+  )) {
     return options;
   }
 
