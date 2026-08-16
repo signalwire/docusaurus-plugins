@@ -45,9 +45,25 @@ jobs:
           # Advisories accepted because no fix exists. Review at every
           # Docusaurus bump and delete entries once a patch ships.
           #
-          # Currently empty: reclassifying Docusaurus as a peer/dev dependency
-          # moved all known unfixable advisories (image-size, and
-          # serialize-javascript via copy-webpack-plugin -- see
-          # facebook/docusaurus#11801) out of the runtime scope entirely.
+          # Reclassifying Docusaurus as a peer/dev dependency moved all known
+          # unfixable advisories (image-size, and serialize-javascript via
+          # copy-webpack-plugin -- see facebook/docusaurus#11801) out of scope.
           #
-          # allow-ghsas: GHSA-xxxx-xxxx-xxxx
+          # The two below are js-yaml@4.1.1, which lerna@9.0.7 pins exactly.
+          # Both are quadratic-CPU denial of service in the YAML parser, and
+          # both are patched only in 4.3.1. They are reachable only when lerna
+          # parses this repo's own lerna.json at development time, never by a
+          # consumer of either published package -- `yarn audit --groups
+          # dependencies` reports 0 advisories across the 364 runtime packages.
+          #
+          # A `resolutions` entry is NOT an option here: Yarn Classic 1.22
+          # ignores the scoped `lerna/js-yaml` form (verified -- the nested
+          # copy stays at 4.1.1), and an unscoped `js-yaml` entry rewrites
+          # every range for the name, dragging read-yaml-file@1.1.0 from 3.15.1
+          # to 4.x. That package calls `yaml.safeLoad`, removed in v4, and it
+          # is pulled by @changesets/cli -- the tooling that publishes these
+          # packages. Forcing it would trade a dev-time DoS for a broken
+          # release pipeline. Drop both lines once lerna ships js-yaml >=4.3.1;
+          # lerna@10 already has Node >=22 engines, so it is not an option
+          # while the packages support Node 20.
+          allow-ghsas: GHSA-5p4m-2wfm-xmqj, GHSA-52cp-r559-cp3m
