@@ -46,8 +46,8 @@ export default config;
 
 ### Prerequisites
 
-- Node.js ≥ 18.0.0
-- Yarn ≥ 1.22.0
+- Node.js ≥ 20.0.0
+- Yarn 1.22.x (Yarn Classic)
 
 ### Setup
 
@@ -140,7 +140,7 @@ docusaurus-plugins/
 - **Package Management**: Yarn Workspaces + Lerna
 - **Build System**: TypeScript with project references
 - **Version Management**: Changesets
-- **Code Quality**: ESLint + Prettier + Husky
+- **Code Quality**: ESLint + Prettier
 - **Testing**: Jest
 - **Documentation**: Docusaurus
 

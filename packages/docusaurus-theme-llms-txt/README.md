@@ -7,6 +7,18 @@ This theme package provides React components and styling for the
 `@signalwire/docusaurus-plugin-llms-txt` plugin, including a sophisticated copy page button that
 allows users to copy content or share it with AI tools like ChatGPT and Claude.
 
+## Compatibility
+
+|            | Supported              |
+| ---------- | ---------------------- |
+| Docusaurus | `^3.9.0 \|\| ^4.0.0`   |
+| React      | `^18.0.0 \|\| ^19.0.0` |
+| Node.js    | `>=20.0`               |
+
+React 18 and 19 are both tested in CI on every commit. `@docusaurus/core` and
+`@docusaurus/theme-common` are **peer dependencies** — your site already provides them, so this
+theme never installs a second copy of Docusaurus.
+
 ## Installation
 
 ```bash

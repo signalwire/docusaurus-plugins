@@ -33,31 +33,68 @@ jobs:
       - name: Type check
         run: yarn run type-check
 
-  test-plugins:
-    name: Test Plugins
+  # Both published packages declare `react: ^18.0.0 || ^19.0.0`. Docusaurus v4
+  # will require React 19, but v3 sites are still on 18, so both legs have to
+  # stay green -- otherwise that peer range is an unverified claim.
+  test:
+    name: Test (React ${{ matrix.react }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        react: ['18', '19']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node.js and Dependencies
         uses: ./.github/actions/setup
+
+      # The website pins its own React range, so swapping only the root would
+      # leave a nested copy behind and the build would not actually exercise
+      # the matrix version.
+      - name: Pin React ${{ matrix.react }}
+        run: |
+          yarn add -W --dev \
+            react@^${{ matrix.react }} \
+            react-dom@^${{ matrix.react }} \
+            @types/react@^${{ matrix.react }} \
+            @types/react-dom@^${{ matrix.react }}
+          yarn workspace website add \
+            react@^${{ matrix.react }} \
+            react-dom@^${{ matrix.react }}
+
+      # Guards against the leg silently testing the wrong version: if the
+      # website kept a nested copy, root and site would resolve different
+      # files and the build below would not be exercising matrix.react at all.
+      - name: Verify the whole workspace resolves one React ${{ matrix.react }}
+        run: |
+          node -e "
+            const path = require('path');
+            const resolve = (from) =>
+              require.resolve('react/package.json', { paths: [from] });
+            const root = resolve(process.cwd());
+            const site = resolve(path.join(process.cwd(), 'website'));
+            const version = require(root).version;
+            console.log('root   ->', root);
+            console.log('site   ->', site);
+            console.log('version->', version);
+            if (root !== site) {
+              throw new Error('website resolves a different React copy');
+            }
+            if (!version.startsWith('${{ matrix.react }}.')) {
+              throw new Error('expected React ${{ matrix.react }}.x, got ' + version);
+            }
+          "
 
       - name: Build packages
         run: yarn run build:packages
 
+      - name: Type check
+        run: yarn run type-check
+
       - name: Test packages
-        run: yarn run test
-
-  test-website:
-    name: Test Website Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js and Dependencies
-        uses: ./.github/actions/setup
+        run: yarn run test:ci
 
       - name: Build website
         run: yarn run build:website

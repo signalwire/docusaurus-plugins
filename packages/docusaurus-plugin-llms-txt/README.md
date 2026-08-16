@@ -12,6 +12,18 @@ human-readable experience.
 **Perfect for**: API documentation, internal knowledge bases, developer resources, and any
 documentation that you want to make accessible to AI assistants, chatbots, or LLM-powered tools.
 
+## Compatibility
+
+|            | Supported                               |
+| ---------- | --------------------------------------- |
+| Docusaurus | `^3.9.0 \|\| ^4.0.0`                    |
+| Node.js    | `>=20.0`                                |
+| React      | supplied by Docusaurus (`^18` or `^19`) |
+
+`@docusaurus/core`, `@docusaurus/logger`, `@docusaurus/utils` and `@docusaurus/utils-validation` are
+**peer dependencies** — your site already provides them, so this plugin never installs a second copy
+of Docusaurus.
+
 ## How It Works
 
 This plugin processes your **final HTML output** after Docusaurus builds your site, not your source
