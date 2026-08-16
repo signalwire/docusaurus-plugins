@@ -47,7 +47,10 @@
     "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
-    "@docusaurus/core": "^3.0.0"
+    "@docusaurus/core": "^3.9.0 || ^4.0.0",
+    "@docusaurus/logger": "^3.9.0 || ^4.0.0",
+    "@docusaurus/utils": "^3.9.0 || ^4.0.0",
+    "@docusaurus/utils-validation": "^3.9.0 || ^4.0.0"
   },
   "dependencies": {
     "fs-extra": "^11.0.0",
@@ -58,29 +61,31 @@
     "rehype-parse": "^9",
     "rehype-remark": "^10",
     "remark-gfm": "^4",
+    "remark-parse": "^11",
     "remark-stringify": "^11",
     "string-width": "^5.0.0",
     "unified": "^11",
     "unist-util-visit": "^5"
   },
   "devDependencies": {
-    "@docusaurus/logger": "^3",
-    "@docusaurus/module-type-aliases": "^3",
-    "@docusaurus/theme-common": "^3",
-    "@docusaurus/tsconfig": "^3",
-    "@docusaurus/types": "^3",
-    "@docusaurus/utils": "^3",
-    "@docusaurus/utils-validation": "^3",
+    "@docusaurus/logger": "^3.10.2",
+    "@docusaurus/module-type-aliases": "^3.10.2",
+    "@docusaurus/theme-common": "^3.10.2",
+    "@docusaurus/tsconfig": "^3.10.2",
+    "@docusaurus/types": "^3.10.2",
+    "@docusaurus/utils": "^3.10.2",
+    "@docusaurus/utils-validation": "^3.10.2",
     "@types/fs-extra": "^11.0.4",
     "@types/hast": "^3.0.4",
+    "@types/mdast": "^4.0.4",
     "@types/node": "^22.15.19",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
+    "@types/react": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
-    "@typescript-eslint/parser": "^8.32.1"
+    "@typescript-eslint/parser": "^8.32.1",
+    "hast-util-to-mdast": "^10.1.2"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0"
   },
   "author": "SignalWire <devon.white@signalwire.com>",
   "license": "MIT",

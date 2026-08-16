@@ -22,8 +22,19 @@ import { createPluginLogger } from '../logging';
 import { orchestrateProcessing } from '../orchestrator';
 
 import type { PluginOptions } from '../types';
-import type { LoadContext } from '@docusaurus/types';
-import type { CommanderStatic } from 'commander';
+import type { LoadContext, Plugin } from '@docusaurus/types';
+
+/**
+ * The CLI object Docusaurus hands to `extendCli`.
+ *
+ * Derived from Docusaurus's own `Plugin` type rather than imported from
+ * `commander` directly: Docusaurus owns the commander instance it passes us, so
+ * taking the type from the same place guarantees we stay in step with it. It
+ * also keeps `commander` out of our manifest -- declaring our own copy could
+ * resolve to a different major than the one we actually receive.
+ * @internal
+ */
+type ExtendCliArg = Parameters<NonNullable<Plugin['extendCli']>>[0];
 
 /**
  * CLI-specific conversion function
@@ -72,7 +83,7 @@ async function runCliConversion(
  * @internal
  */
 export function registerLlmsTxt(
-  cli: CommanderStatic,
+  cli: ExtendCliArg,
   _pluginName: string,
   baseOptions: Partial<PluginOptions>,
   context: LoadContext
@@ -93,7 +104,7 @@ export function registerLlmsTxt(
  * @internal
  */
 export function registerLlmsTxtClean(
-  cli: CommanderStatic,
+  cli: ExtendCliArg,
   _pluginName: string,
   baseOptions: Partial<PluginOptions>,
   context: LoadContext
