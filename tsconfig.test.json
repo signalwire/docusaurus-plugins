@@ -1,7 +1,14 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node", "jest", "@testing-library/jest-dom"],
+    // tsconfig.base.json sets "rootDir": "${configDir}/src" for the packages.
+    // Inheriting that here points at a nonexistent <repo>/src and makes
+    // `tsc -p tsconfig.test.json` fail with TS6059 before it reports a single
+    // real error. The test tree spans the repo root, so the root is the rootDir.
+    "rootDir": ".",
+    // module-type-aliases supplies the *.module.css declarations the theme
+    // sources import; without it every styles import is a TS2307.
+    "types": ["node", "jest", "@testing-library/jest-dom", "@docusaurus/module-type-aliases"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "jsx": "react-jsx",

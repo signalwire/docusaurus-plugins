@@ -58,6 +58,28 @@ const VISIBLE: RouteEntry = {
   contentSelectors: ['article'],
 };
 
+/**
+ * Renders the component at a route the payload marks displayable, then unmounts.
+ *
+ * Every "renders nothing" test needs this first. CopyPageContent returns null on
+ * its first pass no matter what, because useCopyContentData starts out
+ * `isLoading` and only fetches inside an effect -- so asserting on an empty
+ * container straight after render() is equally true of a route that must render
+ * the button. This does two things about that: it proves the harness produces a
+ * button at all (a positive control), and it warms useCopyContentData's
+ * module-level cache for the URL under test, so every later render against that
+ * same URL takes the synchronous cache branch and has already settled by the
+ * time render() returns.
+ */
+async function renderDisplayableOnce(visiblePath: string): Promise<void> {
+  router.__setPathname(visiblePath);
+  const control = render(<CopyPageContent />);
+  await expect(
+    screen.findByRole('button', { name: 'Copy page' })
+  ).resolves.toBeInTheDocument();
+  control.unmount();
+}
+
 describe('CopyPageContent', () => {
   afterEach(() => {
     jest.restoreAllMocks();
@@ -97,13 +119,20 @@ describe('CopyPageContent', () => {
   });
 
   it('renders nothing when the route is marked shouldDisplay: false', async () => {
-    setPluginData();
-    router.__setPathname('/docs/hidden');
-    mockFetch({ '/docs/hidden': { ...VISIBLE, shouldDisplay: false } });
+    const url = setPluginData();
+    mockFetch({
+      '/docs/intro': VISIBLE,
+      '/docs/hidden': { ...VISIBLE, shouldDisplay: false },
+    });
 
+    await renderDisplayableOnce('/docs/intro');
+
+    // Same payload, same warmed URL -- only the route changes.
+    setPluginData({ copyContentDataUrl: url });
+    router.__setPathname('/docs/hidden');
     const { container } = render(<CopyPageContent />);
 
-    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+    expect(screen.queryByRole('button', { name: 'Copy page' })).toBeNull();
     expect(container).toBeEmptyDOMElement();
   });
 
@@ -135,19 +164,53 @@ describe('CopyPageContent', () => {
   });
 
   it('renders nothing when the plugin is disabled', async () => {
-    setPluginData({ copyContentConfig: false });
-    router.__setPathname('/docs/intro');
+    const url = setPluginData();
     mockFetch({ '/docs/intro': VISIBLE });
 
+    await renderDisplayableOnce('/docs/intro');
+
+    // Same route, same warmed URL -- only copyContentConfig changes.
+    setPluginData({ copyContentConfig: false, copyContentDataUrl: url });
     const { container } = render(<CopyPageContent />);
 
-    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+    expect(screen.queryByRole('button', { name: 'Copy page' })).toBeNull();
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders nothing when global data is absent entirely', () => {
-    router.__setPathname('/docs/intro');
+  it('renders nothing when global data is absent entirely', async () => {
+    setPluginData();
+    mockFetch({ '/docs/intro': VISIBLE });
+
+    await renderDisplayableOnce('/docs/intro');
+
+    // Same route, same warmed URL -- the only difference is that the plugin
+    // never registered its global data, so the theme has no siteConfig and no
+    // data URL to look the route up in.
+    useGlobalData.__reset();
     const { container } = render(<CopyPageContent />);
+
+    expect(screen.queryByRole('button', { name: 'Copy page' })).toBeNull();
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  // siteConfig is optional on PluginGlobalData, and this is the only case that
+  // pins the `!siteConfig` guard: with global data missing altogether there is
+  // no data URL either, so `!shouldDisplay` returns null first and the guard
+  // could be deleted without a single test noticing. Here the route data still
+  // says displayable, so the guard is the only thing standing between
+  // useCopyActions and an undefined siteConfig.
+  it('renders nothing when global data omits siteConfig', async () => {
+    const url = setPluginData();
+    mockFetch({ '/docs/intro': VISIBLE });
+
+    await renderDisplayableOnce('/docs/intro');
+
+    useGlobalData.__setPluginData(PLUGIN_NAME, {
+      copyContentDataUrl: url,
+    } satisfies PluginGlobalData);
+    const { container } = render(<CopyPageContent />);
+
+    expect(screen.queryByRole('button', { name: 'Copy page' })).toBeNull();
     expect(container).toBeEmptyDOMElement();
   });
 
