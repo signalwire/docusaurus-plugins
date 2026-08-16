@@ -9,7 +9,7 @@ tags: [testing, standalone]
 
 This is a test post in the standalone blog plugin instance. This content should be classified as a blog post by the LLMs plugin and should have plugin.name set to '@docusaurus/plugin-content-blog'.
 
-<!--truncate-->
+{/* truncate */}
 
 ## Testing Plugin Classification
 

@@ -6,10 +6,13 @@
  */
 import React from 'react';
 
-import { SiOpenai } from 'react-icons/si';
+// Simple Icons dropped the OpenAI logo in react-icons 5.7.0, so `SiOpenai` no
+// longer exists. RiOpenaiFill is the closest filled monochrome equivalent and
+// matches the weight of SiClaude in the same menu.
+import { RiOpenaiFill } from 'react-icons/ri';
 
 import styles from '../styles.module.css';
 
 export default function ChatGPTIcon(): React.JSX.Element {
-  return <SiOpenai className={styles.icon} />;
+  return <RiOpenaiFill className={styles.icon} />;
 }
