@@ -24,7 +24,7 @@
   "scripts": {
     "build": "tsc --build",
     "build:watch": "tsc --build --watch",
-    "clean": "rimraf lib",
+    "clean": "rimraf lib .tsbuildinfo",
     "lint": "echo 'Linting handled at root level'",
     "lint:fix": "echo 'Linting handled at root level'",
     "type-check": "tsc --noEmit",

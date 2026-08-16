@@ -22,7 +22,7 @@
     "build:watch": "tsc --build --watch",
     "copy:watch": "node ../../scripts/copyUntypedFiles.js --watch",
     "watch": "concurrently --names \"tsc,copy\" --kill-others \"yarn build:watch\" \"yarn copy:watch\"",
-    "clean": "rimraf lib",
+    "clean": "rimraf lib .tsbuildinfo",
     "lint": "echo 'Linting handled at root level'",
     "lint:fix": "echo 'Linting handled at root level'",
     "type-check": "tsc --noEmit",

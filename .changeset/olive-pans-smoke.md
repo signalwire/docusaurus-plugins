@@ -32,3 +32,12 @@ dependency.
 - Declared `remark-parse`, `hast-util-to-mdast` and `@types/mdast`, which the plugin imported
   without declaring. These previously resolved only via hoisting and would fail under pnpm or any
   strict node_modules layout.
+
+**Packaging**
+
+- Test files are no longer published. The theme ships `src/theme` as the TypeScript swizzle
+  template, so a co-located test would have been copied into users' sites by
+  `docusaurus swizzle --typescript`.
+- `lib/.tsbuildinfo` is no longer published. It is TypeScript's incremental build cache and was the
+  single largest file in both tarballs: unpacked size drops from 204KB to 111KB (theme) and 473KB to
+  366KB (plugin).

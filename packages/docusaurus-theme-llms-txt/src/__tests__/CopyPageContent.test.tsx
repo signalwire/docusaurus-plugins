@@ -9,9 +9,9 @@ import * as useGlobalData from '@test/mocks/docusaurus/useGlobalData';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import CopyPageContent from '../index';
+import CopyPageContent from '../theme/CopyPageContent';
 
-import type { PluginGlobalData } from '../../../types';
+import type { PluginGlobalData } from '../types';
 
 const PLUGIN_NAME = 'docusaurus-plugin-llms-txt';
 
