@@ -219,6 +219,30 @@ describe('Package Structure Validation', () => {
     });
   });
 
+  // The theme reads the plugin's global data by name. The plugin owns that name
+  // as PLUGIN_NAME, but the theme cannot import it: doing so would turn a
+  // types-only devDependency into a runtime one. So the string is duplicated,
+  // and if the two ever drift the copy button silently renders nothing --
+  // usePluginData just returns undefined. Compared as source text to keep this
+  // hermetic (constants.ts pulls in ESM-only string-width).
+  it('keeps the theme in sync with the plugin name it reads global data by', async () => {
+    const constants = await fs.readFile(
+      'packages/docusaurus-plugin-llms-txt/src/constants.ts',
+      'utf8'
+    );
+    const consumer = await fs.readFile(
+      'packages/docusaurus-theme-llms-txt/src/theme/CopyPageContent/index.tsx',
+      'utf8'
+    );
+
+    const declared = /PLUGIN_NAME\s*=\s*'([^']+)'/.exec(constants)?.[1];
+    const used = /usePluginData\(\s*'([^']+)'/.exec(consumer)?.[1];
+
+    expect(declared).toBeDefined();
+    expect(used).toBeDefined();
+    expect(used).toBe(declared);
+  });
+
   it('accepts both React 18 and React 19 wherever React is a peer', async () => {
     const packageJsonFiles = await getPackageJsonFiles();
 

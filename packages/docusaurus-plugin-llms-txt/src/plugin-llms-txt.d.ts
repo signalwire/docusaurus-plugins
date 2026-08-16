@@ -24,6 +24,27 @@ declare module '@signalwire/docusaurus-plugin-llms-txt' {
 declare module '@theme/CopyPageContent' {
   import type { ReactNode } from 'react';
 
+  /**
+   * Copy-page-button options after defaults have been merged in.
+   *
+   * Mirrors `ResolvedCopyPageContentOptions` in
+   * @signalwire/docusaurus-theme-llms-txt (src/hooks/useCopyButtonConfig.ts).
+   * It is restated here rather than imported because these `@theme/*`
+   * declarations intentionally live in the plugin package, which does not
+   * depend on the theme.
+   */
+  export interface ResolvedCopyPageContentOptions {
+    readonly buttonLabel: string;
+    readonly display: {
+      readonly docs: boolean;
+      readonly excludeRoutes: readonly string[];
+    };
+    readonly contentStrategy: 'prefer-markdown' | 'html-only';
+    readonly viewMarkdown: boolean;
+    readonly chatGPT: { readonly enabled: boolean; readonly prompt: string };
+    readonly claude: { readonly enabled: boolean; readonly prompt: string };
+  }
+
   export interface Props {
     readonly isMobile?: boolean;
   }
@@ -44,10 +65,11 @@ declare module '@theme/DocBreadcrumbs' {
 // CopyButton subcomponent
 declare module '@theme/CopyPageContent/CopyButton' {
   import type { ReactNode } from 'react';
+  import type { ResolvedCopyPageContentOptions } from '@theme/CopyPageContent';
 
   export interface Props {
     readonly copyStatus: 'idle' | 'success' | 'error';
-    readonly finalConfig: any; // ResolvedCopyPageButtonOptions
+    readonly finalConfig: ResolvedCopyPageContentOptions;
     readonly isOpen: boolean;
     readonly onMainAction: () => void | Promise<void>;
     readonly onDropdownToggle: () => void;
@@ -59,10 +81,11 @@ declare module '@theme/CopyPageContent/CopyButton' {
 // DropdownMenu components
 declare module '@theme/CopyPageContent/DropdownMenu' {
   import type { ReactNode } from 'react';
+  import type { ResolvedCopyPageContentOptions } from '@theme/CopyPageContent';
 
   export interface Props {
     readonly isOpen: boolean;
-    readonly finalConfig: any;
+    readonly finalConfig: ResolvedCopyPageContentOptions;
     readonly onAction: (action: string) => void;
     readonly isMobile?: boolean;
     readonly hasMarkdown?: boolean;
