@@ -20,7 +20,9 @@ export function resolveGfmConfig(markdown: MarkdownOptions): MarkdownOptions {
   if (markdown.remarkGfm === true) {
     return {
       ...markdown,
-      remarkGfm: DEFAULT_GFM,
+      // Copy, never hand out the module-level singleton -- a caller mutating
+      // the returned config would rewrite the defaults for every other site.
+      remarkGfm: { ...DEFAULT_GFM },
     };
   }
 
@@ -43,17 +45,21 @@ export function resolveGfmConfig(markdown: MarkdownOptions): MarkdownOptions {
 export function applyGfmConfiguration(options: PluginOptions): PluginOptions {
   const markdown = options.markdown ?? {};
 
-  if (!(
-    markdown.remarkGfm === true ||
-    (typeof markdown.remarkGfm === 'object' && markdown.remarkGfm !== null)
-  )) {
+  // `undefined` means "not configured", and getMarkdownConfig later coerces
+  // that to `true` -- so it has to resolve to the same defaults as an explicit
+  // `remarkGfm: true`. Joi does not fill nested defaults when the `markdown`
+  // key is absent entirely, so treating undefined as "skip" here made
+  // `{llmsTxt: {...}}` and `{markdown: {}, llmsTxt: {...}}` emit different
+  // Markdown: the former reached remark-gfm with none of DEFAULT_GFM, losing
+  // stringLength/tablePipeAlign and misaligning tables for CJK and emoji.
+  const remarkGfm = markdown.remarkGfm ?? true;
+
+  if (remarkGfm === false) {
     return options;
   }
 
-  const resolvedMarkdown = resolveGfmConfig(markdown);
-
   return {
     ...options,
-    markdown: resolvedMarkdown,
+    markdown: resolveGfmConfig({ ...markdown, remarkGfm }),
   };
 }

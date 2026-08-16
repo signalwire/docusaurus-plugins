@@ -16,9 +16,13 @@ dependency.
   `@docusaurus/theme-classic`. The previous `^18.0.0` cap was wrong: the package already shipped
   React 19 types and was used on React 19 sites, so npm and pnpm users hit a peer conflict.
 - `@docusaurus/core` and `@docusaurus/theme-common` moved from `dependencies` to `peerDependencies`
-  on the theme, and the plugin now declares peers for `@docusaurus/logger`, `@docusaurus/utils` and
-  `@docusaurus/utils-validation` (previously resolved only by hoisting). Installing this theme no
-  longer pulls a second copy of Docusaurus into your `node_modules`.
+  on the theme. Installing this theme no longer pulls a second copy of Docusaurus into your
+  `node_modules`.
+- The plugin now declares `@docusaurus/logger`, `@docusaurus/utils` and
+  `@docusaurus/utils-validation` as `dependencies` (previously resolved only by hoisting). These are
+  libraries rather than the build tool, and sites never install them by name, so declaring them as
+  peers would leave them unmet under Yarn Classic and unresolved under pnpm. `@docusaurus/core`
+  remains the only peer, matching what every first-party Docusaurus plugin declares.
 - Minimum Node is now 20, matching Docusaurus 3.9+.
 
 **Fixed**
@@ -32,6 +36,15 @@ dependency.
 - Declared `remark-parse`, `hast-util-to-mdast` and `@types/mdast`, which the plugin imported
   without declaring. These previously resolved only via hoisting and would fail under pnpm or any
   strict node_modules layout.
+- Declared `tslib` on the theme. The build sets `importHelpers`, so 15 files in the published `lib/`
+  require it at runtime; it had been supplied only through `@docusaurus/core`'s own dependency tree,
+  which moving core to a peer removed. Under pnpm or a nested npm layout the theme failed to render
+  with `Cannot find module 'tslib'`.
+- GFM options are now applied consistently. Omitting the `markdown` key entirely silently dropped
+  every GFM default, so `{llmsTxt: {...}}` and `{markdown: {}, llmsTxt: {...}}` emitted different
+  Markdown: the first reached `remark-gfm` with none of `stringLength`, `tablePipeAlign`,
+  `tableCellPadding` or `singleTilde`, misaligning table pipes for CJK and emoji content.
+  `undefined` now resolves to the same defaults as an explicit `remarkGfm: true`.
 
 **Packaging**
 
