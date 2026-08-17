@@ -127,7 +127,8 @@
     "rimraf": "^5.0.0",
     "ts-jest": "^29.4.3",
     "tslib": "^2.8.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "yaml": "^2.9.0"
   },
   "packageManager": "pnpm@10.34.5",
   "engines": {
