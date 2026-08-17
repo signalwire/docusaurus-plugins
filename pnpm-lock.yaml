@@ -5,6 +5,8 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  copy-webpack-plugin>serialize-javascript: ^7.0.5
+  css-minimizer-webpack-plugin>serialize-javascript: ^7.0.5
   lerna>js-yaml: ^4.3.1
   lerna>tar: ^7.5.21
   nx>brace-expansion: ^5.0.9
@@ -138,16 +140,16 @@ importers:
     dependencies:
       '@docusaurus/core':
         specifier: ^3.9.0 || ^4.0.0
-        version: 3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3)
+        version: 3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(postcss@8.5.26))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3)
       '@docusaurus/logger':
         specifier: ^3.9.0 || ^4.0.0
         version: 3.10.2
       '@docusaurus/utils':
         specifier: ^3.9.0 || ^4.0.0
-        version: 3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@docusaurus/utils-validation':
         specifier: ^3.9.0 || ^4.0.0
-        version: 3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       fs-extra:
         specifier: ^11.0.0
         version: 11.4.0
@@ -190,16 +192,16 @@ importers:
     devDependencies:
       '@docusaurus/module-type-aliases':
         specifier: ^3.10.2
-        version: 3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@docusaurus/theme-common':
         specifier: ^3.10.2
-        version: 3.10.2(@docusaurus/plugin-content-docs@3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 3.10.2(@docusaurus/plugin-content-docs@3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(postcss@8.5.26))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@docusaurus/tsconfig':
         specifier: ^3.10.2
         version: 3.10.2
       '@docusaurus/types':
         specifier: ^3.10.2
-        version: 3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
@@ -239,19 +241,19 @@ importers:
     devDependencies:
       '@docusaurus/core':
         specifier: ^3.10.2
-        version: 3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(postcss@8.5.26))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3)
+        version: 3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3)
       '@docusaurus/module-type-aliases':
         specifier: ^3.10.2
-        version: 3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@docusaurus/theme-common':
         specifier: ^3.10.2
-        version: 3.10.2(@docusaurus/plugin-content-docs@3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(postcss@8.5.26))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 3.10.2(@docusaurus/plugin-content-docs@3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@docusaurus/types':
         specifier: ^3.10.2
-        version: 3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@signalwire/docusaurus-plugin-llms-txt':
         specifier: 2.0.0-alpha.7
-        version: 2.0.0-alpha.7(@docusaurus/core@3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(postcss@8.5.26))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))
+        version: 2.0.0-alpha.7(@docusaurus/core@3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))
       '@types/node':
         specifier: ^22.15.19
         version: 22.20.1
@@ -7914,9 +7916,6 @@ packages:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
     engines: {node: '>=10'}
 
-  randombytes@2.1.0:
-    resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
-
   range-parser@1.2.0:
     resolution: {integrity: sha512-kA5WQoNVo4t9lNx2kQNFCxKeBl5IbbSNBl1M/tLkw9WCn+hxNBAW5Qh8gdhs63CJnhjJ2zQWFoqPJP2sK1AV5A==}
     engines: {node: '>= 0.6'}
@@ -8367,8 +8366,9 @@ packages:
     resolution: {integrity: sha512-VMbMxbDeehAxpOtWJXlcUS5E8iXh6QmN+BkRX1GARS3wRaXEEgzCcB10gTQazO42tpNIya8xIyNx8fll1OFPrg==}
     engines: {node: '>= 0.8.0'}
 
-  serialize-javascript@6.0.2:
-    resolution: {integrity: sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g==}
+  serialize-javascript@7.1.0:
+    resolution: {integrity: sha512-RNEqWOyhhUQYN9V1GfHwu9AR/g+NTciH6Z5u3/no6X3/w+04J2lVDL+svFQVXgXrEGBMG2puMVN3gq2SNGuTGw==}
+    engines: {node: '>=20.0.0'}
 
   serve-handler@6.1.7:
     resolution: {integrity: sha512-CinAq1xWb0vR3twAv9evEU8cNWkXCb9kd5ePAHUKJBkOsUpR1wt/CvGdeca7vqumL1U5cSaeVQ6zZMxiJ3yWsg==}
@@ -13901,9 +13901,9 @@ snapshots:
 
   '@sideway/pinpoint@2.0.0': {}
 
-  '@signalwire/docusaurus-plugin-llms-txt@2.0.0-alpha.7(@docusaurus/core@3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(postcss@8.5.26))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))':
+  '@signalwire/docusaurus-plugin-llms-txt@2.0.0-alpha.7(@docusaurus/core@3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))':
     dependencies:
-      '@docusaurus/core': 3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(postcss@8.5.26))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(postcss@8.5.26)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3)
+      '@docusaurus/core': 3.10.2(@docusaurus/faster@3.10.2(@docusaurus/types@3.10.2(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)))(@mdx-js/react@3.1.1(@types/react@19.2.18)(react@19.2.8))(@rspack/core@1.7.12)(@swc/core@1.16.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3)
       fs-extra: 11.4.0
       hast-util-select: 6.0.4
       hast-util-to-html: 9.0.5
@@ -15614,7 +15614,7 @@ snapshots:
       globby: 13.2.2
       normalize-path: 3.0.0
       schema-utils: 4.3.3
-      serialize-javascript: 6.0.2
+      serialize-javascript: 7.1.0
       webpack: 5.109.2(@swc/core@1.16.0)(postcss@8.5.26)
 
   copy-webpack-plugin@11.0.0(webpack@5.109.2(@swc/core@1.16.0)):
@@ -15624,7 +15624,7 @@ snapshots:
       globby: 13.2.2
       normalize-path: 3.0.0
       schema-utils: 4.3.3
-      serialize-javascript: 6.0.2
+      serialize-javascript: 7.1.0
       webpack: 5.109.2(@swc/core@1.16.0)
 
   core-js-compat@3.50.0:
@@ -15714,7 +15714,7 @@ snapshots:
       jest-worker: 29.7.0
       postcss: 8.5.26
       schema-utils: 4.3.3
-      serialize-javascript: 6.0.2
+      serialize-javascript: 7.1.0
       webpack: 5.109.2(@swc/core@1.16.0)(postcss@8.5.26)
     optionalDependencies:
       clean-css: 5.3.3
@@ -15726,7 +15726,7 @@ snapshots:
       jest-worker: 29.7.0
       postcss: 8.5.26
       schema-utils: 4.3.3
-      serialize-javascript: 6.0.2
+      serialize-javascript: 7.1.0
       webpack: 5.109.2(@swc/core@1.16.0)
     optionalDependencies:
       clean-css: 5.3.3
@@ -20512,10 +20512,6 @@ snapshots:
 
   quick-lru@5.1.1: {}
 
-  randombytes@2.1.0:
-    dependencies:
-      safe-buffer: 5.2.1
-
   range-parser@1.2.0: {}
 
   range-parser@1.2.1: {}
@@ -21066,9 +21062,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  serialize-javascript@6.0.2:
-    dependencies:
-      randombytes: 2.1.0
+  serialize-javascript@7.1.0: {}
 
   serve-handler@6.1.7:
     dependencies:
