@@ -42,37 +42,15 @@ jobs:
           comment-summary-in-pr: on-failure
           show-patched-versions: true
 
-          # Advisories accepted because no fix exists. Review at every
-          # Docusaurus bump and delete entries once a patch ships.
+          # Dev-only DoS advisories in versions lerna/nx pin exactly. All three
+          # are dev-time only: `yarn audit --groups dependencies` is clean.
           #
-          # Reclassifying Docusaurus as a peer/dev dependency moved all known
-          # unfixable advisories (image-size, and serialize-javascript via
-          # copy-webpack-plugin -- see facebook/docusaurus#11801) out of scope.
+          #   js-yaml@4.1.1        (x2) pinned by lerna, patched in 4.3.1
+          #   brace-expansion@5.0.8      pinned by nx,    patched in 5.0.9
           #
-          # The two below are js-yaml@4.1.1, which lerna@9.0.7 pins exactly.
-          # Both are quadratic-CPU denial of service in the YAML parser, and
-          # both are patched only in 4.3.1. They are reachable only when lerna
-          # parses this repo's own lerna.json at development time, never by a
-          # consumer of either published package -- `yarn audit --groups
-          # dependencies` reports 0 advisories across the 364 runtime packages.
-          #
-          # A `resolutions` entry is NOT an option here: Yarn Classic 1.22
-          # ignores the scoped `lerna/js-yaml` form (verified -- the nested
-          # copy stays at 4.1.1), and an unscoped `js-yaml` entry rewrites
-          # every range for the name, dragging read-yaml-file@1.1.0 from 3.15.1
-          # to 4.x. That package calls `yaml.safeLoad`, removed in v4, and it
-          # is pulled by @changesets/cli -- the tooling that publishes these
-          # packages. Forcing it would trade a dev-time DoS for a broken
-          # release pipeline. Drop both lines once lerna ships js-yaml >=4.3.1;
-          # lerna@10 already has Node >=22 engines, so it is not an option
-          # while the packages support Node 20.
-          #
-          # The third is brace-expansion@5.0.8, pinned exactly by nx, which
-          # lerna depends on at `>=21.5.3 <23.0.0`. Patched in 5.0.9, and no
-          # release in that range ships it -- only nx 23.2.0 canaries do. Note
-          # this is not a regression: main resolves brace-expansion to 4.0.1,
-          # which the same advisory covers (>= 4.0.0, < 5.0.9). The delta gate
-          # flags it only because the version string changed. Everything else
-          # in the tree is already on the patched 5.0.9; an unscoped resolution
-          # would drag the 1.1.18 and 2.1.4 consumers across two majors.
+          # Not fixable by `resolutions`: Yarn 1.22 ignores the scoped
+          # `lerna/js-yaml` form, and an unscoped entry rewrites every range for
+          # the name -- forcing read-yaml-file (used by @changesets/cli) onto
+          # js-yaml 4.x, where the `safeLoad` it calls no longer exists.
+          # Removing lerna is the real fix; see issue for tracking.
           allow-ghsas: GHSA-5p4m-2wfm-xmqj, GHSA-52cp-r559-cp3m, GHSA-rgw5-rvv9-x895

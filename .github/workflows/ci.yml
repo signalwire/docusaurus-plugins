@@ -63,13 +63,9 @@ jobs:
           yarn workspace website add \
             react@^${{ matrix.react }} \
             react-dom@^${{ matrix.react }}
-          # `yarn workspace <name> add` leaves the root tree incomplete: it
-          # drops hoisted root devDependencies from node_modules while leaving
-          # them in package.json and yarn.lock. Reproduced on Yarn 1.22.22 --
-          # @testing-library/react, @testing-library/user-event, @types/react-dom
-          # and rimraf all disappear, so the theme suite dies with "Cannot find
-          # module '@testing-library/react'". A plain install puts them back
-          # without disturbing the pinned React.
+          # Yarn 1.22 `workspace <name> add` drops hoisted root devDependencies
+          # from node_modules (@testing-library/*, rimraf) while leaving them in
+          # package.json. This restores them; the pinned React is unaffected.
           yarn install
 
       # Guards against the leg silently testing the wrong version: if the

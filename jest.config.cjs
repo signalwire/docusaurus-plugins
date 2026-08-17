@@ -85,8 +85,7 @@ module.exports = {
   collectCoverageFrom: [
     'packages/*/src/**/*.{ts,tsx}',
     '!packages/*/src/**/*.d.ts',
-    // Tests live beside the code they cover, so without this they count as
-    // production source: every new spec file would lower reported coverage.
+    // Tests live under src/, so without this they count as covered source.
     '!packages/*/src/**/__tests__/**',
   ],
 };

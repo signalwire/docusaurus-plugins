@@ -12,10 +12,8 @@ module.exports = new Proxy(
   {},
   {
     get: (_target, key) => {
-      // Symbol keys must fall through as undefined. Returning a string for
-      // Symbol.toPrimitive makes any coercion of the module -- a template
-      // literal, String(styles), a snapshot serializer -- throw "is not a
-      // function", which reads as a bug anywhere but here.
+      // Symbols must be undefined: a string Symbol.toPrimitive breaks any
+      // coercion of the module (template literals, snapshot serializers).
       if (typeof key === 'symbol') {
         return undefined;
       }
