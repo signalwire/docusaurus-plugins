@@ -42,15 +42,9 @@ jobs:
           comment-summary-in-pr: on-failure
           show-patched-versions: true
 
-          # Dev-only DoS advisories in versions lerna/nx pin exactly. All three
-          # are dev-time only: `yarn audit --groups dependencies` is clean.
-          #
-          #   js-yaml@4.1.1        (x2) pinned by lerna, patched in 4.3.1
-          #   brace-expansion@5.0.8      pinned by nx,    patched in 5.0.9
-          #
-          # Not fixable by `resolutions`: Yarn 1.22 ignores the scoped
-          # `lerna/js-yaml` form, and an unscoped entry rewrites every range for
-          # the name -- forcing read-yaml-file (used by @changesets/cli) onto
-          # js-yaml 4.x, where the `safeLoad` it calls no longer exists.
-          # Removing lerna is the real fix; see issue for tracking.
-          allow-ghsas: GHSA-5p4m-2wfm-xmqj, GHSA-52cp-r559-cp3m, GHSA-rgw5-rvv9-x895
+          # No accepted advisories. pnpm overrides pin the vulnerable versions
+          # lerna and nx depend on (js-yaml, brace-expansion, tar) without
+          # disturbing other consumers of those names -- see pnpm.overrides in
+          # package.json. Add entries here only for advisories with no fix at
+          # any version, and note the reason.
+          # allow-ghsas: GHSA-xxxx-xxxx-xxxx

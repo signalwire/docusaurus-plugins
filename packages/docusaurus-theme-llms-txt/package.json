@@ -21,14 +21,14 @@
     "build": "tsc --build && node ../../scripts/copyUntypedFiles.js && prettier --config ../../.prettierrc.json --write \"lib/theme/**/*.js\"",
     "build:watch": "tsc --build --watch",
     "copy:watch": "node ../../scripts/copyUntypedFiles.js --watch",
-    "watch": "concurrently --names \"tsc,copy\" --kill-others \"yarn build:watch\" \"yarn copy:watch\"",
+    "watch": "concurrently --names \"tsc,copy\" --kill-others \"pnpm run build:watch\" \"pnpm run copy:watch\"",
     "clean": "rimraf lib .tsbuildinfo",
     "lint": "echo 'Linting handled at root level'",
     "lint:fix": "echo 'Linting handled at root level'",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
-    "prepublishOnly": "yarn run clean && yarn run build && yarn run lint && yarn run type-check"
+    "prepublishOnly": "pnpm run clean && pnpm run build && pnpm run lint && pnpm run type-check"
   },
   "keywords": [
     "signalwire",

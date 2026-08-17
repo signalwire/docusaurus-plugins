@@ -8,12 +8,10 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 
 import { useLocation } from '@docusaurus/router';
 
-export default function useDropdownState(): {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  toggleDropdown: () => void;
-  dropdownRef: React.RefObject<HTMLDivElement | null>;
-} {
+// The return type is inferred on purpose. React 18 and 19 disagree on what
+// useRef<T>(null) produces -- 19 widens it to RefObject<T | null> -- so naming
+// either shape makes the other major reject `ref={dropdownRef}`.
+export default function useDropdownState() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();

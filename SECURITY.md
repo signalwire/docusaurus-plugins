@@ -16,7 +16,7 @@ Two deliberate choices are worth explaining, because they differ from a plain `n
 
 ### We gate the change, not the inventory
 
-`yarn audit` reports the absolute state of the whole tree. That makes an unrelated PR fail for a
+`pnpm audit` reports the absolute state of the whole tree. That makes an unrelated PR fail for a
 transitive advisory it did not introduce and cannot fix, which trains everyone to ignore the check.
 Dependency Review compares the base and head of the PR, so it only speaks up about what the PR
 actually changed.

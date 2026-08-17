@@ -169,12 +169,12 @@ describe('Package Structure Validation', () => {
     });
   });
 
-  // Yarn Classic does not implement npm's "!" negation syntax, and when it
-  // meets one it stops treating files[] as a whitelist entirely -- packing MORE
-  // than intended, not less. Measured on this repo: 90 entries under npm pack
-  // vs 141 under yarn pack for the same manifest. Keep the list positive and
-  // rely on layout (tests live outside lib/ and src/theme) instead.
-  it('uses no negation patterns in files[], which Yarn Classic mishandles', async () => {
+  // Negation support is not uniform across packers: Yarn Classic ignored it and
+  // silently packed MORE than intended (measured here: 90 entries under npm pack
+  // vs 141 under yarn pack for the same manifest). A positive list means the same
+  // thing everywhere, so keep relying on layout instead -- tests live outside
+  // lib/ and src/theme.
+  it('uses no negation patterns in files[], which packers treat differently', async () => {
     const packageJsonFiles = await getPackageJsonFiles();
     const publishable = packageJsonFiles.filter((pkg) => !pkg.content.private);
     expect(publishable.length).toBeGreaterThan(0);

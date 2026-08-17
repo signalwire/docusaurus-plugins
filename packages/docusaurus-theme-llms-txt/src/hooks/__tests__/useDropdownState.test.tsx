@@ -39,9 +39,8 @@ describe('useDropdownState', () => {
     expect(result.current.isOpen).toBe(false);
   });
 
-  // `dropdownRef` is typed RefObject<HTMLDivElement | null> -- the React 19
-  // @types/react shape. Attaching it to a real element is what proves the
-  // signature is honest under whichever @types/react major is installed.
+  // Covers the runtime half only: ts-jest is transpile-only, so the ref's type
+  // is proven by `type-check` on both matrix legs, not here.
   it('exposes a ref that attaches to a DOM node', () => {
     function Harness(): React.JSX.Element {
       const { dropdownRef, isOpen, toggleDropdown } = useDropdownState();

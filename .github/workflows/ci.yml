@@ -22,16 +22,16 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Build packages
-        run: yarn run build:packages
+        run: pnpm run build:packages
 
       - name: Check code formatting
-        run: yarn run format:check
+        run: pnpm run format:check
 
       - name: Lint
-        run: yarn run lint
+        run: pnpm run lint
 
       - name: Type check
-        run: yarn run type-check
+        run: pnpm run type-check
 
   # Both published packages declare `react: ^18.0.0 || ^19.0.0`. Docusaurus v4
   # will require React 19, but v3 sites are still on 18, so both legs have to
@@ -50,55 +50,27 @@ jobs:
       - name: Setup Node.js and Dependencies
         uses: ./.github/actions/setup
 
-      # The website pins its own React range, so swapping only the root would
-      # leave a nested copy behind and the build would not actually exercise
-      # the matrix version.
+      # pnpm overrides apply tree-wide, so nested copies move too. Adding at
+      # the root instead would leave the packages' own @types/react ^19 in
+      # place and the React 18 leg would type-check against React 19.
       - name: Pin React ${{ matrix.react }}
         run: |
-          yarn add -W --dev \
-            react@^${{ matrix.react }} \
-            react-dom@^${{ matrix.react }} \
-            @types/react@^${{ matrix.react }} \
-            @types/react-dom@^${{ matrix.react }}
-          yarn workspace website add \
-            react@^${{ matrix.react }} \
-            react-dom@^${{ matrix.react }}
-          # Yarn 1.22 `workspace <name> add` drops hoisted root devDependencies
-          # from node_modules (@testing-library/*, rimraf) while leaving them in
-          # package.json. This restores them; the pinned React is unaffected.
-          yarn install
+          node scripts/pinReact.js ${{ matrix.react }}
+          pnpm install --no-frozen-lockfile
 
-      # Guards against the leg silently testing the wrong version: if the
-      # website kept a nested copy, root and site would resolve different
-      # files and the build below would not be exercising matrix.react at all.
-      - name: Verify the whole workspace resolves one React ${{ matrix.react }}
-        run: |
-          node -e "
-            const path = require('path');
-            const resolve = (from) =>
-              require.resolve('react/package.json', { paths: [from] });
-            const root = resolve(process.cwd());
-            const site = resolve(path.join(process.cwd(), 'website'));
-            const version = require(root).version;
-            console.log('root   ->', root);
-            console.log('site   ->', site);
-            console.log('version->', version);
-            if (root !== site) {
-              throw new Error('website resolves a different React copy');
-            }
-            if (!version.startsWith('${{ matrix.react }}.')) {
-              throw new Error('expected React ${{ matrix.react }}.x, got ' + version);
-            }
-          "
+      # Guards against the leg silently testing the wrong version. Checks the
+      # types too: a runtime-only pin would leave tsc on the other major.
+      - name: Verify React ${{ matrix.react }} everywhere
+        run: node scripts/checkReactVersions.js ${{ matrix.react }}
 
       - name: Build packages
-        run: yarn run build:packages
+        run: pnpm run build:packages
 
       - name: Type check
-        run: yarn run type-check
+        run: pnpm run type-check
 
       - name: Test packages
-        run: yarn run test:ci
+        run: pnpm run test:ci
 
       - name: Build website
-        run: yarn run build:website
+        run: pnpm run build:website

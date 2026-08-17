@@ -8,10 +8,10 @@ This guide covers the complete process for publishing your Docusaurus plugins to
 
 ```bash
 # Check if you're logged in
-yarn npm:check
+pnpm npm:check
 
 # Login if needed
-yarn npm:login
+pnpm npm:login
 ```
 
 ### 2. Package Name Configuration
@@ -26,14 +26,14 @@ Before publishing, update the package names in:
 
 ```bash
 # Install dependencies
-yarn install
+pnpm install
 
 # Build all packages
-yarn build:packages
+pnpm build:packages
 
 # Run tests and linting
-yarn test
-yarn lint
+pnpm test
+pnpm lint
 ```
 
 ## Publishing Process
@@ -45,7 +45,7 @@ Changesets provide automated versioning and changelog generation:
 #### Step 1: Create a Changeset
 
 ```bash
-yarn changeset
+pnpm changeset
 ```
 
 This will:
@@ -59,13 +59,13 @@ This will:
 
 ```bash
 # Update package versions and generate changelogs
-yarn changeset:version
+pnpm changeset:version
 
 # Install updated dependencies
-yarn install
+pnpm install
 
 # Publish to npm
-yarn changeset:publish
+pnpm changeset:publish
 ```
 
 ### Option 2: Manual Publishing
@@ -83,7 +83,7 @@ Edit `packages/*/package.json` files to bump versions following semantic version
 #### Step 2: Build and Test
 
 ```bash
-yarn prerelease
+pnpm prerelease
 ```
 
 #### Step 3: Publish Individual Packages
@@ -105,7 +105,7 @@ For testing or pre-release versions without Git commits:
 ##### Canary Releases
 
 ```bash
-yarn canary
+pnpm canary
 ```
 
 Creates versions like `1.0.0-canary-20241204123456` with the `canary` npm tag.
@@ -113,7 +113,7 @@ Creates versions like `1.0.0-canary-20241204123456` with the `canary` npm tag.
 ##### Alpha Releases
 
 ```bash
-yarn alpha
+pnpm alpha
 ```
 
 Creates versions like `1.0.0-alpha-20241204123456` with the `alpha` npm tag.
@@ -121,7 +121,7 @@ Creates versions like `1.0.0-alpha-20241204123456` with the `alpha` npm tag.
 ##### Beta Releases
 
 ```bash
-yarn beta
+pnpm beta
 ```
 
 Creates versions like `1.0.0-beta-20241204123456` with the `beta` npm tag.
@@ -129,7 +129,7 @@ Creates versions like `1.0.0-beta-20241204123456` with the `beta` npm tag.
 ##### Dev Releases
 
 ```bash
-yarn dev:release
+pnpm dev:release
 ```
 
 Creates versions like `1.0.0-dev-20241204123456` with the `dev` npm tag.
@@ -142,47 +142,47 @@ For longer prerelease cycles with Git tracking:
 
 ```bash
 # Choose your tag: alpha, beta, rc, etc.
-yarn prerelease:enter alpha
+pnpm prerelease:enter alpha
 
 # Version packages (creates 1.0.0-alpha.0, 1.0.0-alpha.1, etc.)
-yarn prerelease:version
+pnpm prerelease:version
 
 # Commit changes
 git add .
 git commit -m "Enter alpha prerelease"
 
 # Publish with the specified tag
-yarn prerelease:publish
+pnpm prerelease:publish
 ```
 
 ##### Continue Releasing Prereleases
 
 ```bash
 # Add changesets as normal
-yarn changeset
+pnpm changeset
 
 # Version packages (increments prerelease number)
-yarn prerelease:version
+pnpm prerelease:version
 
 # Commit and publish
 git add .
 git commit -m "Version alpha packages"
-yarn prerelease:publish
+pnpm prerelease:publish
 ```
 
 ##### Exit Prerelease Mode
 
 ```bash
 # Exit prerelease mode
-yarn prerelease:exit
+pnpm prerelease:exit
 
 # Version packages (removes prerelease suffix)
-yarn prerelease:version
+pnpm prerelease:version
 
 # Commit and publish to latest
 git add .
 git commit -m "Exit prerelease and release stable version"
-yarn prerelease:publish
+pnpm prerelease:publish
 ```
 
 #### Installing Prerelease Versions
@@ -219,7 +219,7 @@ npm install @your-org/package@1.0.0-alpha.0
 Run this command to verify everything is ready:
 
 ```bash
-yarn publish:check
+pnpm publish:check
 ```
 
 This runs the `prepublishOnly` script which:
@@ -339,13 +339,13 @@ done from your local machine, not through CI/CD.
 2. **Create a changeset for your changes**:
 
    ```bash
-   yarn changeset
+   pnpm changeset
    ```
 
 3. **Version the packages**:
 
    ```bash
-   yarn changeset:version
+   pnpm changeset:version
    ```
 
 4. **Commit the version changes**:
@@ -358,13 +358,13 @@ done from your local machine, not through CI/CD.
 5. **Build and test everything**:
 
    ```bash
-   yarn prerelease
+   pnpm prerelease
    ```
 
 6. **Publish to npm**:
 
    ```bash
-   yarn changeset:publish
+   pnpm changeset:publish
    ```
 
 7. **Push the version tags and commits**:
@@ -378,60 +378,60 @@ done from your local machine, not through CI/CD.
 
 ```bash
 # Check what would be published
-yarn publish:check
+pnpm publish:check
 
 # Build all packages
-yarn build:packages
+pnpm build:packages
 
 # Test everything before publishing
-yarn prerelease
+pnpm prerelease
 
 # Create a changeset
-yarn changeset
+pnpm changeset
 
 # Version packages
-yarn changeset:version
+pnpm changeset:version
 
 # Publish to npm
-yarn changeset:publish
+pnpm changeset:publish
 
 # Check npm login status
-yarn npm:check
+pnpm npm:check
 
 # Login to npm
-yarn npm:login
+pnpm npm:login
 ```
 
 ### Snapshot Prerelease Commands
 
 ```bash
 # Canary release (snapshot with timestamp)
-yarn canary
+pnpm canary
 
 # Alpha release (snapshot with timestamp)
-yarn alpha
+pnpm alpha
 
 # Beta release (snapshot with timestamp)
-yarn beta
+pnpm beta
 
 # Dev release (snapshot with timestamp)
-yarn dev:release
+pnpm dev:release
 ```
 
 ### Full Prerelease Mode Commands
 
 ```bash
 # Enter prerelease mode (specify tag: alpha, beta, rc, etc.)
-yarn prerelease:enter <tag>
+pnpm prerelease:enter <tag>
 
 # Exit prerelease mode
-yarn prerelease:exit
+pnpm prerelease:exit
 
 # Version packages in prerelease mode
-yarn prerelease:version
+pnpm prerelease:version
 
 # Publish prerelease packages
-yarn prerelease:publish
+pnpm prerelease:publish
 ```
 
 ## Troubleshooting
@@ -440,7 +440,7 @@ yarn prerelease:publish
 
 **"npm ERR! 403 Forbidden"**
 
-- Check if you're logged in: `yarn npm:check`
+- Check if you're logged in: `pnpm npm:check`
 - Verify package name isn't taken
 - Check organization permissions
 
@@ -448,13 +448,13 @@ yarn prerelease:publish
 
 - Version number already published
 - Update version in package.json
-- Or use `yarn changeset` to manage versions
+- Or use `pnpm changeset` to manage versions
 
 **Build failures before publish**
 
-- Run `yarn clean` then `yarn build:packages`
-- Check TypeScript errors: `yarn type-check`
-- Check linting: `yarn lint`
+- Run `pnpm clean` then `pnpm build:packages`
+- Check TypeScript errors: `pnpm type-check`
+- Check linting: `pnpm lint`
 
 **Changeset not detecting changes**
 
@@ -479,7 +479,7 @@ npm install @your-org/docusaurus-plugin-llms-txt
 1. **Always test before publishing**
 
    ```bash
-   yarn prerelease
+   pnpm prerelease
    ```
 
 2. **Use semantic versioning consistently**

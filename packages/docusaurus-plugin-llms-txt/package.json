@@ -30,7 +30,7 @@
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
-    "prepublishOnly": "yarn run clean && yarn run build && yarn run lint && yarn run type-check"
+    "prepublishOnly": "pnpm run clean && pnpm run build && pnpm run lint && pnpm run type-check"
   },
   "keywords": [
     "signalwire",

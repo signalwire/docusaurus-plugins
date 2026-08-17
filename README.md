@@ -47,7 +47,7 @@ export default config;
 ### Prerequisites
 
 - Node.js ≥ 20.0.0
-- Yarn 1.22.x (Yarn Classic)
+- pnpm 10.x (`corepack enable pnpm` picks up the pinned version)
 
 ### Setup
 
@@ -57,29 +57,29 @@ git clone https://github.com/signalwire/docusaurus-plugins.git
 cd docusaurus-plugins
 
 # Install dependencies
-yarn install
+pnpm install
 
 # Build all packages
-yarn build:packages
+pnpm build:packages
 ```
 
 ### Development Workflow
 
 ```bash
 # Start development with watch mode
-yarn dev
+pnpm dev
 
 # Run tests
-yarn test
+pnpm test
 
 # Lint code
-yarn lint
+pnpm lint
 
 # Type check
-yarn type-check
+pnpm type-check
 
 # Format code
-yarn format
+pnpm format
 ```
 
 ### Adding New Packages
@@ -92,13 +92,13 @@ yarn format
 
 | Command               | Description                    |
 | --------------------- | ------------------------------ |
-| `yarn dev`            | Start development server       |
-| `yarn build`          | Build all packages and website |
-| `yarn build:packages` | Build all packages only        |
-| `yarn test`           | Run tests in all packages      |
-| `yarn lint`           | Lint all packages              |
-| `yarn format`         | Format all code                |
-| `yarn clean`          | Clean build artifacts          |
+| `pnpm dev`            | Start development server       |
+| `pnpm build`          | Build all packages and website |
+| `pnpm build:packages` | Build all packages only        |
+| `pnpm test`           | Run tests in all packages      |
+| `pnpm lint`           | Lint all packages              |
+| `pnpm format`         | Format all code                |
+| `pnpm clean`          | Clean build artifacts          |
 
 ## 📤 Publishing
 
@@ -109,13 +109,13 @@ publishing.
 
 ```bash
 # Create a changeset
-yarn changeset
+pnpm changeset
 
 # Version packages and update changelogs
-yarn changeset:version
+pnpm changeset:version
 
 # Publish to npm
-yarn changeset:publish
+pnpm changeset:publish
 ```
 
 For detailed publishing instructions, see [PUBLISHING.md](./PUBLISHING.md).
@@ -137,7 +137,7 @@ docusaurus-plugins/
 
 ### Technology Stack
 
-- **Package Management**: Yarn Workspaces (linking) + Lerna (task running)
+- **Package Management**: pnpm workspaces (linking) + Lerna (task running)
 - **Build System**: TypeScript with project references
 - **Version Management**: Changesets
 - **Code Quality**: ESLint + Prettier
@@ -159,8 +159,8 @@ docusaurus-plugins/
 2. Create a feature branch
 3. Make your changes
 4. Add tests if applicable
-5. Run `yarn prerelease` to verify everything works
-6. Create a changeset with `yarn changeset`
+5. Run `pnpm prerelease` to verify everything works
+6. Create a changeset with `pnpm changeset`
 7. Submit a pull request
 
 ### Development Guidelines
