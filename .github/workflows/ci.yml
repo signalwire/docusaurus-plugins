@@ -3,8 +3,8 @@ name: CI
 on:
   push:
     branches: [main, develop]
+  # No branch filter: a PR stacked on another feature branch still needs CI.
   pull_request:
-    branches: [main, develop]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

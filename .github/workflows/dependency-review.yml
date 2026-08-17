@@ -42,9 +42,12 @@ jobs:
           comment-summary-in-pr: on-failure
           show-patched-versions: true
 
-          # No accepted advisories. pnpm overrides pin the vulnerable versions
-          # lerna and nx depend on (js-yaml, brace-expansion, tar) without
-          # disturbing other consumers of those names -- see pnpm.overrides in
-          # package.json. Add entries here only for advisories with no fix at
-          # any version, and note the reason.
-          # allow-ghsas: GHSA-xxxx-xxxx-xxxx
+          # Only advisories with no patch at any version belong here. The
+          # dev-only ones lerna and nx pin are handled by pnpm.overrides in
+          # package.json instead -- see there.
+          #
+          # Both below are image-size 2.0.2, reached through @docusaurus/core.
+          # Neither has a patched release (verified via the GitHub advisory
+          # API), and both are parser DoS in a build-time image reader that
+          # never runs in a deployed site. Drop them if a fix ever ships.
+          allow-ghsas: GHSA-w3rx-r6r6-pgpr, GHSA-5p2g-fcmc-qvqq
