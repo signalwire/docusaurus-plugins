@@ -130,14 +130,14 @@ docusaurus-plugins/
 │   ├── docusaurus-plugin-llms-txt/
 │   └── docusaurus-theme-llms-txt/
 ├── website/                     # Demo/documentation site
-├── .changeset/                  # Changeset configuration
-├── lerna.json                   # Lerna configuration
+├── .changeset/                  # Versioning and release (changesets)
+├── lerna.json                   # Lerna config -- task running only
 └── package.json                 # Root package with workspaces
 ```
 
 ### Technology Stack
 
-- **Package Management**: Yarn Workspaces + Lerna
+- **Package Management**: Yarn Workspaces (linking) + Lerna (task running)
 - **Build System**: TypeScript with project references
 - **Version Management**: Changesets
 - **Code Quality**: ESLint + Prettier
