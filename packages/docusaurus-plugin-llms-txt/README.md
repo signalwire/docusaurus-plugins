@@ -20,9 +20,9 @@ documentation that you want to make accessible to AI assistants, chatbots, or LL
 | Node.js    | `>=20.0`                                |
 | React      | supplied by Docusaurus (`^18` or `^19`) |
 
-`@docusaurus/core`, `@docusaurus/logger`, `@docusaurus/utils` and `@docusaurus/utils-validation` are
-**peer dependencies** — your site already provides them, so this plugin never installs a second copy
-of Docusaurus.
+`@docusaurus/core` is a **peer dependency** supplied by your site, so this plugin does not install a
+second copy of the Docusaurus application. The directly imported build helpers `@docusaurus/logger`,
+`@docusaurus/utils`, and `@docusaurus/utils-validation` are runtime dependencies of the plugin.
 
 ## How It Works
 

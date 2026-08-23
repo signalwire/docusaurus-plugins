@@ -5,6 +5,7 @@
  */
 
 import { execFileSync } from 'child_process';
+import os from 'os';
 import path from 'path';
 
 import { Globby } from '@docusaurus/utils';
@@ -69,6 +70,98 @@ async function getTsconfigFiles(): Promise<TsconfigFile[]> {
     }
     return { file, content: config as TsconfigFile['content'] };
   });
+}
+
+const publishedPathsCache = new Map<string, string[]>();
+
+function getPublishedPaths(cwd: string): string[] {
+  const cached = publishedPathsCache.get(cwd);
+  if (cached) {
+    return cached;
+  }
+
+  const raw = execFileSync(
+    'npm',
+    ['pack', '--dry-run', '--json', '--ignore-scripts'],
+    {
+      cwd,
+      encoding: 'utf8',
+      env: {
+        ...process.env,
+        npm_config_cache: path.join(
+          os.tmpdir(),
+          'docusaurus-plugins-npm-cache'
+        ),
+      },
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }
+  );
+  const published = (JSON.parse(raw) as [{ files: { path: string }[] }])[0];
+  const paths = published.files.map((file) => file.path);
+  publishedPathsCache.set(cwd, paths);
+  return paths;
+}
+
+async function resolveTypeScriptModule(
+  fromFile: string,
+  specifier: string
+): Promise<string> {
+  const base = path.resolve(path.dirname(fromFile), specifier);
+  const candidates = [
+    base,
+    `${base}.ts`,
+    `${base}.tsx`,
+    path.join(base, 'index.ts'),
+    path.join(base, 'index.tsx'),
+  ];
+
+  for (const candidate of candidates) {
+    if (await fs.pathExists(candidate)) {
+      return candidate;
+    }
+  }
+
+  throw new Error(`${fromFile}: cannot resolve ${specifier}`);
+}
+
+function getInterfaceShape(
+  sourceText: string,
+  fileName: string,
+  interfaceName: string
+): string[] {
+  const sourceFile = ts.createSourceFile(
+    fileName,
+    sourceText,
+    ts.ScriptTarget.Latest,
+    true
+  );
+  let result: string[] | undefined;
+
+  const visit = (node: ts.Node): void => {
+    if (ts.isInterfaceDeclaration(node) && node.name.text === interfaceName) {
+      result = node.members.map((member) => {
+        if (!ts.isPropertySignature(member) || !member.type) {
+          throw new Error(
+            `${fileName}: ${interfaceName} contains an unsupported member`
+          );
+        }
+        const name = member.name.getText(sourceFile);
+        const optional = member.questionToken ? '?' : '';
+        const type = member.type
+          .getText(sourceFile)
+          .replace(/\breadonly\s*/g, '')
+          .replace(/\s+/g, '');
+        return `${name}${optional}:${type}`;
+      });
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sourceFile);
+
+  if (!result) {
+    throw new Error(`${fileName}: cannot find interface ${interfaceName}`);
+  }
+  return result.sort();
 }
 
 const tsconfigSchema = Joi.object({
@@ -170,8 +263,8 @@ describe('Package Structure Validation', () => {
   });
 
   // Negation support is not uniform across packers: Yarn Classic ignored it and
-  // silently packed MORE than intended (measured here: 90 entries under npm pack
-  // vs 141 under yarn pack for the same manifest). A positive list means the same
+  // silently packed MORE than intended (measured here: 90 entries under npm
+  // pack vs 141 under yarn pack for the same manifest). A positive list means
   // thing everywhere, so keep relying on layout instead -- tests live outside
   // lib/ and src/theme.
   it('uses no negation patterns in files[], which packers treat differently', async () => {
@@ -201,13 +294,7 @@ describe('Package Structure Validation', () => {
 
     publishable.forEach((pkg) => {
       const cwd = path.dirname(pkg.file);
-      const raw = execFileSync(
-        'npm',
-        ['pack', '--dry-run', '--json', '--ignore-scripts'],
-        { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
-      );
-      const published = (JSON.parse(raw) as [{ files: { path: string }[] }])[0];
-      const paths = published.files.map((f) => f.path);
+      const paths = getPublishedPaths(cwd);
 
       const leaked = paths.filter((p) =>
         /(?:^|\/)__tests__(?:\/|$)|\.test\.[cm]?[jt]sx?$|\.tsbuildinfo/.test(p)
@@ -217,6 +304,35 @@ describe('Package Structure Validation', () => {
         leaked: [],
       });
     });
+  });
+
+  it('publishes every hook exported by its public type entrypoint', async () => {
+    const packageDir = 'packages/docusaurus-theme-llms-txt';
+    const entrypoint = path.join(packageDir, 'src/hooks/index.ts');
+    const source = await fs.readFile(entrypoint, 'utf8');
+    const specifiers = [
+      ...new Set(
+        ts
+          .preProcessFile(source, true, true)
+          .importedFiles.map((file) => file.fileName)
+          .filter((specifier) => specifier.startsWith('.'))
+      ),
+    ];
+    const published = new Set(getPublishedPaths(packageDir));
+    const missing: string[] = [];
+
+    for (const specifier of specifiers) {
+      const resolved = await resolveTypeScriptModule(entrypoint, specifier);
+      const packagedPath = path
+        .relative(packageDir, resolved)
+        .split(path.sep)
+        .join('/');
+      if (!published.has(packagedPath)) {
+        missing.push(packagedPath);
+      }
+    }
+
+    expect(missing).toEqual([]);
   });
 
   // The theme reads the plugin's global data by name. The plugin owns that name
@@ -235,12 +351,39 @@ describe('Package Structure Validation', () => {
       'utf8'
     );
 
-    const declared = /PLUGIN_NAME\s*=\s*'([^']+)'/.exec(constants)?.[1];
-    const used = /usePluginData\(\s*'([^']+)'/.exec(consumer)?.[1];
+    const declared = /PLUGIN_NAME\s*=\s*'(?<pluginName>[^']+)'/.exec(constants)
+      ?.groups?.pluginName;
+    const used = /usePluginData\(\s*'(?<pluginName>[^']+)'/.exec(consumer)
+      ?.groups?.pluginName;
 
     expect(declared).toBeDefined();
     expect(used).toBeDefined();
     expect(used).toBe(declared);
+  });
+
+  it('keeps the public CopyPageContent config declaration in sync', async () => {
+    const implementationFile =
+      'packages/docusaurus-theme-llms-txt/src/hooks/useCopyButtonConfig.ts';
+    const declarationFile =
+      'packages/docusaurus-plugin-llms-txt/src/plugin-llms-txt.d.ts';
+    const [implementation, declaration] = await Promise.all([
+      fs.readFile(implementationFile, 'utf8'),
+      fs.readFile(declarationFile, 'utf8'),
+    ]);
+
+    expect(
+      getInterfaceShape(
+        declaration,
+        declarationFile,
+        'ResolvedCopyPageContentOptions'
+      )
+    ).toEqual(
+      getInterfaceShape(
+        implementation,
+        implementationFile,
+        'ResolvedCopyPageContentOptions'
+      )
+    );
   });
 
   it('accepts both React 18 and React 19 wherever React is a peer', async () => {

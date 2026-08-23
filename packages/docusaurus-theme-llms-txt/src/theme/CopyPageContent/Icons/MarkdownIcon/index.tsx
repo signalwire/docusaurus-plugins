@@ -8,7 +8,7 @@ import type React from 'react';
 
 import { FaMarkdown } from '@signalwire/docusaurus-theme-llms-txt/react-icons';
 
-import styles from '../styles.module.css';
+import styles from './styles.module.css';
 
 export default function MarkdownIcon(): React.JSX.Element {
   return <FaMarkdown className={styles.icon} />;

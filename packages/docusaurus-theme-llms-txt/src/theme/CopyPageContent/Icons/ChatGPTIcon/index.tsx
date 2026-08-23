@@ -11,7 +11,7 @@ import type React from 'react';
 // matches the weight of SiClaude in the same menu.
 import { RiOpenaiFill } from '@signalwire/docusaurus-theme-llms-txt/react-icons';
 
-import styles from '../styles.module.css';
+import styles from './styles.module.css';
 
 export default function ChatGPTIcon(): React.JSX.Element {
   return <RiOpenaiFill className={styles.icon} />;

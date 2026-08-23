@@ -36,6 +36,26 @@ jobs:
       - name: Type check tests
         run: pnpm exec tsc -p tsconfig.test.json
 
+      # A safe component must build from only the directory Docusaurus copies
+      # for that component. This catches relative imports into parent theme
+      # directories that a full CopyPageContent ejection would hide.
+      - name: Build individually ejected safe icons
+        run: |
+          pnpm --filter website exec docusaurus swizzle \
+            @signalwire/docusaurus-theme-llms-txt CopyPageContent/Icons/ChatGPTIcon \
+            --eject --typescript
+          pnpm --filter website exec docusaurus swizzle \
+            @signalwire/docusaurus-theme-llms-txt CopyPageContent/Icons/ChevronIcon \
+            --eject --typescript
+          pnpm --filter website exec docusaurus swizzle \
+            @signalwire/docusaurus-theme-llms-txt CopyPageContent/Icons/ClaudeIcon \
+            --eject --typescript
+          pnpm --filter website exec docusaurus swizzle \
+            @signalwire/docusaurus-theme-llms-txt CopyPageContent/Icons/MarkdownIcon \
+            --eject --typescript
+          pnpm run build:website:only
+          rm -rf website/src/theme/CopyPageContent
+
       - name: Type check ejected theme source
         run: |
           pnpm --filter website exec docusaurus swizzle \
@@ -60,12 +80,14 @@ jobs:
       - name: Setup Node.js and Dependencies
         uses: ./.github/actions/setup
 
-      # pnpm overrides apply tree-wide, so nested copies move too. Adding at
-      # the root instead would leave the packages' own @types/react ^19 in
-      # place and the React 18 leg would type-check against React 19.
-      - name: Pin React ${{ matrix.react }}
+      # React 18 is the lockfile baseline installed by the setup action. pnpm
+      # overrides apply tree-wide, so only the React 19 leg needs a re-pin and
+      # reinstall; changing root dependencies alone would leave nested types
+      # on React 18.
+      - name: Pin React 19
+        if: matrix.react == '19'
         run: |
-          node scripts/pinReact.js ${{ matrix.react }}
+          node scripts/pinReact.js 19
           pnpm install --no-frozen-lockfile
 
       # Guards against the leg silently testing the wrong version. Checks the

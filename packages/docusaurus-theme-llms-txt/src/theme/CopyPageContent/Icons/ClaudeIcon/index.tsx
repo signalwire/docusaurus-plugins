@@ -8,7 +8,7 @@ import type React from 'react';
 
 import { SiClaude } from '@signalwire/docusaurus-theme-llms-txt/react-icons';
 
-import styles from '../styles.module.css';
+import styles from './styles.module.css';
 
 export default function ClaudeIcon(): React.JSX.Element {
   return <SiClaude className={styles.icon} />;

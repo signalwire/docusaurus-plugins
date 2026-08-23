@@ -26,6 +26,8 @@ const themeModuleNameMapper = {
   '^@docusaurus/theme-common$':
     '<rootDir>/test/mocks/docusaurus/theme-common.ts',
 
+  '^@signalwire/docusaurus-theme-llms-txt/hooks$': `${THEME_SRC}/hooks/index.ts`,
+  '^@signalwire/docusaurus-theme-llms-txt/react-icons$': `${THEME_SRC}/reactIcons.ts`,
   '^@theme/(.*)$': `${THEME_SRC}/theme/$1`,
 };
 

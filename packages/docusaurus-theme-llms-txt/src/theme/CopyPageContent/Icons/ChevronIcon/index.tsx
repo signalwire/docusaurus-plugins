@@ -10,7 +10,7 @@ import clsx from 'clsx';
 
 import { FiChevronDown } from '@signalwire/docusaurus-theme-llms-txt/react-icons';
 
-import buttonStyles from '../../CopyButton/styles.module.css';
+import styles from './styles.module.css';
 
 interface ChevronIconProps {
   isOpen: boolean;
@@ -21,10 +21,7 @@ export default function ChevronIcon({
 }: ChevronIconProps): React.JSX.Element {
   return (
     <FiChevronDown
-      className={clsx(
-        buttonStyles.arrowIcon,
-        isOpen && buttonStyles.arrowIconOpen
-      )}
+      className={clsx(styles.arrowIcon, isOpen && styles.arrowIconOpen)}
     />
   );
 }

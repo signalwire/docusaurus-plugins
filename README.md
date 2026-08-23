@@ -56,11 +56,8 @@ export default config;
 git clone https://github.com/signalwire/docusaurus-plugins.git
 cd docusaurus-plugins
 
-# Install dependencies
-pnpm install
-
-# Build all packages
-pnpm build:packages
+# Install dependencies and build all packages
+pnpm run bootstrap
 ```
 
 ### Development Workflow
@@ -90,15 +87,16 @@ pnpm format
 
 ## 📋 Scripts Reference
 
-| Command               | Description                    |
-| --------------------- | ------------------------------ |
-| `pnpm dev`            | Start development server       |
-| `pnpm build`          | Build all packages and website |
-| `pnpm build:packages` | Build all packages only        |
-| `pnpm test`           | Run tests in all packages      |
-| `pnpm lint`           | Lint all packages              |
-| `pnpm format`         | Format all code                |
-| `pnpm clean`          | Clean build artifacts          |
+| Command               | Description                     |
+| --------------------- | ------------------------------- |
+| `pnpm dev`            | Start development server        |
+| `pnpm build`          | Build all packages and website  |
+| `pnpm build:packages` | Build all packages only         |
+| `pnpm run bootstrap`  | Install and build the workspace |
+| `pnpm test`           | Run tests in all packages       |
+| `pnpm lint`           | Lint all packages               |
+| `pnpm format`         | Format all code                 |
+| `pnpm clean`          | Clean build artifacts           |
 
 ## 📤 Publishing
 

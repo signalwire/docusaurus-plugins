@@ -32,7 +32,9 @@ developer's machine at build time, not to anything a visitor to your site can re
 `fail-on-scopes` therefore stays at its default of `runtime`, and this repo classifies Docusaurus
 accordingly:
 
-- published packages declare `@docusaurus/*` as **peerDependencies**
+- published packages declare host-owned framework packages such as `@docusaurus/core` and
+  `@docusaurus/theme-common` as **peerDependencies**; directly imported build helpers remain runtime
+  dependencies
 - the demo website declares them as **devDependencies**
 
 This is the remedy the Docusaurus maintainers themselves recommend — see

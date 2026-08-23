@@ -31,13 +31,13 @@ contents hosting service.
 Using SSH:
 
 ```bash
-USE_SSH=true pnpm deploy
+USE_SSH=true pnpm run deploy
 ```
 
 Not using SSH:
 
 ```bash
-GIT_USER=<Your GitHub username> pnpm deploy
+GIT_USER=<Your GitHub username> pnpm run deploy
 ```
 
 If you are using GitHub pages for hosting, this command is a convenient way to build the website and
