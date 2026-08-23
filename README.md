@@ -86,7 +86,7 @@ pnpm format
 
 1. Create a new directory in `packages/`
 2. Add a `package.json` with standard scripts
-3. Lerna will automatically detect and include it in all operations
+3. pnpm will automatically detect and include it in all workspace operations
 
 ## 📋 Scripts Reference
 
@@ -131,13 +131,13 @@ docusaurus-plugins/
 │   └── docusaurus-theme-llms-txt/
 ├── website/                     # Demo/documentation site
 ├── .changeset/                  # Versioning and release (changesets)
-├── lerna.json                   # Lerna config -- task running only
-└── package.json                 # Root package with workspaces
+├── pnpm-workspace.yaml          # Workspace packages and shared pnpm settings
+└── package.json                 # Root scripts and development dependencies
 ```
 
 ### Technology Stack
 
-- **Package Management**: pnpm workspaces (linking) + Lerna (task running)
+- **Package Management**: pnpm workspaces (linking and task running)
 - **Build System**: TypeScript with project references
 - **Version Management**: Changesets
 - **Code Quality**: ESLint + Prettier

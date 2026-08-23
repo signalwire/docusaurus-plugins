@@ -42,9 +42,7 @@ jobs:
           comment-summary-in-pr: on-failure
           show-patched-versions: true
 
-          # Only advisories with no patch at any version belong here. The
-          # dev-only ones lerna and nx pin are handled by pnpm.overrides in
-          # package.json instead -- see there.
+          # Only advisories with no patch at any version belong here.
           #
           # Both below are image-size 2.0.2, reached through @docusaurus/core.
           # Neither has a patched release (verified via the GitHub advisory

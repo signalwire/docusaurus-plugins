@@ -13,18 +13,20 @@ import clsx from 'clsx';
 import { useLocation } from '@docusaurus/router';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { usePluginData } from '@docusaurus/useGlobalData';
-
-import CopyButton from '@theme/CopyPageContent/CopyButton';
-import DropdownMenu from '@theme/CopyPageContent/DropdownMenu';
-
 import {
   useCopyContentData,
   useCopyButtonConfig,
   useDropdownState,
   useCopyActions,
-} from '../../hooks';
+} from '@signalwire/docusaurus-theme-llms-txt/hooks';
 
-import type { CopyPageContentProps, PluginGlobalData } from '../../types';
+import CopyButton from '@theme/CopyPageContent/CopyButton';
+import DropdownMenu from '@theme/CopyPageContent/DropdownMenu';
+
+import type {
+  CopyPageContentProps,
+  PluginGlobalData,
+} from '@signalwire/docusaurus-theme-llms-txt/types';
 
 import styles from './styles.module.css';
 

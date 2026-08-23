@@ -6,7 +6,7 @@
  */
 import type React from 'react';
 
-import { FaCode } from 'react-icons/fa';
+import { FaCode } from '@signalwire/docusaurus-theme-llms-txt/react-icons';
 
 import styles from '../styles.module.css';
 

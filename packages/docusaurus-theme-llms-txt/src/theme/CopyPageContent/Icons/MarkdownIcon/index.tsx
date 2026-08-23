@@ -6,7 +6,7 @@
  */
 import type React from 'react';
 
-import { FaMarkdown } from 'react-icons/fa';
+import { FaMarkdown } from '@signalwire/docusaurus-theme-llms-txt/react-icons';
 
 import styles from '../styles.module.css';
 

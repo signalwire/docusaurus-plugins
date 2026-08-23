@@ -17,16 +17,21 @@ if (!major) {
 
 const lock = await readFile('pnpm-lock.yaml', 'utf8');
 
-// Lockfile entries look like `  react@18.3.1:` / `  '@types/react@18.3.27':`
-// The trailing `@` in the pattern keeps `react-dom` and `@types/react-dom` out.
-const pattern = /^\s+'?(@types\/react|react)@([^:'(\s]+)/gm;
+// Lockfile entries look like `  react@18.3.1:` and
+// `  '@types/react-dom@18.3.7':`. Scoped names are quoted by pnpm.
+const pattern =
+  /^\s+'?(?<name>@types\/react(?:-dom)?|react(?:-dom)?)@(?<version>[^:'(\s]+)/gm;
 
 const versions = new Map([
   ['react', new Set()],
+  ['react-dom', new Set()],
   ['@types/react', new Set()],
+  ['@types/react-dom', new Set()],
 ]);
 
-for (const [, name, version] of lock.matchAll(pattern)) {
+for (const {
+  groups: { name, version },
+} of lock.matchAll(pattern)) {
   versions.get(name).add(version);
 }
 

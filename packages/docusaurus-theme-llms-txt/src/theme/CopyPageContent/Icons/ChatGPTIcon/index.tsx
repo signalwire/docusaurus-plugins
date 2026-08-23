@@ -9,7 +9,7 @@ import type React from 'react';
 // Simple Icons dropped the OpenAI logo in react-icons 5.7.0, so `SiOpenai` no
 // longer exists. RiOpenaiFill is the closest filled monochrome equivalent and
 // matches the weight of SiClaude in the same menu.
-import { RiOpenaiFill } from 'react-icons/ri';
+import { RiOpenaiFill } from '@signalwire/docusaurus-theme-llms-txt/react-icons';
 
 import styles from '../styles.module.css';
 

@@ -6,7 +6,7 @@
  */
 import type React from 'react';
 
-import { SiClaude } from 'react-icons/si';
+import { SiClaude } from '@signalwire/docusaurus-theme-llms-txt/react-icons';
 
 import styles from '../styles.module.css';
 

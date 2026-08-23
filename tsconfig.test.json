@@ -18,6 +18,9 @@
     "paths": {
       "@test/*": ["./test/*"],
       "@theme/*": ["./packages/docusaurus-theme-llms-txt/src/theme/*"],
+      "@signalwire/docusaurus-theme-llms-txt/hooks": ["./packages/docusaurus-theme-llms-txt/src/hooks/index.ts"],
+      "@signalwire/docusaurus-theme-llms-txt/react-icons": ["./packages/docusaurus-theme-llms-txt/src/reactIcons.ts"],
+      "@signalwire/docusaurus-theme-llms-txt/types": ["./packages/docusaurus-theme-llms-txt/src/types.ts"],
       "@docusaurus/router": ["./test/mocks/docusaurus/router"],
       "@docusaurus/ExecutionEnvironment": ["./test/mocks/docusaurus/ExecutionEnvironment"],
       "@docusaurus/useBaseUrl": ["./test/mocks/docusaurus/useBaseUrl"],

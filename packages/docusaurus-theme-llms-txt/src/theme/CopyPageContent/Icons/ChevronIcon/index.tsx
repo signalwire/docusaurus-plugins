@@ -8,7 +8,7 @@ import type React from 'react';
 
 import clsx from 'clsx';
 
-import { FiChevronDown } from 'react-icons/fi';
+import { FiChevronDown } from '@signalwire/docusaurus-theme-llms-txt/react-icons';
 
 import buttonStyles from '../../CopyButton/styles.module.css';
 

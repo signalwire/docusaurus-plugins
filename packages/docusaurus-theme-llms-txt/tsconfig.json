@@ -6,6 +6,12 @@
   // editors without `jsx` or the Docusaurus module aliases for every .tsx file.
   "extends": "../../tsconfig.base.client.json",
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@signalwire/docusaurus-theme-llms-txt/hooks": ["src/hooks/index.ts"],
+      "@signalwire/docusaurus-theme-llms-txt/react-icons": ["src/reactIcons.ts"],
+      "@signalwire/docusaurus-theme-llms-txt/types": ["src/types.ts"]
+    },
     "types": ["node", "@docusaurus/module-type-aliases", "@signalwire/docusaurus-plugin-llms-txt"]
   },
   "include": ["src"],

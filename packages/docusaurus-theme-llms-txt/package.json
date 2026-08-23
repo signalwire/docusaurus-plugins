@@ -5,6 +5,18 @@
   "main": "./lib/index.js",
   "types": "src/theme-llms-txt.d.ts",
   "exports": {
+    "./hooks": {
+      "types": "./src/hooks/index.ts",
+      "default": "./lib/hooks/index.js"
+    },
+    "./react-icons": {
+      "types": "./src/reactIcons.ts",
+      "default": "./lib/reactIcons.js"
+    },
+    "./types": {
+      "types": "./src/types.ts",
+      "default": "./lib/types.js"
+    },
     ".": {
       "types": "./src/theme-llms-txt.d.ts",
       "default": "./lib/index.js"
@@ -12,8 +24,17 @@
   },
   "files": [
     "lib",
+    "src/hooks/index.ts",
+    "src/hooks/useCopyActions.ts",
+    "src/hooks/useCopyButtonConfig.ts",
+    "src/hooks/useCopyContentData.ts",
+    "src/hooks/useDropdownState.ts",
+    "src/reactIcons.ts",
     "src/theme",
     "src/theme-llms-txt.d.ts",
+    "src/types",
+    "src/types.ts",
+    "src/utils",
     "README.md",
     "CHANGELOG.md"
   ],
@@ -53,10 +74,13 @@
     "@docusaurus/module-type-aliases": "^3.10.2",
     "@docusaurus/theme-common": "^3.10.2",
     "@docusaurus/types": "^3.10.2",
-    "@signalwire/docusaurus-plugin-llms-txt": "2.0.0-alpha.7",
-    "@types/node": "^22.15.19",
-    "@types/react": "^19.1.13",
-    "concurrently": "^9.0.0"
+    "@signalwire/docusaurus-plugin-llms-txt": "workspace:*",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "concurrently": "^9.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "peerDependencies": {
     "@docusaurus/core": "^3.9.0 || ^4.0.0",

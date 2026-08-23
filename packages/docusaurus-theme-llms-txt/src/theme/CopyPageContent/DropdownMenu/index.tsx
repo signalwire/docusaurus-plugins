@@ -17,7 +17,7 @@ import ClaudeIcon from '@theme/CopyPageContent/Icons/ClaudeIcon';
 import HtmlIcon from '@theme/CopyPageContent/Icons/HtmlIcon';
 import MarkdownIcon from '@theme/CopyPageContent/Icons/MarkdownIcon';
 
-import type { ResolvedCopyPageContentOptions } from '../../../hooks';
+import type { ResolvedCopyPageContentOptions } from '@signalwire/docusaurus-theme-llms-txt/hooks';
 
 import styles from './styles.module.css';
 

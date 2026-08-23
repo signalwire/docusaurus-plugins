@@ -3,10 +3,13 @@ packages:
   - 'website'
 
 overrides:
-  # lerna pins these exactly and no in-range release fixes them.
-  lerna>js-yaml: ^4.3.1 # GHSA-5p4m-2wfm-xmqj, GHSA-52cp-r559-cp3m
-  lerna>tar: ^7.5.21 # GHSA-8qq5-rm4j-mr97, GHSA-34x7-hfp2-rc4v
-  nx>brace-expansion: ^5.0.9 # GHSA-rgw5-rvv9-x895
+  # Release builds target the lowest supported React major so emitted
+  # declarations remain consumable by Docusaurus 3 sites. CI overrides this
+  # block to React 19 for the second compatibility leg.
+  react: ^18
+  react-dom: ^18
+  '@types/react': ^18
+  '@types/react-dom': ^18
   # Build-time webpack plugins; patched in 7.0.3.
   copy-webpack-plugin>serialize-javascript: ^7.0.5 # GHSA-5c6j-r48x-rmvq
   css-minimizer-webpack-plugin>serialize-javascript: ^7.0.5 # GHSA-5c6j-r48x-rmvq
@@ -15,5 +18,4 @@ onlyBuiltDependencies:
   - '@parcel/watcher'
   - '@swc/core'
   - core-js
-  - nx
   - unrs-resolver

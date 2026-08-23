@@ -8,11 +8,14 @@ import type React from 'react';
 
 import clsx from 'clsx';
 
-import { MdCheck, MdFileCopy } from 'react-icons/md';
+import {
+  MdCheck,
+  MdFileCopy,
+} from '@signalwire/docusaurus-theme-llms-txt/react-icons';
 
 import ChevronIcon from '@theme/CopyPageContent/Icons/ChevronIcon';
 
-import type { ResolvedCopyPageContentOptions } from '../../../hooks';
+import type { ResolvedCopyPageContentOptions } from '@signalwire/docusaurus-theme-llms-txt/hooks';
 
 import styles from './styles.module.css';
 
