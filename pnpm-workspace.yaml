@@ -13,6 +13,8 @@ overrides:
   # Build-time webpack plugins; patched in 7.0.3.
   copy-webpack-plugin>serialize-javascript: ^7.0.5 # GHSA-5c6j-r48x-rmvq
   css-minimizer-webpack-plugin>serialize-javascript: ^7.0.5 # GHSA-5c6j-r48x-rmvq
+  # SockJS only uses uuid.v4(), whose API remains compatible in the patched release.
+  sockjs>uuid: ^11.1.1 # GHSA-w5hq-g745-h8pq
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
