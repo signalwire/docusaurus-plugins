@@ -4,20 +4,19 @@
   "type": "module",
   "description": "Generate Markdown versions of Docusaurus HTML pages and an llms.txt index file",
   "main": "./lib/src/index.js",
-  "types": "src/plugin-llms-txt.d.ts",
+  "types": "./lib/src/index.d.ts",
   "exports": {
     "./public": {
       "types": "./lib/src/public/index.d.ts",
       "default": "./lib/src/public/index.js"
     },
     ".": {
-      "types": "./src/plugin-llms-txt.d.ts",
+      "types": "./lib/src/index.d.ts",
       "default": "./lib/src/index.js"
     }
   },
   "files": [
     "lib",
-    "src/plugin-llms-txt.d.ts",
     "README.md",
     "CHANGELOG.md"
   ],
@@ -47,12 +46,12 @@
     "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
-    "@docusaurus/core": "^3.9.0 || ^4.0.0"
+    "@docusaurus/core": "^3.10.0"
   },
   "dependencies": {
-    "@docusaurus/logger": "^3.9.0 || ^4.0.0",
-    "@docusaurus/utils": "^3.9.0 || ^4.0.0",
-    "@docusaurus/utils-validation": "^3.9.0 || ^4.0.0",
+    "@docusaurus/logger": "^3.10.0",
+    "@docusaurus/utils": "^3.10.0",
+    "@docusaurus/utils-validation": "^3.10.0",
     "fs-extra": "^11.0.0",
     "hast-util-select": "^6.0.4",
     "hast-util-to-html": "^9.0.5",

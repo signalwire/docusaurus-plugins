@@ -1,9 +1,9 @@
 {
-  // This file is not used in compilation. It is here just for a nice editor experience.
+  // CI uses this config to type-check ejected theme components; editors use it too.
   "extends": "@docusaurus/tsconfig",
   "compilerOptions": {
     "baseUrl": ".",
-    "types": ["@signalwire/docusaurus-plugin-llms-txt"]
+    "types": ["@signalwire/docusaurus-theme-llms-txt"]
   },
   "exclude": [".docusaurus", "build"]
 }

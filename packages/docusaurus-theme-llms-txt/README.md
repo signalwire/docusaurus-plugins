@@ -11,7 +11,7 @@ allows users to copy content or share it with AI tools like ChatGPT and Claude.
 
 |            | Supported              |
 | ---------- | ---------------------- |
-| Docusaurus | `^3.9.0 \|\| ^4.0.0`   |
+| Docusaurus | `^3.10.0`              |
 | React      | `^18.0.0 \|\| ^19.0.0` |
 | Node.js    | `>=20.0`               |
 
@@ -22,9 +22,9 @@ theme never installs a second copy of Docusaurus.
 ## Installation
 
 ```bash
-npm install @signalwire/docusaurus-theme-llms-txt
+npm install @signalwire/docusaurus-plugin-llms-txt @signalwire/docusaurus-theme-llms-txt
 # or
-yarn add @signalwire/docusaurus-theme-llms-txt
+yarn add @signalwire/docusaurus-plugin-llms-txt @signalwire/docusaurus-theme-llms-txt
 ```
 
 ## Basic Usage
@@ -40,13 +40,15 @@ export default {
     [
       '@signalwire/docusaurus-plugin-llms-txt',
       {
-        copyPageButton: {
-          buttonLabel: 'Copy Page',
-          actions: {
-            markdown: true,
-            ai: {
-              chatGPT: true,
-              claude: true,
+        ui: {
+          copyPageContent: {
+            buttonLabel: 'Copy Page',
+            actions: {
+              viewMarkdown: true,
+              ai: {
+                chatGPT: true,
+                claude: true,
+              },
             },
           },
         },
@@ -58,7 +60,7 @@ export default {
 
 ## Components
 
-### CopyPageButton
+### CopyPageContent
 
 The main component that provides copy and AI sharing functionality. It automatically integrates with
 your content pages.
@@ -215,14 +217,17 @@ customize components:
 
 ```bash
 # Wrap the breadcrumbs to customize button placement (safe)
-npx docusaurus swizzle @signalwire/docusaurus-theme-llms-txt DocBreadcrumbs --wrap
+npx docusaurus swizzle @signalwire/docusaurus-theme-llms-txt DocBreadcrumbs --wrap --typescript
 
-# Wrap the copy button for additional functionality (safe - not commonly needed)
-npx docusaurus swizzle @signalwire/docusaurus-theme-llms-txt CopyPageButton --wrap
+# Replace an individual icon (safe)
+npx docusaurus swizzle @signalwire/docusaurus-theme-llms-txt CopyPageContent/Icons/ChatGPTIcon --eject --typescript
 ```
 
-**Note:** This plugin uses a WRAP pattern on `DocBreadcrumbs` instead of ejecting layout components.
-This prevents conflicts with other plugins that might also modify the documentation layout.
+The theme wraps Docusaurus's `DocBreadcrumbs` instead of ejecting a layout component, which reduces
+conflicts with other themes or plugins that customize the documentation layout. The main
+`CopyPageContent` component is intentionally marked unsafe to swizzle because it depends on the
+theme's hooks and the plugin's global data. Prefer CSS variables or a safe subcomponent when
+possible; Docusaurus requires `--danger` to wrap or eject it.
 
 ### Custom Component Implementation
 
@@ -244,7 +249,7 @@ export default function DocBreadcrumbs(props) {
 }
 ```
 
-**Note:** This plugin uses `@theme-init/DocBreadcrumbs` internally to wrap the base Docusaurus
+**Note:** This theme uses `@theme-init/DocBreadcrumbs` internally to wrap the base Docusaurus
 breadcrumbs. As a user, you should use `@theme-original/DocBreadcrumbs` to wrap our enhanced
 version.
 
@@ -266,20 +271,28 @@ This theme automatically integrates with plugin configuration:
 
 ```js
 // docusaurus.config.js - Plugin configuration affects theme behavior
-{
-  copyPageButton: {
-    buttonLabel: 'Share Content',
-    actions: {
-      markdown: true,
-      ai: {
-        chatGPT: {
-          prompt: 'Help me understand this:'
+export default {
+  themes: ['@signalwire/docusaurus-theme-llms-txt'],
+  plugins: [
+    [
+      '@signalwire/docusaurus-plugin-llms-txt',
+      {
+        ui: {
+          copyPageContent: {
+            buttonLabel: 'Share Content',
+            actions: {
+              viewMarkdown: true,
+              ai: {
+                chatGPT: { prompt: 'Help me understand this:' },
+                claude: false, // Disables the Claude option
+              },
+            },
+          },
         },
-        claude: false  // Disables Claude option
-      }
-    }
-  }
-}
+      },
+    ],
+  ],
+};
 ```
 
 ## Accessibility

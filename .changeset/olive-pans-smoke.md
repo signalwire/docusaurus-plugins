@@ -8,10 +8,9 @@ dependency.
 
 **Breaking — check your peer dependencies before upgrading.**
 
-- `@docusaurus/core` is now required to be `^3.9.0 || ^4.0.0` (was `^3.0.0`). Docusaurus only gained
-  React 19 support in 3.7 and dropped Node 18 in 3.9, so the old range advertised combinations that
-  could not actually work. Docusaurus v4 is pre-accepted so upgrading to it will not trip a
-  peer-dependency error.
+- `@docusaurus/core` is now required to be `^3.10.0` (was `^3.0.0`). Docusaurus only gained React 19
+  support in 3.7 and dropped Node 18 in 3.9, so the old range advertised combinations that could not
+  actually work. Version 3.10 is the compatibility baseline exercised by this release.
 - The theme now declares `react`/`react-dom` as `^18.0.0 || ^19.0.0`, matching
   `@docusaurus/theme-classic`. The previous `^18.0.0` cap was wrong: the package already shipped
   React 19 types and was used on React 19 sites, so npm and pnpm users hit a peer conflict.
@@ -21,9 +20,11 @@ dependency.
 - The plugin now declares `@docusaurus/logger`, `@docusaurus/utils` and
   `@docusaurus/utils-validation` as `dependencies` (previously resolved only by hoisting). These are
   libraries rather than the build tool, and sites never install them by name, so declaring them as
-  peers would leave them unmet under Yarn Classic and unresolved under pnpm. `@docusaurus/core`
-  remains the only peer, matching what every first-party Docusaurus plugin declares.
-- Minimum Node is now 20, matching Docusaurus 3.9+.
+  peers would leave them unmet under Yarn Classic and unresolved under pnpm. Keeping
+  `@docusaurus/core` as the only peer prevents a third-party package from pulling a second copy of
+  core. First-party Docusaurus packages instead pin core as an exact lockstep dependency, which a
+  third-party package cannot do.
+- Minimum Node is now 20, matching the Docusaurus 3.10 baseline.
 
 **Fixed**
 
@@ -54,6 +55,12 @@ dependency.
 - TypeScript swizzles now resolve the theme's hooks, types, and icon dependencies through exported
   package entry points. Those source helpers are included in the tarball, so an ejected
   `CopyPageContent` compiles in a consuming site under pnpm's strict dependency layout.
+- The `@theme/*` module declarations now ship with the theme that provides those components. If your
+  `tsconfig.json` explicitly lists `@signalwire/docusaurus-plugin-llms-txt` in
+  `compilerOptions.types`, replace it with `@signalwire/docusaurus-theme-llms-txt`.
+- The plugin's root TypeScript entry point now uses its generated declarations. Published consumers
+  can resolve `Options` and the default plugin signature without reaching an unshipped `src/types`
+  directory, and the declarations stay aligned with the runtime exports.
 - `lib/.tsbuildinfo` is no longer published. It is TypeScript's incremental build cache and was the
   single largest file in both tarballs: unpacked size drops from 204KB to 111KB (theme) and 473KB to
   366KB (plugin).

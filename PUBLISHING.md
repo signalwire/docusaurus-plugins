@@ -247,7 +247,7 @@ Each package should have these key fields in `package.json`:
     "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
-    "@docusaurus/core": "^3.0.0"
+    "@docusaurus/core": "^3.10.0"
   }
 }
 ```

@@ -16,7 +16,7 @@ documentation that you want to make accessible to AI assistants, chatbots, or LL
 
 |            | Supported                               |
 | ---------- | --------------------------------------- |
-| Docusaurus | `^3.9.0 \|\| ^4.0.0`                    |
+| Docusaurus | `^3.10.0`                               |
 | Node.js    | `>=20.0`                                |
 | React      | supplied by Docusaurus (`^18` or `^19`) |
 
@@ -161,12 +161,14 @@ const config: Config = {
     [
       '@signalwire/docusaurus-plugin-llms-txt',
       {
-        // Enable with defaults
-        generate: {
-          enableMarkdownFiles: true,
-          enableLlmsFullTxt: false,
+        markdown: {
+          enableFiles: true,
+          includeBlog: false,
+          includePages: false,
+          includeDocs: true,
         },
-        include: {
+        llmsTxt: {
+          enableLlmsFullTxt: false,
           includeBlog: false,
           includePages: false,
           includeDocs: true,

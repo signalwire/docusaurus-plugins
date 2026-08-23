@@ -30,6 +30,7 @@ type PackageJsonFile = {
       access?: string;
     };
     files?: string[];
+    exports?: Record<string, string | { types?: string; default?: string }>;
     dependencies?: Record<string, string>;
     peerDependencies?: Record<string, string>;
   };
@@ -102,66 +103,42 @@ function getPublishedPaths(cwd: string): string[] {
   return paths;
 }
 
-async function resolveTypeScriptModule(
-  fromFile: string,
-  specifier: string
-): Promise<string> {
-  const base = path.resolve(path.dirname(fromFile), specifier);
-  const candidates = [
-    base,
-    `${base}.ts`,
-    `${base}.tsx`,
-    path.join(base, 'index.ts'),
-    path.join(base, 'index.tsx'),
-  ];
-
-  for (const candidate of candidates) {
-    if (await fs.pathExists(candidate)) {
-      return candidate;
-    }
-  }
-
-  throw new Error(`${fromFile}: cannot resolve ${specifier}`);
+function normalizePublishedPath(file: string): string {
+  return file.replace(/^\.\//, '');
 }
 
-function getInterfaceShape(
-  sourceText: string,
-  fileName: string,
-  interfaceName: string
+function getPublishedTypeEntrypoints(
+  pkg: PackageJsonFile['content']
 ): string[] {
-  const sourceFile = ts.createSourceFile(
-    fileName,
-    sourceText,
-    ts.ScriptTarget.Latest,
-    true
+  const exported = Object.values(pkg.exports ?? {}).flatMap((entry) =>
+    typeof entry === 'object' && entry.types ? [entry.types] : []
   );
-  let result: string[] | undefined;
+  return [
+    ...new Set([pkg.types, ...exported].filter((entry) => entry !== undefined)),
+  ].map(normalizePublishedPath);
+}
 
-  const visit = (node: ts.Node): void => {
-    if (ts.isInterfaceDeclaration(node) && node.name.text === interfaceName) {
-      result = node.members.map((member) => {
-        if (!ts.isPropertySignature(member) || !member.type) {
-          throw new Error(
-            `${fileName}: ${interfaceName} contains an unsupported member`
-          );
-        }
-        const name = member.name.getText(sourceFile);
-        const optional = member.questionToken ? '?' : '';
-        const type = member.type
-          .getText(sourceFile)
-          .replace(/\breadonly\s*/g, '')
-          .replace(/\s+/g, '');
-        return `${name}${optional}:${type}`;
-      });
-    }
-    ts.forEachChild(node, visit);
-  };
-  visit(sourceFile);
-
-  if (!result) {
-    throw new Error(`${fileName}: cannot find interface ${interfaceName}`);
-  }
-  return result.sort();
+function resolvePublishedTypeModule(
+  fromFile: string,
+  specifier: string,
+  published: ReadonlySet<string>
+): string | undefined {
+  const base = path.posix.normalize(
+    path.posix.join(path.posix.dirname(fromFile), specifier)
+  );
+  const extensionlessBases = base.endsWith('.js')
+    ? [base, base.slice(0, -'.js'.length)]
+    : [base];
+  const candidates = extensionlessBases.flatMap((candidate) => [
+    candidate,
+    `${candidate}.d.ts`,
+    `${candidate}.ts`,
+    `${candidate}.tsx`,
+    path.posix.join(candidate, 'index.d.ts'),
+    path.posix.join(candidate, 'index.ts'),
+    path.posix.join(candidate, 'index.tsx'),
+  ]);
+  return candidates.find((candidate) => published.has(candidate));
 }
 
 const tsconfigSchema = Joi.object({
@@ -306,33 +283,57 @@ describe('Package Structure Validation', () => {
     });
   });
 
-  it('publishes every hook exported by its public type entrypoint', async () => {
-    const packageDir = 'packages/docusaurus-theme-llms-txt';
-    const entrypoint = path.join(packageDir, 'src/hooks/index.ts');
-    const source = await fs.readFile(entrypoint, 'utf8');
-    const specifiers = [
-      ...new Set(
-        ts
+  it('publishes the complete relative closure of every type entrypoint', async () => {
+    const packageJsonFiles = await getPackageJsonFiles();
+    const publishable = packageJsonFiles.filter((pkg) => !pkg.content.private);
+
+    for (const pkg of publishable) {
+      const packageDir = path.dirname(pkg.file);
+      const published = new Set(getPublishedPaths(packageDir));
+      const queue = getPublishedTypeEntrypoints(pkg.content);
+      const visited = new Set<string>();
+      const missing: string[] = [];
+
+      while (queue.length > 0) {
+        const current = queue.shift();
+        if (!current || visited.has(current)) {
+          continue;
+        }
+        visited.add(current);
+
+        if (!published.has(current)) {
+          missing.push(`entrypoint: ${current}`);
+          continue;
+        }
+
+        const source = await fs.readFile(
+          path.join(packageDir, current),
+          'utf8'
+        );
+        const specifiers = ts
           .preProcessFile(source, true, true)
           .importedFiles.map((file) => file.fileName)
-          .filter((specifier) => specifier.startsWith('.'))
-      ),
-    ];
-    const published = new Set(getPublishedPaths(packageDir));
-    const missing: string[] = [];
+          .filter((specifier) => specifier.startsWith('.'));
 
-    for (const specifier of specifiers) {
-      const resolved = await resolveTypeScriptModule(entrypoint, specifier);
-      const packagedPath = path
-        .relative(packageDir, resolved)
-        .split(path.sep)
-        .join('/');
-      if (!published.has(packagedPath)) {
-        missing.push(packagedPath);
+        for (const specifier of specifiers) {
+          const resolved = resolvePublishedTypeModule(
+            current,
+            specifier,
+            published
+          );
+          if (resolved) {
+            queue.push(resolved);
+          } else {
+            missing.push(`${current} -> ${specifier}`);
+          }
+        }
       }
-    }
 
-    expect(missing).toEqual([]);
+      expect({ package: pkg.content.name, missing }).toEqual({
+        package: pkg.content.name,
+        missing: [],
+      });
+    }
   });
 
   // The theme reads the plugin's global data by name. The plugin owns that name
@@ -359,31 +360,6 @@ describe('Package Structure Validation', () => {
     expect(declared).toBeDefined();
     expect(used).toBeDefined();
     expect(used).toBe(declared);
-  });
-
-  it('keeps the public CopyPageContent config declaration in sync', async () => {
-    const implementationFile =
-      'packages/docusaurus-theme-llms-txt/src/hooks/useCopyButtonConfig.ts';
-    const declarationFile =
-      'packages/docusaurus-plugin-llms-txt/src/plugin-llms-txt.d.ts';
-    const [implementation, declaration] = await Promise.all([
-      fs.readFile(implementationFile, 'utf8'),
-      fs.readFile(declarationFile, 'utf8'),
-    ]);
-
-    expect(
-      getInterfaceShape(
-        declaration,
-        declarationFile,
-        'ResolvedCopyPageContentOptions'
-      )
-    ).toEqual(
-      getInterfaceShape(
-        implementation,
-        implementationFile,
-        'ResolvedCopyPageContentOptions'
-      )
-    );
   });
 
   it('accepts both React 18 and React 19 wherever React is a peer', async () => {

@@ -12,7 +12,7 @@
       "@signalwire/docusaurus-theme-llms-txt/react-icons": ["src/reactIcons.ts"],
       "@signalwire/docusaurus-theme-llms-txt/types": ["src/types.ts"]
     },
-    "types": ["node", "@docusaurus/module-type-aliases", "@signalwire/docusaurus-plugin-llms-txt"]
+    "types": ["node", "@docusaurus/module-type-aliases"]
   },
   "include": ["src"],
   "exclude": ["**/__tests__/**", "**/backup/**"]

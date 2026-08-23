@@ -33,6 +33,9 @@ import type {
   RouteConfig,
 } from '@docusaurus/types';
 
+/** Public plugin configuration type exposed from the package root. */
+export type Options = PluginOptions;
+
 /**
  * Create a mapping of route paths to their plugin and version information by
  * traversing the nested route structure
@@ -371,14 +374,6 @@ export default function llmsTxtPlugin(
     },
   };
 }
-
-/**
- * Static function to mark components as safe for swizzling
- * This is required for Docusaurus to allow users to swizzle components
- * without --danger flag
- */
-// Note: Swizzlable components are now provided by
-// @signalwire/docusaurus-theme-llms-txt
 
 /**
  * Type-safe validation function with enhanced error handling
