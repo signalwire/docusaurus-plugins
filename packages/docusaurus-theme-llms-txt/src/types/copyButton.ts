@@ -14,6 +14,8 @@
 /**
  * Copy page content configuration options
  * Inline component - positioning handled by parent container
+ * Mirrors the plugin's public CopyPageContentOptions across the Joi ->
+ * global-data JSON -> defaulting boundary.
  */
 export interface CopyPageContentOptions {
   /** Custom button label (default: 'Copy Page') */

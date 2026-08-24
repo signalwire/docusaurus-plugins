@@ -1,0 +1,51 @@
+name: Dependency Review
+
+# Replaces the old `yarn audit --groups dependencies` gate, which could never
+# pass: Yarn Classic's `--level` flag filters only what is printed, not the exit
+# code (it is a bitmask over the unfiltered result set), and there is no way to
+# accept an advisory that has no available fix.
+#
+# This gates the DELTA instead of the inventory. A PR that touches a README can
+# no longer fail on a pre-existing transitive advisory, but a PR that introduces
+# a newly vulnerable dependency still fails. This mirrors what Docusaurus itself
+# runs -- see .github/workflows/dependency-review.yml in facebook/docusaurus,
+# which has no audit step at all.
+
+on: [pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write # required by comment-summary-in-pr
+
+jobs:
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v5
+        with:
+          fail-on-severity: high
+
+          # `fail-on-scopes` defaults to `runtime`, which is the whole point:
+          # build/dev tooling is out of the threat model for a static-site
+          # toolchain. See facebook/docusaurus#5501 and
+          # facebook/create-react-app#11174.
+
+          comment-summary-in-pr: on-failure
+          show-patched-versions: true
+
+          # Only advisories with no patch at any version belong here.
+          #
+          # Both below are image-size 2.0.2, reached through @docusaurus/core.
+          # Neither has a patched release (verified via the GitHub advisory
+          # API), and both are parser DoS in a build-time image reader that
+          # never runs in a deployed site. Drop them if a fix ever ships.
+          allow-ghsas: GHSA-w3rx-r6r6-pgpr, GHSA-5p2g-fcmc-qvqq

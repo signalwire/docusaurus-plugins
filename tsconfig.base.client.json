@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "${configDir}/lib/.tsbuildinfo-client",
+    "tsBuildInfoFile": "${configDir}/.tsbuildinfo",
     "noEmit": false,
     "moduleResolution": "node",
     "module": "CommonJS",

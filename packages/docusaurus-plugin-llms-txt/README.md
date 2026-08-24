@@ -12,6 +12,18 @@ human-readable experience.
 **Perfect for**: API documentation, internal knowledge bases, developer resources, and any
 documentation that you want to make accessible to AI assistants, chatbots, or LLM-powered tools.
 
+## Compatibility
+
+|            | Supported                               |
+| ---------- | --------------------------------------- |
+| Docusaurus | `^3.10.0`                               |
+| Node.js    | `>=20.0`                                |
+| React      | supplied by Docusaurus (`^18` or `^19`) |
+
+`@docusaurus/core` is a **peer dependency** supplied by your site, so this plugin does not install a
+second copy of the Docusaurus application. The directly imported build helpers `@docusaurus/logger`,
+`@docusaurus/utils`, and `@docusaurus/utils-validation` are runtime dependencies of the plugin.
+
 ## How It Works
 
 This plugin processes your **final HTML output** after Docusaurus builds your site, not your source
@@ -149,12 +161,14 @@ const config: Config = {
     [
       '@signalwire/docusaurus-plugin-llms-txt',
       {
-        // Enable with defaults
-        generate: {
-          enableMarkdownFiles: true,
-          enableLlmsFullTxt: false,
+        markdown: {
+          enableFiles: true,
+          includeBlog: false,
+          includePages: false,
+          includeDocs: true,
         },
-        include: {
+        llmsTxt: {
+          enableLlmsFullTxt: false,
           includeBlog: false,
           includePages: false,
           includeDocs: true,
