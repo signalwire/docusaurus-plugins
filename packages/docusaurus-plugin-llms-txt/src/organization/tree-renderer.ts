@@ -108,6 +108,13 @@ export function renderTreeAsMarkdown(
     md += `- [${d.title}](${formattedUrl})${descriptionText}\n`;
   });
 
+  // Handle section-specific optional links (external URLs, listed as-is)
+  node.optionalLinks?.forEach((link) => {
+    const descriptionText =
+      enableDescriptions && link.description ? `: ${link.description}` : '';
+    md += `- [${link.title}](${link.url})${descriptionText}\n`;
+  });
+
   // Process subcategories (already ordered by tree builder)
   if (node.subCategories.length) {
     node.subCategories.forEach((sub: TreeNode) => {
