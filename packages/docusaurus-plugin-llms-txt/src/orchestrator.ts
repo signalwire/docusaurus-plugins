@@ -10,8 +10,10 @@ import {
   analyzeCacheStrategy,
   validateCliContext,
 } from './cache/cache-strategy';
+import { collectAllAttachments } from './config';
 import { setupDirectories, buildSiteUrl } from './filesystem/paths';
 import { generateOutputFiles } from './generation/output-generator';
+import { AttachmentProcessor } from './processing/attachment-processor';
 import { coordinateProcessing } from './processing/processing-coordinator';
 
 import type { ProcessedAttachment } from './processing/attachment-processor';
@@ -99,6 +101,23 @@ export async function orchestrateProcessing(
     siteConfig
   );
 
+  // Build-time callers may supply attachments they already processed. CLI
+  // callers do not have that setup phase, so process configured attachments
+  // here before regenerating the index files.
+  let finalAttachments = processedAttachments;
+  if (finalAttachments === undefined) {
+    const configuredAttachments = collectAllAttachments(config);
+    if (configuredAttachments.length > 0) {
+      const attachmentProcessor = new AttachmentProcessor(logger);
+      finalAttachments = await attachmentProcessor.processAttachments(
+        configuredAttachments,
+        siteDir,
+        outDir
+      );
+      logger.info(`Processed ${finalAttachments.length} attachment files`);
+    }
+  }
+
   // Generate output files with integrated attachments
   const outputResult = await generateOutputFiles(
     processingResult.docs,
@@ -106,7 +125,7 @@ export async function orchestrateProcessing(
     siteConfig,
     directories,
     logger,
-    processedAttachments, // Pass attachments for integration into tree
+    finalAttachments,
     finalCache // Pass cache for indexing filtering
   );
 

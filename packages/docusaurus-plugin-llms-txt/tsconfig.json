@@ -6,7 +6,6 @@
     "outDir": "./lib",
     "composite": true,
     "incremental": true,
-    "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "jsx": "react-jsx",
     "noEmit": false,
     "module": "ESNext",

@@ -48,7 +48,7 @@ npx vercel
 Create a Dockerfile for containerized deployment:
 
 ```dockerfile
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /app
 COPY . .
 RUN npm ci

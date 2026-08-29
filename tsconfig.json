@@ -4,7 +4,11 @@
     "composite": true,
     "incremental": true
   },
-  "references": [{ "path": "./packages/docusaurus-plugin-llms-txt" }, { "path": "./website" }],
+  "references": [
+    { "path": "./packages/docusaurus-plugin-llms-txt" },
+    { "path": "./packages/docusaurus-theme-llms-txt" },
+    { "path": "./website" }
+  ],
   "files": [],
   "include": []
 }

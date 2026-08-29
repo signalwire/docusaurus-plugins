@@ -1,0 +1,64 @@
+# The root cause of the 71-advisory pile-up was a lockfile that went ~9 months
+# without a refresh: nearly every advisory was a caret-ranged transitive whose
+# patch was already inside the declared range. This config exists so that does
+# not happen again.
+#
+# Cooldown values mirror facebook/docusaurus. Deliberately not immediate: a
+# cooldown window is what gives the ecosystem time to spot a compromised
+# release before we pull it in. Security updates bypass cooldown.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: monthly
+    labels:
+      - 'dependencies'
+    groups:
+      github-actions:
+        patterns: ['*']
+
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    labels:
+      - 'dependencies'
+    cooldown:
+      default-days: 5
+      semver-major-days: 30
+      semver-minor-days: 8
+      semver-patch-days: 8
+    groups:
+      # One PR per ecosystem rather than one per package. Docusaurus ships ~20
+      # packages in lockstep, so ungrouped updates would be unreviewable.
+      docusaurus:
+        patterns:
+          - '@docusaurus/*'
+          - 'docusaurus-plugin-*'
+      react:
+        patterns:
+          - 'react'
+          - 'react-dom'
+          - '@types/react'
+          - '@types/react-dom'
+      unified:
+        patterns:
+          - 'unified'
+          - 'remark-*'
+          - 'rehype-*'
+          - 'hast-util-*'
+          - 'mdast-util-*'
+          - 'unist-util-*'
+          - '@types/hast'
+          - '@types/mdast'
+      dev-tooling:
+        dependency-type: development
+        patterns: ['*']
+        exclude-patterns:
+          - '@docusaurus/*'
+          - 'react'
+          - 'react-dom'
+          - '@types/react'
+          - '@types/react-dom'

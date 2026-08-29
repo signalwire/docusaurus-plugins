@@ -9,6 +9,5 @@ website/
 **/assets/
 **/*.min.js
 **/*bundle*.js
-__tests__/
 development/
 .eslintrc.*

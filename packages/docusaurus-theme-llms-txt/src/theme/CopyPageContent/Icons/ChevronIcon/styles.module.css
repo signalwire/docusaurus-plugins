@@ -1,0 +1,10 @@
+.arrowIcon {
+  width: var(--llms-copy-arrow-icon-size);
+  height: var(--llms-copy-arrow-icon-size);
+  fill: currentColor;
+  transition: var(--llms-copy-arrow-transition);
+}
+
+.arrowIconOpen {
+  transform: rotate(180deg);
+}

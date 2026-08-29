@@ -9,7 +9,7 @@ tags: [plugin, classification, testing]
 
 This is another test post to ensure our standalone blog plugin instance creates multiple routes that can be properly classified by the LLMs plugin.
 
-<!--truncate-->
+{/* truncate */}
 
 ## Multiple Blog Routes
 

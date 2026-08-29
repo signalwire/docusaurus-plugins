@@ -4,33 +4,32 @@
   "type": "module",
   "description": "Generate Markdown versions of Docusaurus HTML pages and an llms.txt index file",
   "main": "./lib/src/index.js",
-  "types": "src/plugin-llms-txt.d.ts",
+  "types": "./lib/src/index.d.ts",
   "exports": {
     "./public": {
       "types": "./lib/src/public/index.d.ts",
       "default": "./lib/src/public/index.js"
     },
     ".": {
-      "types": "./src/plugin-llms-txt.d.ts",
+      "types": "./lib/src/index.d.ts",
       "default": "./lib/src/index.js"
     }
   },
   "files": [
     "lib",
-    "src/plugin-llms-txt.d.ts",
     "README.md",
     "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsc --build",
     "build:watch": "tsc --build --watch",
-    "clean": "rimraf lib",
+    "clean": "rimraf lib .tsbuildinfo",
     "lint": "echo 'Linting handled at root level'",
     "lint:fix": "echo 'Linting handled at root level'",
     "type-check": "tsc --noEmit",
-    "format": "prettier --write src/**/*.{ts,tsx}",
-    "format:check": "prettier --check src/**/*.{ts,tsx}",
-    "prepublishOnly": "yarn run clean && yarn run build && yarn run lint && yarn run type-check"
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
+    "prepublishOnly": "pnpm run clean && pnpm run build && pnpm run lint && pnpm run type-check"
   },
   "keywords": [
     "signalwire",
@@ -47,9 +46,12 @@
     "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
-    "@docusaurus/core": "^3.0.0"
+    "@docusaurus/core": "^3.10.0"
   },
   "dependencies": {
+    "@docusaurus/logger": "^3.10.0",
+    "@docusaurus/utils": "^3.10.0",
+    "@docusaurus/utils-validation": "^3.10.0",
     "fs-extra": "^11.0.0",
     "hast-util-select": "^6.0.4",
     "hast-util-to-html": "^9.0.5",
@@ -58,29 +60,29 @@
     "rehype-parse": "^9",
     "rehype-remark": "^10",
     "remark-gfm": "^4",
+    "remark-parse": "^11",
     "remark-stringify": "^11",
     "string-width": "^5.0.0",
     "unified": "^11",
     "unist-util-visit": "^5"
   },
   "devDependencies": {
-    "@docusaurus/logger": "^3",
-    "@docusaurus/module-type-aliases": "^3",
-    "@docusaurus/theme-common": "^3",
-    "@docusaurus/tsconfig": "^3",
-    "@docusaurus/types": "^3",
-    "@docusaurus/utils": "^3",
-    "@docusaurus/utils-validation": "^3",
+    "@docusaurus/module-type-aliases": "^3.10.2",
+    "@docusaurus/theme-common": "^3.10.2",
+    "@docusaurus/tsconfig": "^3.10.2",
+    "@docusaurus/types": "^3.10.2",
     "@types/fs-extra": "^11.0.4",
     "@types/hast": "^3.0.4",
-    "@types/node": "^22.15.19",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^20.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.32.1",
-    "@typescript-eslint/parser": "^8.32.1"
+    "hast-util-to-mdast": "^10.1.2",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0"
   },
   "author": "SignalWire <devon.white@signalwire.com>",
   "license": "MIT",

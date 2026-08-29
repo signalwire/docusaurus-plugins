@@ -1,9 +1,19 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "references": [{ "path": "./tsconfig.client.json" }],
+  // One project, not two. The package is entirely CommonJS + JSX (no
+  // "type": "module"), so the previous server/client split bought nothing: the
+  // root project resolved to a single .d.ts while the referenced client project
+  // compiled all the real code. That made `tsc --noEmit` a no-op and left
+  // editors without `jsx` or the Docusaurus module aliases for every .tsx file.
+  "extends": "../../tsconfig.base.client.json",
   "compilerOptions": {
-    "noEmit": false
+    "baseUrl": ".",
+    "paths": {
+      "@signalwire/docusaurus-theme-llms-txt/hooks": ["src/hooks/index.ts"],
+      "@signalwire/docusaurus-theme-llms-txt/react-icons": ["src/reactIcons.ts"],
+      "@signalwire/docusaurus-theme-llms-txt/types": ["src/types.ts"]
+    },
+    "types": ["node", "@docusaurus/module-type-aliases"]
   },
   "include": ["src"],
-  "exclude": ["**/__tests__/**"]
+  "exclude": ["**/__tests__/**", "**/backup/**"]
 }
