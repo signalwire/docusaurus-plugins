@@ -66,6 +66,8 @@ export const INDEX_IDENTIFIER = 'index' as const;
 
 /** Cache file name */
 export const CACHE_FILENAME = 'cache.json' as const;
+/** Cache schema version; increment when route metadata becomes required */
+export const CACHE_SCHEMA_VERSION = 1 as const;
 /** Temporary file prefix for atomic operations */
 export const TEMP_FILE_PREFIX = '.tmp-' as const;
 /** JSON pretty print indentation */

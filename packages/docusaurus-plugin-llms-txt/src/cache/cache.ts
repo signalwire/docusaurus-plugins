@@ -8,7 +8,7 @@
 import path from 'path';
 
 import packageJson from '../../package.json';
-import { CACHE_FILENAME } from '../constants';
+import { CACHE_FILENAME, CACHE_SCHEMA_VERSION } from '../constants';
 import { CacheIO } from './cache-io';
 import { isCachedRouteValid, calcConfigHash } from './cache-validation';
 import { getMarkdownConfig } from '../config';
@@ -207,6 +207,7 @@ export class CacheManager {
     cachedRoutes: CachedRouteInfo[]
   ): Promise<void> {
     const updatedCache = {
+      schemaVersion: CACHE_SCHEMA_VERSION,
       pluginVersion: packageJson.version,
       configHash: calcConfigHash(config),
       routes: cachedRoutes,

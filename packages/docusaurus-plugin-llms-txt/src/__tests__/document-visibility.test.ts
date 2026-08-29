@@ -28,6 +28,7 @@ const docs: DocInfo[] = [
 ];
 
 const cache: CacheSchema = {
+  schemaVersion: 1,
   pluginVersion: 'test',
   configHash: 'test',
   routes: [

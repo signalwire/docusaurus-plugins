@@ -68,6 +68,10 @@ const [llmsTxt, llmsFullTxt, cacheJson, fixtureOutputs] = await Promise.all([
 ]);
 
 const cache = JSON.parse(cacheJson);
+if (cache.schemaVersion !== 1) {
+  throw new Error('The current LLM route cache schema was not persisted.');
+}
+
 for (const { fixture, html, markdown } of fixtureOutputs) {
   if (!html.includes(fixture.marker) || !markdown.includes(fixture.title)) {
     throw new Error(

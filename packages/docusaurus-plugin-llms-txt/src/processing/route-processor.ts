@@ -131,11 +131,16 @@ async function processRoutesStream(
   const needsRegeneration =
     existingCachedRoutes &&
     existingCachedRoutes.some((route) => !route.contentSelectors);
+  const unlistedRoutePaths = new Set(
+    existingCachedRoutes
+      ?.filter((route) => route.isUnlisted)
+      .map((route) => route.path)
+  );
 
   const cachedRoutes =
     existingCachedRoutes && !needsRegeneration
       ? existingCachedRoutes
-      : cacheManager.createCachedRouteInfo(routes);
+      : cacheManager.createCachedRouteInfo(routes, unlistedRoutePaths);
   const directories = { docsDir, mdOutDir };
 
   // Create route lookup table for link resolution
