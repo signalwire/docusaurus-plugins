@@ -8,7 +8,7 @@
 import path from 'path';
 
 import packageJson from '../../package.json';
-import { CACHE_FILENAME } from '../constants';
+import { CACHE_FILENAME, CACHE_SCHEMA_VERSION } from '../constants';
 import { CacheIO } from './cache-io';
 import { isCachedRouteValid, calcConfigHash } from './cache-validation';
 import { getMarkdownConfig } from '../config';
@@ -93,7 +93,10 @@ export class CacheManager {
   }
 
   /** Create cached route info from routes with metadata for filtering */
-  createCachedRouteInfo(routes: RouteConfig[]): CachedRouteInfo[] {
+  createCachedRouteInfo(
+    routes: RouteConfig[],
+    unlistedRoutePaths: ReadonlySet<string> = new Set()
+  ): CachedRouteInfo[] {
     const cachedRoutes = routes.map((route) => {
       // Safe access to route properties - cast to access plugin info
       const pluginName = (route as PluginRouteConfig).plugin?.name;
@@ -123,6 +126,7 @@ export class CacheManager {
         contentType: classifyRoute(route as PluginRouteConfig),
         isVersioned,
         isGeneratedIndex,
+        isUnlisted: unlistedRoutePaths.has(route.path),
       };
 
       // Resolve content selectors for this route
@@ -203,6 +207,7 @@ export class CacheManager {
     cachedRoutes: CachedRouteInfo[]
   ): Promise<void> {
     const updatedCache = {
+      schemaVersion: CACHE_SCHEMA_VERSION,
       pluginVersion: packageJson.version,
       configHash: calcConfigHash(config),
       routes: cachedRoutes,

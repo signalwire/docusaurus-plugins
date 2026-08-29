@@ -14,6 +14,7 @@ import {
   LLMS_TXT_FILENAME,
   PROCESSING_MESSAGES,
 } from '../constants';
+import { filterUnlistedDocs } from './document-visibility';
 import { buildLlmsFullTxtContent } from './full-index-builder';
 import { buildLlmsTxtContent, buildUnifiedDocumentTree } from './index-builder';
 import { saveMarkdownFile } from './markdown-writer';
@@ -142,11 +143,18 @@ export async function generateOutputFiles(
     };
   }
 
-  // Filter docs for indexing (llms.txt) if cache is available
+  // Unlisted content remains available as standalone Markdown but must not be
+  // discoverable through either LLM index.
+  const visibleDocs =
+    cache && cache.routes.length > 0
+      ? filterUnlistedDocs(docs, cache, logger)
+      : docs;
+
+  // Apply llms.txt-specific indexing configuration if cache is available.
   const docsForIndexing =
     cache && cache.routes.length > 0
-      ? filterDocsForIndexing(docs, config, cache, logger)
-      : docs;
+      ? filterDocsForIndexing(visibleDocs, config, cache, logger)
+      : visibleDocs;
 
   // Build the unified tree first (used by llms.txt) with filtered docs
   buildUnifiedDocumentTree(docsForIndexing, config, attachments);
@@ -168,7 +176,6 @@ export async function generateOutputFiles(
   await saveMarkdownFile(llmsTxtPath, llmsTxtContent);
 
   logger.debug(`Successfully saved llms.txt`);
-  const totalItems = docsForIndexing.length + (attachments?.length ?? 0);
   logger.info(
     `Generated llms.txt with ${docsForIndexing.length} documents${attachments?.length ? ` and ${attachments.length} attachments` : ''}`
   );
@@ -180,7 +187,7 @@ export async function generateOutputFiles(
   const llmsTxtConfig = getLlmsTxtConfig(config);
   if (llmsTxtConfig.enableLlmsFullTxt) {
     const llmsFullTxtContent = await buildLlmsFullTxtContent(
-      docs,
+      visibleDocs,
       config,
       siteConfig,
       directories,
@@ -197,8 +204,9 @@ export async function generateOutputFiles(
     await saveMarkdownFile(llmsFullTxtPath, llmsFullTxtContent);
 
     logger.debug(`Successfully saved llms-full.txt`);
+    const fullTotalItems = visibleDocs.length + (attachments?.length ?? 0);
     logger.info(
-      `Generated llms-full.txt with full content from ${totalItems} items`
+      `Generated llms-full.txt with full content from ${fullTotalItems} items`
     );
 
     totalContentLength += llmsFullTxtContent.length;

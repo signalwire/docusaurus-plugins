@@ -17,6 +17,7 @@ import {
 } from './config';
 import { ERROR_MESSAGES, PLUGIN_NAME } from './constants';
 import { generateCopyContentJson } from './copy-button/json-generator';
+import { collectUnlistedRoutePaths } from './discovery/content-visibility';
 import { getErrorMessage, createConfigError, isPluginError } from './errors';
 import { PathManager } from './filesystem/paths';
 import { createPluginLogger } from './logging';
@@ -245,6 +246,7 @@ export default function llmsTxtPlugin(
       generatedFilesDir,
       siteConfig,
       routes,
+      plugins,
     }): Promise<void> {
       const log = createPluginLogger(config);
 
@@ -271,6 +273,13 @@ export default function llmsTxtPlugin(
 
         log.info(`Processing ${enhancedRoutes.length} routes`);
 
+        const unlistedRoutePaths = collectUnlistedRoutePaths(plugins);
+        if (unlistedRoutePaths.size > 0) {
+          log.debug(
+            `Found ${unlistedRoutePaths.size} unlisted Docusaurus content routes`
+          );
+        }
+
         // Create cache manager to capture enhanced metadata immediately
         const cacheManager = new (await import('./cache/cache')).CacheManager(
           siteDir,
@@ -282,8 +291,10 @@ export default function llmsTxtPlugin(
         );
 
         // Create cached routes with enhanced metadata before processing
-        const enhancedCachedRoutes =
-          cacheManager.createCachedRouteInfo(enhancedRoutes);
+        const enhancedCachedRoutes = cacheManager.createCachedRouteInfo(
+          enhancedRoutes,
+          unlistedRoutePaths
+        );
         log.debug(
           `Created cached routes with enhanced metadata: ${enhancedCachedRoutes.length} routes`
         );
