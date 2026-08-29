@@ -20,7 +20,8 @@ export function resolveGfmConfig(markdown: MarkdownOptions): MarkdownOptions {
   if (markdown.remarkGfm === true) {
     return {
       ...markdown,
-      remarkGfm: DEFAULT_GFM,
+      // Copy: DEFAULT_GFM is a module singleton.
+      remarkGfm: { ...DEFAULT_GFM },
     };
   }
 
@@ -43,19 +44,16 @@ export function resolveGfmConfig(markdown: MarkdownOptions): MarkdownOptions {
 export function applyGfmConfiguration(options: PluginOptions): PluginOptions {
   const markdown = options.markdown ?? {};
 
-  if (
-    !(
-      markdown.remarkGfm === true ||
-      (typeof markdown.remarkGfm === 'object' && markdown.remarkGfm !== null)
-    )
-  ) {
+  // Joi skips nested defaults when `markdown` is absent, so remarkGfm arrives
+  // undefined. getMarkdownConfig coerces that to true, so resolve it the same.
+  const remarkGfm = markdown.remarkGfm ?? true;
+
+  if (remarkGfm === false) {
     return options;
   }
 
-  const resolvedMarkdown = resolveGfmConfig(markdown);
-
   return {
     ...options,
-    markdown: resolvedMarkdown,
+    markdown: resolveGfmConfig({ ...markdown, remarkGfm }),
   };
 }

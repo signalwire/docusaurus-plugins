@@ -203,6 +203,8 @@ export interface UiOptions {
 
 /**
  * Copy page button configuration options
+ * Mirrors the theme's CopyPageContentOptions across the Joi -> global-data
+ * JSON -> defaulting boundary.
  */
 export interface CopyPageContentOptions {
   /** Custom button label (default: 'Copy Page') */

@@ -436,6 +436,7 @@ coverage/
 
 # Dependency directories
 jspm_packages/
+.pnpm-store/
 
 # TypeScript cache
 *.tsbuildinfo

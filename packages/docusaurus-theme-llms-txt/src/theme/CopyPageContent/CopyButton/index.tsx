@@ -4,15 +4,18 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React from 'react';
+import type React from 'react';
 
 import clsx from 'clsx';
 
-import { MdCheck, MdFileCopy } from 'react-icons/md';
+import {
+  MdCheck,
+  MdFileCopy,
+} from '@signalwire/docusaurus-theme-llms-txt/react-icons';
 
 import ChevronIcon from '@theme/CopyPageContent/Icons/ChevronIcon';
 
-import type { ResolvedCopyPageContentOptions } from '../../../hooks';
+import type { ResolvedCopyPageContentOptions } from '@signalwire/docusaurus-theme-llms-txt/hooks';
 
 import styles from './styles.module.css';
 

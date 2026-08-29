@@ -8,12 +8,11 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 
 import { useLocation } from '@docusaurus/router';
 
-export default function useDropdownState(): {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  toggleDropdown: () => void;
-  dropdownRef: React.RefObject<HTMLDivElement | null>;
-} {
+// The return type is inferred on purpose. React 18 and 19 disagree on what
+// useRef<T>(null) produces -- 19 widens it to RefObject<T | null> -- so naming
+// either shape makes the other major reject `ref={dropdownRef}`.
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export default function useDropdownState() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
@@ -48,9 +47,15 @@ export default function useDropdownState(): {
     setIsOpen(!isOpen);
   }, [isOpen]);
 
+  // Keep the public setter boolean-only instead of exposing React's wider
+  // Dispatch<SetStateAction<boolean>> implementation detail.
+  const setOpen = useCallback((nextIsOpen: boolean) => {
+    setIsOpen(nextIsOpen);
+  }, []);
+
   return {
     isOpen,
-    setIsOpen,
+    setIsOpen: setOpen,
     toggleDropdown,
     dropdownRef,
   };

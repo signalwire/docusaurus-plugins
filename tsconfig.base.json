@@ -3,7 +3,7 @@
     /* Build Configuration */
     "composite": true,
     "incremental": true,
-    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "tsBuildInfoFile": "${configDir}/.tsbuildinfo",
 
     /* Emit */
     "target": "ES2020",

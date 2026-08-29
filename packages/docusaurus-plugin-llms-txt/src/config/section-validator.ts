@@ -157,6 +157,7 @@ interface ProcessedSection {
   description?: string;
   position?: number;
   docs: unknown[];
+  optionalLinks?: readonly unknown[];
   parentId?: string;
 }
 
@@ -164,7 +165,7 @@ interface ProcessedSection {
  * Check if a processed section is empty
  */
 function isEmpty(section: ProcessedSection): boolean {
-  return section.docs.length === 0;
+  return section.docs.length === 0 && !section.optionalLinks?.length;
 }
 
 /**

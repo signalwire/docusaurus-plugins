@@ -12,7 +12,8 @@ const config: Config = {
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
     v4: true,
-    experimental_faster: true,
+    // Renamed from `experimental_faster` in Docusaurus 3.10.
+    faster: true,
     experimental_router: 'browser',
   },
 

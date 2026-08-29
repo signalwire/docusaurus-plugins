@@ -1,0 +1,23 @@
+packages:
+  - 'packages/*'
+  - 'website'
+
+overrides:
+  # Release builds target the lowest supported React major so emitted
+  # declarations remain consumable by Docusaurus 3 sites. CI overrides this
+  # block to React 19 for the second compatibility leg.
+  react: ^18
+  react-dom: ^18
+  '@types/react': ^18
+  '@types/react-dom': ^18
+  # Build-time webpack plugins; patched in 7.0.3.
+  copy-webpack-plugin>serialize-javascript: ^7.0.5 # GHSA-5c6j-r48x-rmvq
+  css-minimizer-webpack-plugin>serialize-javascript: ^7.0.5 # GHSA-5c6j-r48x-rmvq
+  # SockJS only uses uuid.v4(), whose API remains compatible in the patched release.
+  sockjs>uuid: ^11.1.1 # GHSA-w5hq-g745-h8pq
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@swc/core'
+  - core-js
+  - unrs-resolver

@@ -4,7 +4,8 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import type React from 'react';
 
 import clsx from 'clsx';
 
@@ -16,7 +17,7 @@ import ClaudeIcon from '@theme/CopyPageContent/Icons/ClaudeIcon';
 import HtmlIcon from '@theme/CopyPageContent/Icons/HtmlIcon';
 import MarkdownIcon from '@theme/CopyPageContent/Icons/MarkdownIcon';
 
-import type { ResolvedCopyPageContentOptions } from '../../../hooks';
+import type { ResolvedCopyPageContentOptions } from '@signalwire/docusaurus-theme-llms-txt/hooks';
 
 import styles from './styles.module.css';
 

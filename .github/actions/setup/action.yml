@@ -1,5 +1,5 @@
 name: 'Setup Node.js and Dependencies'
-description: 'Setup Node.js with yarn cache and install dependencies'
+description: 'Setup pnpm and Node.js with a dependency cache, then install'
 
 inputs:
   node-version:
@@ -10,12 +10,17 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    # Must precede setup-node: the pnpm cache key needs a resolvable store path.
+    # Version comes from packageManager in package.json.
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        cache: 'yarn'
+        cache: 'pnpm'
 
     - name: Install dependencies
-      run: yarn install --frozen-lockfile
+      run: pnpm install --frozen-lockfile
       shell: bash
