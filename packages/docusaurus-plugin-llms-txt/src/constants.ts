@@ -28,6 +28,8 @@ export const EXIT_CODE_ERROR = 1 as const;
 // DOCUSAURUS PLUGIN NAMES
 // ============================================================================
 
+/** Official Docusaurus docs plugin name */
+export const DOCUSAURUS_DOCS_PLUGIN = 'docusaurus-plugin-content-docs' as const;
 /** Official Docusaurus blog plugin name */
 export const DOCUSAURUS_BLOG_PLUGIN = 'docusaurus-plugin-content-blog' as const;
 /** Official Docusaurus pages plugin name */

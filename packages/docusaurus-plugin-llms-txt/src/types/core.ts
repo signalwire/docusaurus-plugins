@@ -36,6 +36,7 @@ export interface CachedRouteInfo {
   readonly contentType: ContentType;
   readonly isVersioned?: boolean; // true for non-latest versions (isLast=false), false for latest (isLast=true)
   readonly isGeneratedIndex?: boolean;
+  readonly isUnlisted?: boolean;
   readonly contentSelectors: readonly string[]; // Content selectors for HTML extraction (always present)
 }
 

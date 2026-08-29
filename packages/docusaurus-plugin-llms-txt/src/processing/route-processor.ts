@@ -260,6 +260,12 @@ export async function processDocuments(
     validateCliContext(cacheHasRoutes, configMatches, logger);
   }
 
+  // Preserve current route metadata even when document hashes are invalidated.
+  // The useCache flag below still controls whether cached document data is
+  // reused or every route is processed again.
+  const routesWithMetadata =
+    cache.routes.length > 0 ? [...cache.routes] : undefined;
+
   // Process using unified pipeline
   const result = await processRoutesStream(
     context.routesToProcess,
@@ -270,7 +276,7 @@ export async function processDocuments(
     config,
     logger,
     siteUrl,
-    context.mode === 'cli' || useCache ? [...cache.routes] : undefined,
+    routesWithMetadata,
     outDir,
     siteConfig,
     useCache

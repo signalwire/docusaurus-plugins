@@ -93,7 +93,10 @@ export class CacheManager {
   }
 
   /** Create cached route info from routes with metadata for filtering */
-  createCachedRouteInfo(routes: RouteConfig[]): CachedRouteInfo[] {
+  createCachedRouteInfo(
+    routes: RouteConfig[],
+    unlistedRoutePaths: ReadonlySet<string> = new Set()
+  ): CachedRouteInfo[] {
     const cachedRoutes = routes.map((route) => {
       // Safe access to route properties - cast to access plugin info
       const pluginName = (route as PluginRouteConfig).plugin?.name;
@@ -123,6 +126,7 @@ export class CacheManager {
         contentType: classifyRoute(route as PluginRouteConfig),
         isVersioned,
         isGeneratedIndex,
+        isUnlisted: unlistedRoutePaths.has(route.path),
       };
 
       // Resolve content selectors for this route

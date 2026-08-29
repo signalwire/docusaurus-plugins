@@ -137,11 +137,6 @@ export function shouldIncludeRoute(
     }
   }
 
-  // Skip pages marked as unlisted in frontmatter
-  if (route.props?.unlisted) {
-    return false;
-  }
-
   return true;
 }
 
