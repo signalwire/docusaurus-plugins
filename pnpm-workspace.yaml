@@ -15,6 +15,9 @@ overrides:
   css-minimizer-webpack-plugin>serialize-javascript: ^7.0.5 # GHSA-5c6j-r48x-rmvq
   # SockJS only uses uuid.v4(), whose API remains compatible in the patched release.
   sockjs>uuid: ^11.1.1 # GHSA-w5hq-g745-h8pq
+  # Dev-server query parsing; express 4 / body-parser 1 pin ~6.15 but 6.16 is API-compatible.
+  express>qs: ^6.16.0 # GHSA-x5fp-wj9c-mxmx
+  body-parser>qs: ^6.16.0 # GHSA-x5fp-wj9c-mxmx
 
 onlyBuiltDependencies:
   - '@parcel/watcher'
