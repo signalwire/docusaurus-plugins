@@ -62,7 +62,7 @@
     "remark-gfm": "^4",
     "remark-parse": "^11",
     "remark-stringify": "^11",
-    "string-width": "^5.0.0",
+    "string-width": "^8.2.2",
     "unified": "^11",
     "unist-util-visit": "^5"
   },
